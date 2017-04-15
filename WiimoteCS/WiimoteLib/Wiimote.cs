@@ -297,51 +297,51 @@ namespace WiimoteLib
         /// <summary>
         /// MotionPlus
         /// </summary>
-        public void CheckMotionPlus()
+        public void ConnectMotionPlus()
         {
             //BeginAsyncRead();
 
-            byte[] data;
+            // byte[] data;
 
             mSuppressExtensionInit = true;
 
-            WriteData(REGISTER_EXTENSION_EXT_INIT_1, 0x55);
+            //WriteData(REGISTER_EXTENSION_EXT_INIT_1, 0x55);
             
-            WriteData(REGISTER_EXTENSION_INIT_1, 0x55); // Deactivate motion plus
+            //WriteData(REGISTER_EXTENSION_INIT_1, 0x55); // Deactivate motion plus
             
-            StringBuilder s;
-
-            ////
-            try {
-                data = ReadData(0x04a600fa, 6); //Fails if no motion plus
-            } catch (WiimoteException e)
-            {
-                // No motionplus
-                Debug.Print(e.StackTrace);
-                return;
-            }
-            s = new StringBuilder();
-            foreach (var b in data)
-            {
-                s.Append(b.ToString("X") + " ");
-            }
-            Debug.Indent();
-            Debug.Print("Before: " + s.ToString());
-            Debug.Unindent();
-
-            Thread.Sleep(200);
+            // StringBuilder s;
+            // 
+            // ////
+            // try {
+            //     data = ReadData(0x04a600fa, 6); //Fails if no motion plus
+            // } catch (WiimoteException e)
+            // {
+            //     // No motionplus
+            //     Debug.Print(e.StackTrace);
+            //     return;
+            // }
+            // s = new StringBuilder();
+            // foreach (var b in data)
+            // {
+            //     s.Append(b.ToString("X") + " ");
+            // }
+            // Debug.Indent();
+            // Debug.Print("Before: " + s.ToString());
+            // Debug.Unindent();
+            // 
+            // Thread.Sleep(200);
             WriteData(0x04a600fe, 0x04);
 
 
-            data = ReadData(0x04a400fa, 6); //Fails if no motion plus
-            s = new StringBuilder();
-            foreach (var b in data)
-            {
-                s.Append(b.ToString("X") + " " );
-            }
-            Debug.Indent();
-            Debug.Print("Activated: " + s.ToString());
-            Debug.Unindent();
+            // data = ReadData(0x04a400fa, 6); //Fails if no motion plus
+            // s = new StringBuilder();
+            // foreach (var b in data)
+            // {
+            //     s.Append(b.ToString("X") + " " );
+            // }
+            // Debug.Indent();
+            // Debug.Print("Activated: " + s.ToString());
+            // Debug.Unindent();
             // if (data[4] != 0x04)
             // {
             // 

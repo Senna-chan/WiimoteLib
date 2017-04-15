@@ -231,9 +231,16 @@ namespace WiimoteTest
 			set { mWiimote = value; }
 		}
 
-        private void btnDebug_Click(object sender, EventArgs e)
+        private void btnMPConnect_Click(object sender, EventArgs e)
         {
-            mWiimote.CheckMotionPlus();
+            if (mWiimote.WiimoteState.ExtensionType == ExtensionType.MotionPlus)
+            {
+                // mWiimote.DisconnectMotionPlus();
+            } else
+            {
+                mWiimote.ConnectMotionPlus();
+            }
+            
         }
 
         private void lblMPCallibrate_Click(object sender, EventArgs e)

@@ -86,7 +86,7 @@
             this.lbDrumVelocity = new System.Windows.Forms.ListBox();
             this.lblDrumJoy = new System.Windows.Forms.Label();
             this.clbDrums = new System.Windows.Forms.CheckedListBox();
-            this.btnDebug = new System.Windows.Forms.Button();
+            this.btnMPConnect = new System.Windows.Forms.Button();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
             this.lblMPRawPitch = new System.Windows.Forms.Label();
             this.lblMPRawRoll = new System.Windows.Forms.Label();
@@ -736,19 +736,20 @@
             this.clbDrums.Size = new System.Drawing.Size(60, 124);
             this.clbDrums.TabIndex = 26;
             // 
-            // btnDebug
+            // btnMPConnect
             // 
-            this.btnDebug.Location = new System.Drawing.Point(575, 312);
-            this.btnDebug.Name = "btnDebug";
-            this.btnDebug.Size = new System.Drawing.Size(105, 49);
-            this.btnDebug.TabIndex = 41;
-            this.btnDebug.Text = "Debug";
-            this.btnDebug.UseVisualStyleBackColor = true;
-            this.btnDebug.Click += new System.EventHandler(this.btnDebug_Click);
+            this.btnMPConnect.Location = new System.Drawing.Point(10, 223);
+            this.btnMPConnect.Name = "btnMPConnect";
+            this.btnMPConnect.Size = new System.Drawing.Size(104, 23);
+            this.btnMPConnect.TabIndex = 41;
+            this.btnMPConnect.Text = "Connect";
+            this.btnMPConnect.UseVisualStyleBackColor = true;
+            this.btnMPConnect.Click += new System.EventHandler(this.btnMPConnect_Click);
             // 
             // groupBox11
             // 
             this.groupBox11.Controls.Add(this.lblMPCallibrate);
+            this.groupBox11.Controls.Add(this.btnMPConnect);
             this.groupBox11.Controls.Add(this.lblMPYaw);
             this.groupBox11.Controls.Add(this.lblMPRoll);
             this.groupBox11.Controls.Add(this.lblMPPitch);
@@ -760,7 +761,7 @@
             this.groupBox11.Controls.Add(this.lblMPRawPitch);
             this.groupBox11.Location = new System.Drawing.Point(698, 0);
             this.groupBox11.Name = "groupBox11";
-            this.groupBox11.Size = new System.Drawing.Size(114, 188);
+            this.groupBox11.Size = new System.Drawing.Size(114, 252);
             this.groupBox11.TabIndex = 42;
             this.groupBox11.TabStop = false;
             this.groupBox11.Text = "MotionPlus";
@@ -864,7 +865,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.groupBox11);
-            this.Controls.Add(this.btnDebug);
             this.Controls.Add(this.groupBox10);
             this.Controls.Add(this.lblDevicePath);
             this.Controls.Add(this.groupBox9);
@@ -965,7 +965,7 @@
 		public System.Windows.Forms.CheckedListBox clbDrums;
 		public System.Windows.Forms.Label lblDrumJoy;
 		private System.Windows.Forms.ListBox lbDrumVelocity;
-        private System.Windows.Forms.Button btnDebug;
+        private System.Windows.Forms.Button btnMPConnect;
         private System.Windows.Forms.GroupBox groupBox11;
         private System.Windows.Forms.Label lblMPRawPitch;
         private System.Windows.Forms.Label lblMPRawYaw;
