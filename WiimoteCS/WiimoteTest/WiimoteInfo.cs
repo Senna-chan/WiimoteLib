@@ -184,9 +184,9 @@ namespace WiimoteTest
                     chcMPRollSlow.Checked = ws.MotionPlusState.SlowRoll;
                     chcMPPitchSlow.Checked = ws.MotionPlusState.SlowPitch;
 
-                    lblMPPitch.Text = ws.MotionPlusState.Gyro.X.ToString();
-                    lblMPRoll.Text  = ws.MotionPlusState.Gyro.Y.ToString();
-                    lblMPYaw.Text   = ws.MotionPlusState.Gyro.Z.ToString();
+                    lblMPPitch.Text = ws.MotionPlusState.Gyro.X.ToString("000.00");
+                    lblMPRoll.Text  = ws.MotionPlusState.Gyro.Y.ToString("000.00");
+                    lblMPYaw.Text   = ws.MotionPlusState.Gyro.Z.ToString("000.00");
                     break;
 			}
 

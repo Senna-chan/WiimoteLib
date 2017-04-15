@@ -312,8 +312,14 @@ namespace WiimoteLib
             StringBuilder s;
 
             ////
-
-            data = ReadData(0x04a600fa, 6); //Fails if no motion plus
+            try {
+                data = ReadData(0x04a600fa, 6); //Fails if no motion plus
+            } catch (WiimoteException e)
+            {
+                // No motionplus
+                Debug.Print(e.StackTrace);
+                return;
+            }
             s = new StringBuilder();
             foreach (var b in data)
             {
