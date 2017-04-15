@@ -184,7 +184,7 @@ namespace WiimoteTest
 			UpdateIR(ws.IRState.IRSensors[3], lblIR4, lblIR4Raw, chkFound4, Color.Orange);
 
 			if(ws.IRState.IRSensors[0].Found && ws.IRState.IRSensors[1].Found)
-				g.DrawEllipse(new Pen(Color.Green), (int)(ws.IRState.RawMidpoint.X / 4), (int)(ws.IRState.RawMidpoint.Y / 4), 2, 2);
+				g.DrawEllipse(new Pen(Color.Green), (int)(ws.IRState.RawMidpoint.X / 4), (int)(ws.IRState.RawMidpoint.Y / 4), 5, 5);
 
 			pbIR.Image = b;
 
@@ -216,5 +216,10 @@ namespace WiimoteTest
 		{
 			set { mWiimote = value; }
 		}
-	}
+
+        private void btnDebug_Click(object sender, EventArgs e)
+        {
+            mWiimote.CheckMotionPlus();
+        }
+    }
 }

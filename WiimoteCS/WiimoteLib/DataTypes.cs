@@ -765,10 +765,14 @@ namespace WiimoteLib
 		/// No extension
 		/// </summary>
 		None				= 0x000000000000,
-		/// <summary>
-		/// Nunchuk extension
+        /// <summary>
+		/// Motion Plus
 		/// </summary>
-		Nunchuk				= 0x0000a4200000,
+		MotionPlus  = 0x0000a4200405,
+        /// <summary>
+        /// Nunchuk extension
+        /// </summary>
+        Nunchuk				= 0x0000a4200000,
 		/// <summary>
 		/// Classic Controller extension
 		/// </summary>

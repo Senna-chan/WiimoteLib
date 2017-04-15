@@ -15,6 +15,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using Microsoft.Win32.SafeHandles;
 using System.Threading;
+using System.Text;
 
 namespace WiimoteLib
 {
@@ -60,7 +61,9 @@ namespace WiimoteLib
 
 		private const int REGISTER_EXTENSION_INIT_1			= 0x04a400f0;
 		private const int REGISTER_EXTENSION_INIT_2			= 0x04a400fb;
-		private const int REGISTER_EXTENSION_TYPE			= 0x04a400fa;
+        private const int REGISTER_EXTENSION_EXT_INIT_1     = 0x04a600f0;
+        private const int REGISTER_EXTENSION_EXT_INIT_2     = 0x04a600fb;
+        private const int REGISTER_EXTENSION_TYPE			= 0x04a400fa;
 		private const int REGISTER_EXTENSION_CALIBRATION	= 0x04a40020;
 
 		// length between board sensors
@@ -112,10 +115,13 @@ namespace WiimoteLib
 		// kilograms to pounds
 		private const float KG2LB = 2.20462262f;
 
-		/// <summary>
-		/// Default constructor
-		/// </summary>
-		public Wiimote()
+        // Prevent MotionPlus from turning off upon init
+        private bool mSuppressExtensionInit = false;
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public Wiimote()
 		{
 		}
 
@@ -284,10 +290,88 @@ namespace WiimoteLib
 				mHandle.Close();
 		}
 
-		/// <summary>
-		/// Start reading asynchronously from the controller
-		/// </summary>
-		private void BeginAsyncRead()
+        /// <summary>
+        /// MotionPlus
+        /// </summary>
+        public void CheckMotionPlus()
+        {
+            //BeginAsyncRead();
+
+            byte[] data;
+
+            mSuppressExtensionInit = true;
+
+            WriteData(REGISTER_EXTENSION_EXT_INIT_1, 0x55);
+            
+            WriteData(REGISTER_EXTENSION_INIT_1, 0x55); // Deactivate motion plus
+            
+            StringBuilder s;
+
+            ////
+
+            data = ReadData(0x04a600fa, 6); //Fails if no motion plus
+            s = new StringBuilder();
+            foreach (var b in data)
+            {
+                s.Append(b.ToString("X") + " ");
+            }
+            Debug.Indent();
+            Debug.Print("Before: " + s.ToString());
+            Debug.Unindent();
+
+            Thread.Sleep(200);
+            WriteData(0x04a600fe, 0x04);
+
+
+            data = ReadData(0x04a400fa, 6); //Fails if no motion plus
+            s = new StringBuilder();
+            foreach (var b in data)
+            {
+                s.Append(b.ToString("X") + " " );
+            }
+            Debug.Indent();
+            Debug.Print("Activated: " + s.ToString());
+            Debug.Unindent();
+            // if (data[4] != 0x04)
+            // {
+            // 
+            //     WriteData(REGISTER_EXTENSION_EXT_INIT_2, 0x00);
+            //     // Init extension
+            //     
+            // 
+            // 
+            //     // Needs init
+            //     Debug.Print("INIT");
+            //    
+            // } else
+            // {
+            //     // Carry on:
+            //     var motionPlusData = ReadData(0x04a40008, 8);
+            //     Debug.Print(motionPlusData[0].ToString());
+            // 
+            // }
+
+            
+            /*
+
+            var motionPlusData = ReadData(0x04a40008, 8);
+            //Debug.Print(motionPlusData.ToString());
+            s = new StringBuilder();
+            foreach (var b in motionPlusData)
+            {
+                s.Append(b.ToString("X") + " ");
+            }
+            Debug.Indent();
+            Debug.Print("MotionData: " + s.ToString());
+            Debug.Unindent();
+            */
+
+        }
+
+        /// <summary>
+        /// Start reading asynchronously from the controller
+        /// </summary>
+        private void BeginAsyncRead()
 		{
 			// if the stream is valid and ready
 			if(mStream != null && mStream.CanRead)
@@ -336,9 +420,9 @@ namespace WiimoteLib
 		/// <returns>Returns a boolean noting whether an event needs to be posted</returns>
 		private bool ParseInputReport(byte[] buff)
 		{
-			InputReport type = (InputReport)buff[0];
+            InputReport type = (InputReport)buff[0];
 
-			switch(type)
+            switch (type)
 			{
 				case InputReport.Buttons:
 					ParseButtons(buff);
@@ -368,7 +452,11 @@ namespace WiimoteLib
 					ParseExtension(buff, 16);
 					break;
 				case InputReport.Status:
-					ParseButtons(buff);
+                    SetLEDs(2);
+                    Thread.Sleep(200);
+                    SetLEDs(1);
+                    Thread.Sleep(200);
+                    ParseButtons(buff);
 					mWiimoteState.BatteryRaw = buff[6];
 					mWiimoteState.Battery = (((100.0f * 48.0f * (float)((int)buff[6] / 48.0f))) / 192.0f);
 
@@ -416,19 +504,24 @@ namespace WiimoteLib
 			return true;
 		}
 
-		/// <summary>
-		/// Handles setting up an extension when plugged in
-		/// </summary>
-		private void InitializeExtension()
+        /// <summary>
+        /// Handles setting up an extension when plugged in
+        /// </summary>
+        private void InitializeExtension()
 		{
-			WriteData(REGISTER_EXTENSION_INIT_1, 0x55);
-			WriteData(REGISTER_EXTENSION_INIT_2, 0x00);
-
+            if (!mSuppressExtensionInit)
+            {
+                WriteData(REGISTER_EXTENSION_INIT_1, 0x55);
+                WriteData(REGISTER_EXTENSION_INIT_2, 0x00);
+                mSuppressExtensionInit = false;
+            }
 			// start reading again
 			BeginAsyncRead();
 
-			byte[] buff = ReadData(REGISTER_EXTENSION_TYPE, 6);
-			long type = ((long)buff[0] << 40) | ((long)buff[1] << 32) | ((long)buff[2]) << 24 | ((long)buff[3]) << 16 | ((long)buff[4]) << 8 | buff[5];
+            byte[] buff = ReadData(REGISTER_EXTENSION_TYPE, 6);
+            long type = ((long)buff[0] << 40) | ((long)buff[1] << 32) | ((long)buff[2]) << 24 | ((long)buff[3]) << 16 | ((long)buff[4]) << 8 | buff[5];
+
+            Debug.Print("Extension type: ", type.ToString("x"));
 
 			switch((ExtensionType)type)
 			{
@@ -437,7 +530,9 @@ namespace WiimoteLib
 					mWiimoteState.Extension = false;
 					mWiimoteState.ExtensionType = ExtensionType.None;
 					return;
-				case ExtensionType.Nunchuk:
+                case ExtensionType.MotionPlus:
+                case ExtensionType.MotionPlusB:
+                case ExtensionType.Nunchuk:
 				case ExtensionType.ClassicController:
 				case ExtensionType.Guitar:
 				case ExtensionType.BalanceBoard:
