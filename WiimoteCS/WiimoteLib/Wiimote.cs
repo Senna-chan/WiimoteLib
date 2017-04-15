@@ -531,7 +531,6 @@ namespace WiimoteLib
 					mWiimoteState.ExtensionType = ExtensionType.None;
 					return;
                 case ExtensionType.MotionPlus:
-                case ExtensionType.MotionPlusB:
                 case ExtensionType.Nunchuk:
 				case ExtensionType.ClassicController:
 				case ExtensionType.Guitar:
