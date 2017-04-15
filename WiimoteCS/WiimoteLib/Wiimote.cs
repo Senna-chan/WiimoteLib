@@ -115,6 +115,10 @@ namespace WiimoteLib
 		// kilograms to pounds
 		private const float KG2LB = 2.20462262f;
 
+        // Motion plus
+        private const float ADC_TO_DEG_S = 8192 / 595;
+        private const float FAST_MULTIPLIER = 2000 / 440;
+
         // Prevent MotionPlus from turning off upon init
         private bool mSuppressExtensionInit = false;
 
@@ -368,6 +372,13 @@ namespace WiimoteLib
 
         }
 
+        public void CallibrateMotionPlus()
+        {
+            mWiimoteState.MotionPlusState.Offset.X = mWiimoteState.MotionPlusState.GyroRaw.X;
+            mWiimoteState.MotionPlusState.Offset.Y = mWiimoteState.MotionPlusState.GyroRaw.Y;
+            mWiimoteState.MotionPlusState.Offset.Z = mWiimoteState.MotionPlusState.GyroRaw.Z;
+        }
+
         /// <summary>
         /// Start reading asynchronously from the controller
         /// </summary>
@@ -396,13 +407,18 @@ namespace WiimoteLib
 				// end the current read
 				mStream.EndRead(ar);
 
-				// parse it
-				if(ParseInputReport(buff))
-				{
-					// post an event
-					if(WiimoteChanged != null)
-						WiimoteChanged(this, new WiimoteChangedEventArgs(mWiimoteState));
-				}
+                // parse it
+                try {
+                    if (ParseInputReport(buff))
+                    {
+                        // post an event
+                        if (WiimoteChanged != null)
+                            WiimoteChanged(this, new WiimoteChangedEventArgs(mWiimoteState));
+                    }
+                } catch (WiimoteException e)
+                {
+                    Debug.Print(e.StackTrace);
+                }
 
 				// start reading again
 				BeginAsyncRead();
@@ -972,7 +988,6 @@ namespace WiimoteLib
                     mWiimoteState.MotionPlusState.GyroRaw.Z
                         = ((buff[offset + 3] & 0xF6) << 6) + buff[offset + 0] ;
 
-
                     // Roll
                     mWiimoteState.MotionPlusState.GyroRaw.Y
                         = ((buff[offset + 4] & 0xF6) << 6) + buff[offset + 1];
@@ -980,6 +995,43 @@ namespace WiimoteLib
                     // Pitch
                     mWiimoteState.MotionPlusState.GyroRaw.X
                         = ((buff[offset + 5] & 0xF6) << 6) + buff[offset + 2];
+
+
+                    // Slow flags
+                    mWiimoteState.MotionPlusState.SlowYaw = ((buff[offset + 3] >> 1) & 0x01) == 1;
+                    mWiimoteState.MotionPlusState.SlowPitch = ((buff[offset + 3] >> 0) & 0x01) == 1;
+                    mWiimoteState.MotionPlusState.SlowRoll = ((buff[offset + 4] >> 1) & 0x01) == 1;
+
+
+                    // Convert to deg/s
+                    mWiimoteState.MotionPlusState.Gyro.Z =
+                            (mWiimoteState.MotionPlusState.GyroRaw.Z - mWiimoteState.MotionPlusState.Offset.Z)
+                            / ADC_TO_DEG_S;
+
+                    mWiimoteState.MotionPlusState.Gyro.Y =
+                            (mWiimoteState.MotionPlusState.GyroRaw.Y - mWiimoteState.MotionPlusState.Offset.Y)
+                            / ADC_TO_DEG_S;
+
+                    mWiimoteState.MotionPlusState.Gyro.X =
+                            (mWiimoteState.MotionPlusState.GyroRaw.X - mWiimoteState.MotionPlusState.Offset.X)
+                            / ADC_TO_DEG_S;
+
+                    // Slow / fast mode
+                    if (!mWiimoteState.MotionPlusState.SlowYaw)
+                    {
+                        mWiimoteState.MotionPlusState.Gyro.Z *= FAST_MULTIPLIER;
+                    }
+
+                    if (!mWiimoteState.MotionPlusState.SlowRoll)
+                    {
+                        mWiimoteState.MotionPlusState.Gyro.Y *= FAST_MULTIPLIER;
+                    }
+
+                    if (!mWiimoteState.MotionPlusState.SlowPitch)
+                    {
+                        mWiimoteState.MotionPlusState.Gyro.X *= FAST_MULTIPLIER;
+                    }
+
 
                     break;
 			}

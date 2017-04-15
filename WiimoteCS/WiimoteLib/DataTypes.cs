@@ -345,8 +345,16 @@ namespace WiimoteLib
         [DataMember]
         public Point3 GyroRaw;
         [DataMember]
+        public Point3 Offset;
+        [DataMember]
         public Point3F Gyro;
-        
+        [DataMember]
+        public bool SlowPitch;
+        [DataMember]
+        public bool SlowRoll;
+        [DataMember]
+        public bool SlowYaw;
+
     }
 
     /// <summary>

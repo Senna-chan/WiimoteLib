@@ -94,6 +94,10 @@
             this.chcMPPitchSlow = new System.Windows.Forms.CheckBox();
             this.chcMPRollSlow = new System.Windows.Forms.CheckBox();
             this.chcMPYawSlow = new System.Windows.Forms.CheckBox();
+            this.lblMPPitch = new System.Windows.Forms.Label();
+            this.lblMPRoll = new System.Windows.Forms.Label();
+            this.lblMPYaw = new System.Windows.Forms.Label();
+            this.lblMPCallibrate = new System.Windows.Forms.Button();
             this.groupBox8.SuspendLayout();
             this.groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbIR)).BeginInit();
@@ -744,6 +748,10 @@
             // 
             // groupBox11
             // 
+            this.groupBox11.Controls.Add(this.lblMPCallibrate);
+            this.groupBox11.Controls.Add(this.lblMPYaw);
+            this.groupBox11.Controls.Add(this.lblMPRoll);
+            this.groupBox11.Controls.Add(this.lblMPPitch);
             this.groupBox11.Controls.Add(this.chcMPYawSlow);
             this.groupBox11.Controls.Add(this.chcMPRollSlow);
             this.groupBox11.Controls.Add(this.chcMPPitchSlow);
@@ -752,7 +760,7 @@
             this.groupBox11.Controls.Add(this.lblMPRawPitch);
             this.groupBox11.Location = new System.Drawing.Point(698, 0);
             this.groupBox11.Name = "groupBox11";
-            this.groupBox11.Size = new System.Drawing.Size(114, 136);
+            this.groupBox11.Size = new System.Drawing.Size(114, 188);
             this.groupBox11.TabIndex = 42;
             this.groupBox11.TabStop = false;
             this.groupBox11.Text = "MotionPlus";
@@ -813,6 +821,43 @@
             this.chcMPYawSlow.TabIndex = 5;
             this.chcMPYawSlow.Text = "Slow";
             this.chcMPYawSlow.UseVisualStyleBackColor = true;
+            // 
+            // lblMPPitch
+            // 
+            this.lblMPPitch.AutoSize = true;
+            this.lblMPPitch.Location = new System.Drawing.Point(7, 88);
+            this.lblMPPitch.Name = "lblMPPitch";
+            this.lblMPPitch.Size = new System.Drawing.Size(31, 13);
+            this.lblMPPitch.TabIndex = 6;
+            this.lblMPPitch.Text = "Pitch";
+            // 
+            // lblMPRoll
+            // 
+            this.lblMPRoll.AutoSize = true;
+            this.lblMPRoll.Location = new System.Drawing.Point(7, 101);
+            this.lblMPRoll.Name = "lblMPRoll";
+            this.lblMPRoll.Size = new System.Drawing.Size(25, 13);
+            this.lblMPRoll.TabIndex = 7;
+            this.lblMPRoll.Text = "Roll";
+            // 
+            // lblMPYaw
+            // 
+            this.lblMPYaw.AutoSize = true;
+            this.lblMPYaw.Location = new System.Drawing.Point(7, 114);
+            this.lblMPYaw.Name = "lblMPYaw";
+            this.lblMPYaw.Size = new System.Drawing.Size(28, 13);
+            this.lblMPYaw.TabIndex = 8;
+            this.lblMPYaw.Text = "Yaw";
+            // 
+            // lblMPCallibrate
+            // 
+            this.lblMPCallibrate.Location = new System.Drawing.Point(10, 140);
+            this.lblMPCallibrate.Name = "lblMPCallibrate";
+            this.lblMPCallibrate.Size = new System.Drawing.Size(98, 28);
+            this.lblMPCallibrate.TabIndex = 9;
+            this.lblMPCallibrate.Text = "Callibrate";
+            this.lblMPCallibrate.UseVisualStyleBackColor = true;
+            this.lblMPCallibrate.Click += new System.EventHandler(this.lblMPCallibrate_Click);
             // 
             // WiimoteInfo
             // 
@@ -928,5 +973,9 @@
         private System.Windows.Forms.CheckBox chcMPYawSlow;
         private System.Windows.Forms.CheckBox chcMPRollSlow;
         private System.Windows.Forms.CheckBox chcMPPitchSlow;
+        private System.Windows.Forms.Label lblMPYaw;
+        private System.Windows.Forms.Label lblMPRoll;
+        private System.Windows.Forms.Label lblMPPitch;
+        private System.Windows.Forms.Button lblMPCallibrate;
     }
 }

@@ -179,6 +179,14 @@ namespace WiimoteTest
                     lblMPRawPitch.Text = ws.MotionPlusState.GyroRaw.X.ToString();
                     lblMPRawRoll.Text  = ws.MotionPlusState.GyroRaw.Y.ToString();
                     lblMPRawYaw.Text   = ws.MotionPlusState.GyroRaw.Z.ToString();
+
+                    chcMPYawSlow.Checked = ws.MotionPlusState.SlowYaw;
+                    chcMPRollSlow.Checked = ws.MotionPlusState.SlowRoll;
+                    chcMPPitchSlow.Checked = ws.MotionPlusState.SlowPitch;
+
+                    lblMPPitch.Text = ws.MotionPlusState.Gyro.X.ToString();
+                    lblMPRoll.Text  = ws.MotionPlusState.Gyro.Y.ToString();
+                    lblMPYaw.Text   = ws.MotionPlusState.Gyro.Z.ToString();
                     break;
 			}
 
@@ -226,6 +234,11 @@ namespace WiimoteTest
         private void btnDebug_Click(object sender, EventArgs e)
         {
             mWiimote.CheckMotionPlus();
+        }
+
+        private void lblMPCallibrate_Click(object sender, EventArgs e)
+        {
+            mWiimote.CallibrateMotionPlus();
         }
     }
 }
