@@ -205,10 +205,15 @@ namespace WiimoteLib
 		/// Current state of the Wii Fit Balance Board
 		/// </summary>
 		public BalanceBoardState BalanceBoardState;
-		/// <summary>
-		/// Current state of LEDs
+        /// <summary>
+		/// Current state of the MotionPlus
 		/// </summary>
-		[DataMember]
+        [DataMember]
+		public MotionPlusState MotionPlusState;
+        /// <summary>
+        /// Current state of LEDs
+        /// </summary>
+        [DataMember]
 		public LEDState LEDState;
 
 		/// <summary>
@@ -330,10 +335,24 @@ namespace WiimoteLib
 		public bool C, Z;
 	}
 
-	/// <summary>
-	/// Curernt button state of the Classic Controller
+    /// <summary>
+	/// Current state of the Nunchuk extension
 	/// </summary>
 	[Serializable]
+    [DataContract]
+    public struct MotionPlusState
+    {
+        [DataMember]
+        public Point3 GyroRaw;
+        [DataMember]
+        public Point3F Gyro;
+        
+    }
+
+    /// <summary>
+    /// Curernt button state of the Classic Controller
+    /// </summary>
+    [Serializable]
 	[DataContract]
 	public struct ClassicControllerButtonState
 	{

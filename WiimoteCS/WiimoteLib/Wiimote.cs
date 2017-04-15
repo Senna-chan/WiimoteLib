@@ -970,6 +970,12 @@ namespace WiimoteLib
 					mWiimoteState.BalanceBoardState.CenterOfGravity.X = ((float)(Kx - 1) / (float)(Kx + 1)) * (float)(-BSL / 2);
 					mWiimoteState.BalanceBoardState.CenterOfGravity.Y = ((float)(Ky - 1) / (float)(Ky + 1)) * (float)(-BSW / 2);
 					break;
+                case ExtensionType.MotionPlus:
+                    mWiimoteState.MotionPlusState.GyroRaw.Z
+                        = (int) (buff[offset+3] << 8) + buff[offset] ;
+                    var b = buff[offset];
+                    Debug.Print(mWiimoteState.MotionPlusState.GyroRaw.Z.ToString());
+                    break;
 			}
 		}
 
