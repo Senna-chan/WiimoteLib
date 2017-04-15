@@ -87,6 +87,13 @@
             this.lblDrumJoy = new System.Windows.Forms.Label();
             this.clbDrums = new System.Windows.Forms.CheckedListBox();
             this.btnDebug = new System.Windows.Forms.Button();
+            this.groupBox11 = new System.Windows.Forms.GroupBox();
+            this.lblMPRawPitch = new System.Windows.Forms.Label();
+            this.lblMPRawRoll = new System.Windows.Forms.Label();
+            this.lblMPRawYaw = new System.Windows.Forms.Label();
+            this.chcMPPitchSlow = new System.Windows.Forms.CheckBox();
+            this.chcMPRollSlow = new System.Windows.Forms.CheckBox();
+            this.chcMPYawSlow = new System.Windows.Forms.CheckBox();
             this.groupBox8.SuspendLayout();
             this.groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbIR)).BeginInit();
@@ -98,6 +105,7 @@
             this.groupBox1.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.groupBox10.SuspendLayout();
+            this.groupBox11.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox8
@@ -726,7 +734,7 @@
             // 
             // btnDebug
             // 
-            this.btnDebug.Location = new System.Drawing.Point(574, 327);
+            this.btnDebug.Location = new System.Drawing.Point(575, 312);
             this.btnDebug.Name = "btnDebug";
             this.btnDebug.Size = new System.Drawing.Size(105, 49);
             this.btnDebug.TabIndex = 41;
@@ -734,10 +742,83 @@
             this.btnDebug.UseVisualStyleBackColor = true;
             this.btnDebug.Click += new System.EventHandler(this.btnDebug_Click);
             // 
+            // groupBox11
+            // 
+            this.groupBox11.Controls.Add(this.chcMPYawSlow);
+            this.groupBox11.Controls.Add(this.chcMPRollSlow);
+            this.groupBox11.Controls.Add(this.chcMPPitchSlow);
+            this.groupBox11.Controls.Add(this.lblMPRawYaw);
+            this.groupBox11.Controls.Add(this.lblMPRawRoll);
+            this.groupBox11.Controls.Add(this.lblMPRawPitch);
+            this.groupBox11.Location = new System.Drawing.Point(698, 0);
+            this.groupBox11.Name = "groupBox11";
+            this.groupBox11.Size = new System.Drawing.Size(114, 136);
+            this.groupBox11.TabIndex = 42;
+            this.groupBox11.TabStop = false;
+            this.groupBox11.Text = "MotionPlus";
+            // 
+            // lblMPRawPitch
+            // 
+            this.lblMPRawPitch.AutoSize = true;
+            this.lblMPRawPitch.Location = new System.Drawing.Point(7, 20);
+            this.lblMPRawPitch.Name = "lblMPRawPitch";
+            this.lblMPRawPitch.Size = new System.Drawing.Size(53, 13);
+            this.lblMPRawPitch.TabIndex = 0;
+            this.lblMPRawPitch.Text = "RawPitch";
+            // 
+            // lblMPRawRoll
+            // 
+            this.lblMPRawRoll.AutoSize = true;
+            this.lblMPRawRoll.Location = new System.Drawing.Point(7, 35);
+            this.lblMPRawRoll.Name = "lblMPRawRoll";
+            this.lblMPRawRoll.Size = new System.Drawing.Size(47, 13);
+            this.lblMPRawRoll.TabIndex = 1;
+            this.lblMPRawRoll.Text = "RawRoll";
+            // 
+            // lblMPRawYaw
+            // 
+            this.lblMPRawYaw.AutoSize = true;
+            this.lblMPRawYaw.Location = new System.Drawing.Point(7, 51);
+            this.lblMPRawYaw.Name = "lblMPRawYaw";
+            this.lblMPRawYaw.Size = new System.Drawing.Size(50, 13);
+            this.lblMPRawYaw.TabIndex = 2;
+            this.lblMPRawYaw.Text = "RawYaw";
+            // 
+            // chcMPPitchSlow
+            // 
+            this.chcMPPitchSlow.AutoSize = true;
+            this.chcMPPitchSlow.Location = new System.Drawing.Point(59, 16);
+            this.chcMPPitchSlow.Name = "chcMPPitchSlow";
+            this.chcMPPitchSlow.Size = new System.Drawing.Size(49, 17);
+            this.chcMPPitchSlow.TabIndex = 3;
+            this.chcMPPitchSlow.Text = "Slow";
+            this.chcMPPitchSlow.UseVisualStyleBackColor = true;
+            // 
+            // chcMPRollSlow
+            // 
+            this.chcMPRollSlow.AutoSize = true;
+            this.chcMPRollSlow.Location = new System.Drawing.Point(59, 34);
+            this.chcMPRollSlow.Name = "chcMPRollSlow";
+            this.chcMPRollSlow.Size = new System.Drawing.Size(49, 17);
+            this.chcMPRollSlow.TabIndex = 4;
+            this.chcMPRollSlow.Text = "Slow";
+            this.chcMPRollSlow.UseVisualStyleBackColor = true;
+            // 
+            // chcMPYawSlow
+            // 
+            this.chcMPYawSlow.AutoSize = true;
+            this.chcMPYawSlow.Location = new System.Drawing.Point(59, 50);
+            this.chcMPYawSlow.Name = "chcMPYawSlow";
+            this.chcMPYawSlow.Size = new System.Drawing.Size(49, 17);
+            this.chcMPYawSlow.TabIndex = 5;
+            this.chcMPYawSlow.Text = "Slow";
+            this.chcMPYawSlow.UseVisualStyleBackColor = true;
+            // 
             // WiimoteInfo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.groupBox11);
             this.Controls.Add(this.btnDebug);
             this.Controls.Add(this.groupBox10);
             this.Controls.Add(this.lblDevicePath);
@@ -753,7 +834,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.chkExtension);
             this.Name = "WiimoteInfo";
-            this.Size = new System.Drawing.Size(696, 464);
+            this.Size = new System.Drawing.Size(927, 464);
             this.groupBox8.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
@@ -772,6 +853,8 @@
             this.groupBox9.ResumeLayout(false);
             this.groupBox9.PerformLayout();
             this.groupBox10.ResumeLayout(false);
+            this.groupBox11.ResumeLayout(false);
+            this.groupBox11.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -838,5 +921,12 @@
 		public System.Windows.Forms.Label lblDrumJoy;
 		private System.Windows.Forms.ListBox lbDrumVelocity;
         private System.Windows.Forms.Button btnDebug;
+        private System.Windows.Forms.GroupBox groupBox11;
+        private System.Windows.Forms.Label lblMPRawPitch;
+        private System.Windows.Forms.Label lblMPRawYaw;
+        private System.Windows.Forms.Label lblMPRawRoll;
+        private System.Windows.Forms.CheckBox chcMPYawSlow;
+        private System.Windows.Forms.CheckBox chcMPRollSlow;
+        private System.Windows.Forms.CheckBox chcMPPitchSlow;
     }
 }

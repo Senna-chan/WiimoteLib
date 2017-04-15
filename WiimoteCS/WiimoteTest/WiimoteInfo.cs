@@ -174,6 +174,12 @@ namespace WiimoteTest
 					}
 					lblCOG.Text = ws.BalanceBoardState.CenterOfGravity.ToString();
 					break;
+                case ExtensionType.MotionPlus:
+
+                    lblMPRawPitch.Text = ws.MotionPlusState.GyroRaw.X.ToString();
+                    lblMPRawRoll.Text  = ws.MotionPlusState.GyroRaw.Y.ToString();
+                    lblMPRawYaw.Text   = ws.MotionPlusState.GyroRaw.Z.ToString();
+                    break;
 			}
 
 			g.Clear(Color.Black);

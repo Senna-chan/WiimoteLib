@@ -53,5 +53,6 @@ namespace WiimoteTest
 		{
 			wm.Disconnect();
 		}
-	}
+
+    }
 }

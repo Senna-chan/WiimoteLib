@@ -452,10 +452,6 @@ namespace WiimoteLib
 					ParseExtension(buff, 16);
 					break;
 				case InputReport.Status:
-                    SetLEDs(2);
-                    Thread.Sleep(200);
-                    SetLEDs(1);
-                    Thread.Sleep(200);
                     ParseButtons(buff);
 					mWiimoteState.BatteryRaw = buff[6];
 					mWiimoteState.Battery = (((100.0f * 48.0f * (float)((int)buff[6] / 48.0f))) / 192.0f);
@@ -971,10 +967,20 @@ namespace WiimoteLib
 					mWiimoteState.BalanceBoardState.CenterOfGravity.Y = ((float)(Ky - 1) / (float)(Ky + 1)) * (float)(-BSW / 2);
 					break;
                 case ExtensionType.MotionPlus:
+
+                    // Yaw
                     mWiimoteState.MotionPlusState.GyroRaw.Z
-                        = (int) (buff[offset+3] << 8) + buff[offset] ;
-                    var b = buff[offset];
-                    Debug.Print(mWiimoteState.MotionPlusState.GyroRaw.Z.ToString());
+                        = ((buff[offset + 3] & 0xF6) << 6) + buff[offset + 0] ;
+
+
+                    // Roll
+                    mWiimoteState.MotionPlusState.GyroRaw.Y
+                        = ((buff[offset + 4] & 0xF6) << 6) + buff[offset + 1];
+
+                    // Pitch
+                    mWiimoteState.MotionPlusState.GyroRaw.X
+                        = ((buff[offset + 5] & 0xF6) << 6) + buff[offset + 2];
+
                     break;
 			}
 		}
