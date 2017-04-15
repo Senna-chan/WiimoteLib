@@ -235,10 +235,12 @@ namespace WiimoteTest
         {
             if (mWiimote.WiimoteState.ExtensionType == ExtensionType.MotionPlus)
             {
-                // mWiimote.DisconnectMotionPlus();
+                mWiimote.DisconnectMotionPlus();
+                btnMPConnect.Text = "Connect";
             } else
             {
                 mWiimote.ConnectMotionPlus();
+                btnMPConnect.Text = "Disconnect"; 
             }
             
         }

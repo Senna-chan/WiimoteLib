@@ -305,9 +305,9 @@ namespace WiimoteLib
 
             mSuppressExtensionInit = true;
 
-            //WriteData(REGISTER_EXTENSION_EXT_INIT_1, 0x55);
+            WriteData(REGISTER_EXTENSION_EXT_INIT_1, 0x55);
             
-            //WriteData(REGISTER_EXTENSION_INIT_1, 0x55); // Deactivate motion plus
+            WriteData(REGISTER_EXTENSION_INIT_1, 0x55); // Deactivate motion plus
             
             // StringBuilder s;
             // 
@@ -376,6 +376,11 @@ namespace WiimoteLib
             Debug.Unindent();
             */
 
+        }
+
+        public void DisconnectMotionPlus()
+        {
+            WriteData(REGISTER_EXTENSION_INIT_1, 0x55); // Deactivate motion plus
         }
 
         public void CallibrateMotionPlus()
