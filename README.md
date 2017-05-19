@@ -7,6 +7,8 @@ This project started life as an article for Microsoft's [Coding4Fun](https://cha
 
 I have compiled a [list of applications](http://brianpeek.com/blog/pages/net-based-wiimote-applications.aspx) that are using the library.  Feel free to [contact me](http://brianpeek.com/contact) with your creations so I can add them to the list.
 
+I(StarlightNL) am rewriting this to work with the UWP platform. In this repository are included the library and the amazing WiiPair program written by Richard L. Lynch  that can be found [here](https://www.richlynch.com/2009/11/18/permanently-pair-wiimotewii-balance-board/)
+
 ## Changes
 
 v1.7.0.0
