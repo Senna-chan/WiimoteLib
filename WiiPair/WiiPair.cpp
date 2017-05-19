@@ -107,7 +107,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	srch.hRadio = hRadio;
 
 	WCHAR pass[6];
-	
+
 
 	char answer;
 
@@ -119,8 +119,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		std::cout << "Enter the bluetooth mac-address in this way 00:00:00:00:00:00\r\n";
 		char macInput[17];
 		std::cin >> macInput;
-		sscanf(macInput, "%c:%c:%c:%c:%c:%c", pass[5], pass[4], pass[3], pass[2], pass[1], pass[0]);
-	
+		sscanf_s(macInput, "%x:%x:%x:%x:%x:%x", pass[5], pass[4], pass[3], pass[2], pass[1], pass[0]);
+
 	}
 	else
 	{
@@ -160,7 +160,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 				if (!wcscmp(btdi.szName, L"Nintendo RVL-WBC-01") || !wcscmp(btdi.szName, L"Nintendo RVL-CNT-01"))
 				{
-						
+
 					DWORD pcServices = 16;
 					GUID guids[16];
 					BOOL error = FALSE;
@@ -175,7 +175,7 @@ int _tmain(int argc, _TCHAR* argv[])
 						}
 					}
 
-						
+
 					if (!error)
 					{
 						// Pair with Wii device

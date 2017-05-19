@@ -66,9 +66,13 @@ namespace WiimoteLib
         private const int REGISTER_EXTENSION_EXT_INIT_2     = 0x04a600fb;
         private const int REGISTER_EXTENSION_TYPE			= 0x04a400fa;
 		private const int REGISTER_EXTENSION_CALIBRATION	= 0x04a40020;
+        private const int REGISTER_MOTIONPLUS_DETECT        = 0x04a600fa;
+        private const int REGISTER_MOTIONPLUS_INIT          = 0x04a600f0;
+        private const int REGISTER_MOTIONPLUS_ENABLE        = 0x04a600fe;
+        private const int REGISTER_MOTIONPLUS_DISABLE       = 0x04A400F0;
 
-		// length between board sensors
-		private const int BSL = 43;
+        // length between board sensors
+        private const int BSL = 43;
 
 		// width between board sensors
 		private const int BSW = 24;
@@ -122,7 +126,8 @@ namespace WiimoteLib
 
         // Prevent MotionPlus from turning off upon init
         private bool mSuppressExtensionInit = false;
-
+        // Used for switching between MotionPlus and Nunchuck if both connected
+	    private bool mMotionPlusConnected = false;
         /// <summary>
         /// Default constructor
         /// </summary>
@@ -300,82 +305,8 @@ namespace WiimoteLib
         /// </summary>
         public void ConnectMotionPlus()
         {
-            //BeginAsyncRead();
-
-            // byte[] data;
-
-            mSuppressExtensionInit = false;
-
-            WriteData(REGISTER_EXTENSION_EXT_INIT_1, 0x55);
-            
-            WriteData(REGISTER_EXTENSION_INIT_1, 0x55); // Deactivate motion plus
-            
-            // StringBuilder s;
-            // 
-            // ////
-            // try {
-            //     data = ReadData(0x04a600fa, 6); //Fails if no motion plus
-            // } catch (WiimoteException e)
-            // {
-            //     // No motionplus
-            //     Debug.Print(e.StackTrace);
-            //     return;
-            // }
-            // s = new StringBuilder();
-            // foreach (var b in data)
-            // {
-            //     s.Append(b.ToString("X") + " ");
-            // }
-            // Debug.Indent();
-            // Debug.Print("Before: " + s.ToString());
-            // Debug.Unindent();
-            // 
-            // Thread.Sleep(200);
-//            WriteData(0x04a600fe, 0x04);
-
-
-            // data = ReadData(0x04a400fa, 6); //Fails if no motion plus
-            // s = new StringBuilder();
-            // foreach (var b in data)
-            // {
-            //     s.Append(b.ToString("X") + " " );
-            // }
-            // Debug.Indent();
-            // Debug.Print("Activated: " + s.ToString());
-            // Debug.Unindent();
-            // if (data[4] != 0x04)
-            // {
-            // 
-            //     WriteData(REGISTER_EXTENSION_EXT_INIT_2, 0x00);
-            //     // Init extension
-            //     
-            // 
-            // 
-            //     // Needs init
-            //     Debug.Print("INIT");
-            //    
-            // } else
-            // {
-            //     // Carry on:
-            //     var motionPlusData = ReadData(0x04a40008, 8);
-            //     Debug.Print(motionPlusData[0].ToString());
-            // 
-            // }
-
-            
-            /*
-
-            var motionPlusData = ReadData(0x04a40008, 8);
-            //Debug.Print(motionPlusData.ToString());
-            s = new StringBuilder();
-            foreach (var b in motionPlusData)
-            {
-                s.Append(b.ToString("X") + " ");
-            }
-            Debug.Indent();
-            Debug.Print("MotionData: " + s.ToString());
-            Debug.Unindent();
-            */
+            WriteData(REGISTER_MOTIONPLUS_INIT, 0x55);
+            WriteData(REGISTER_MOTIONPLUS_ENABLE, 0x04);
 
         }
         /// <summary>
@@ -805,6 +736,8 @@ namespace WiimoteLib
 						mWiimoteState.NunchukState.Joystick.Y = (float)((float)mWiimoteState.NunchukState.RawJoystick.Y - mWiimoteState.NunchukState.CalibrationInfo.MidY) / 
 												((float)mWiimoteState.NunchukState.CalibrationInfo.MaxY - mWiimoteState.NunchukState.CalibrationInfo.MinY);
 
+                    if(mMotionPlusConnected)
+                        ConnectMotionPlus();
 					break;
 
 				case ExtensionType.ClassicController:
@@ -1055,7 +988,7 @@ namespace WiimoteLib
                         mWiimoteState.MotionPlusState.Gyro.X *= FAST_MULTIPLIER;
                     }
 
-
+                    DisconnectMotionPlus();
                     break;
 			}
 		}
