@@ -16,6 +16,8 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
 using WiiMoteLibUWP;
+using WiiMoteLibUWP.DataTypes;
+using WiiMoteLibUWP.DataTypes.Enums;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 

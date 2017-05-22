@@ -9,18 +9,17 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.Serialization;
 using Microsoft.Win32.SafeHandles;
 using System.Threading;
-using System.Text;
-using Windows.Devices.Bluetooth;
+using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Devices.HumanInterfaceDevice;
 using Windows.Storage;
+using WiiMoteLibUWP.DataTypes;
+using WiiMoteLibUWP.DataTypes.Enums;
 using WiiMoteLibUWP.Exceptions;
 
 namespace WiiMoteLibUWP
@@ -155,18 +154,10 @@ namespace WiiMoteLibUWP
         internal static async void FindWiimote(WiimoteFoundDelegate wiimoteFound)
         {
             bool found = false;
-            List<string> selectors = new List<string>
+            for (int i = 0; i < 6; i++)
             {
-                HidDevice.GetDeviceSelector(0x10, 0),
-                HidDevice.GetDeviceSelector(0x05, 0),
-                HidDevice.GetDeviceSelector(0x06, 0),
-                BluetoothDevice.GetDeviceSelectorFromConnectionStatus(BluetoothConnectionStatus.Connected),
-                BluetoothDevice.GetDeviceSelectorFromPairingState(true)
-            };
-
-            foreach (var selector in selectors)
-            {
-                var devices = await DeviceInformation.FindAllAsync(selector);
+                var devices = await DeviceInformation.FindAllAsync(HidDevice.GetDeviceSelector(0x05, 0x01));
+                var something = devices.Count;
                 if (devices.Count > 0)
                 {
                     foreach (var device in devices)
@@ -186,6 +177,7 @@ namespace WiiMoteLibUWP
                         }
                     }
                 }
+                await Task.Delay(TimeSpan.FromMilliseconds(500));
             }
 
             // if we didn't find a Wiimote, throw an exception

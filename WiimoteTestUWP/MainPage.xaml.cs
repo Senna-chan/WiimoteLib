@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using WiiMoteLibUWP;
+using WiiMoteLibUWP.Exceptions;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -23,14 +24,12 @@ namespace WiimoteTestUWP
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        Dictionary<Guid, SingleWiimote> mWiimoteMap = new Dictionary<Guid, SingleWiimote>();
-        WiimoteCollection mWC;
         public MainPage()
         {
-            mWC = new WiimoteCollection();
+            var mWc = new WiimoteCollection();
             try
             {
-                mWC.FindAllWiimotes();
+                mWc.FindAllWiimotes();
             }
             catch (WiimoteNotFoundException ex)
             {
@@ -49,12 +48,11 @@ namespace WiimoteTestUWP
             }
 
             this.InitializeComponent();
-            int index = 1;
 
             
-            if (mWC.Count > 0)
+            if (mWc.Count > 0)
             {
-                this.Frame.Navigate(typeof(SingleWiimote), mWC[0]);
+                this.Frame.Navigate(typeof(SingleWiimote), mWc[0]);
             }
             //            foreach (Wiimote wm in mWC)
             //            {

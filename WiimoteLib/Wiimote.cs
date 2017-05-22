@@ -376,11 +376,11 @@ namespace WiimoteLib
 		    {
 		        Debug.WriteLine("OperationCanceledException");
 		    }
-		    catch (IOException)
-		    {
-		        Debug.WriteLine("Oh no!");
-                Thread.Sleep(100);
-		    }
+//		    catch (IOException)
+//		    {
+//		        Debug.WriteLine("Oh no!");
+//                Thread.Sleep(10);
+//		    }
 		}
 
 		/// <summary>
@@ -1273,9 +1273,11 @@ namespace WiimoteLib
 			if(mBuff[0] == (byte)OutputReport.WriteMemory)
 			{
 				Debug.WriteLine("Wait");
-				if(!mWriteDone.WaitOne(1000, false))
-					Debug.WriteLine("Wait failed");
-				//throw new WiimoteException("Error writing data to Wiimote...is it connected?");
+			    if (!mWriteDone.WaitOne(1000, false))
+			    {
+			        Debug.WriteLine("Wait failed");
+			        throw new WiimoteException("Error writing data to Wiimote...is it connected?");
+			    }
 			}
 		}
 

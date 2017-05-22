@@ -29,8 +29,6 @@ namespace WiimoteTestUWP
         /// </summary>
         public App()
         {
-            var wiimote = new Wiimote();
-            wiimote.Connect();
             this.InitializeComponent();
             this.Suspending += OnSuspending;
         }
@@ -42,6 +40,11 @@ namespace WiimoteTestUWP
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+
+
+            var wiimote = new Wiimote();
+            wiimote.Connect();
+
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,

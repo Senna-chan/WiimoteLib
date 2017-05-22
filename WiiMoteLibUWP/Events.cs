@@ -9,6 +9,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 using System;
+using WiiMoteLibUWP.DataTypes;
+using WiiMoteLibUWP.DataTypes.Enums;
 
 namespace WiiMoteLibUWP
 {

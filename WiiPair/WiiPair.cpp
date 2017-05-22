@@ -117,9 +117,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	if (answer == 'y' || answer == 'Y')
 	{
 		std::cout << "Enter the bluetooth mac-address in this way 00:00:00:00:00:00\r\n";
-		char macInput[17];
-		std::cin >> macInput;
-		sscanf_s(macInput, "%x:%x:%x:%x:%x:%x", pass[5], pass[4], pass[3], pass[2], pass[1], pass[0]);
+		scanf_s("%x:%x:%x:%x:%x:%x", pass[5], 2, pass[4], 2, pass[3], 2, pass[2], 2, pass[1], 2, pass[0]);
 
 	}
 	else
