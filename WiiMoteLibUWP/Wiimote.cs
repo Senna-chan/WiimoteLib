@@ -9,6 +9,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.IO;
@@ -156,14 +157,15 @@ namespace WiiMoteLibUWP
             bool found = false;
             for (int i = 0; i < 6; i++)
             {
-                var devices = await DeviceInformation.FindAllAsync(HidDevice.GetDeviceSelector(0x05, 0x01));
+                var devices = await DeviceInformation.FindAllAsync(HidDevice.GetDeviceSelector(0001, 0005));
                 var something = devices.Count;
                 if (devices.Count > 0)
                 {
                     foreach (var device in devices)
                     {
                         var deviceId = device.Id;
-                        var foundDevice = await HidDevice.FromIdAsync(deviceId, FileAccessMode.ReadWrite);
+                        var foundDevice = await HidDevice.FromIdAsync(deviceId, FileAccessMode.Read);
+                        if(foundDevice == null)continue;
                         // if the vendor and product IDs match up
                         if (foundDevice.VendorId == VID && foundDevice.ProductId == PID)
                         {
@@ -198,46 +200,46 @@ namespace WiiMoteLibUWP
         private void OpenWiimoteDeviceHandle(string devicePath)
         {
             // open a read/write handle to our device using the DevicePath returned
-            mHandle = HIDImports.CreateFile(devicePath, FileAccess.ReadWrite, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, HIDImports.EFileAttributes.Overlapped, IntPtr.Zero);
-
-            // create an attributes struct and initialize the size
-            HIDImports.HIDD_ATTRIBUTES attrib = new HIDImports.HIDD_ATTRIBUTES();
-            attrib.Size = Marshal.SizeOf(attrib);
-
-            // get the attributes of the current device
-            if (HIDImports.HidD_GetAttributes(mHandle.DangerousGetHandle(), ref attrib))
-            {
-                // if the vendor and product IDs match up
-                if (attrib.VendorID == VID && attrib.ProductID == PID)
-                {
-                    // create a nice .NET FileStream wrapping the handle above
-                    mStream = new FileStream(mHandle, FileAccess.ReadWrite, REPORT_LENGTH, true);
-
-                    // start an async read operation on it
-                    BeginAsyncRead();
-
-                    // read the calibration info from the controller
-                    try
-                    {
-                        ReadWiimoteCalibration();
-                    }
-                    catch
-                    {
-                        // if we fail above, try the alternate HID writes
-                        mAltWriteMethod = true;
-                        ReadWiimoteCalibration();
-                    }
-
-                    // force a status check to get the state of any extensions plugged in at startup
-                    GetStatus();
-                }
-                else
-                {
-                    // otherwise this isn't the controller, so close up the file handle
-                    mHandle.Dispose();
-                    throw new WiimoteException("Attempted to open a non-Wiimote device.");
-                }
-            }
+//            mHandle = HIDImports.CreateFile(devicePath, FileAccess.ReadWrite, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, HIDImports.EFileAttributes.Overlapped, IntPtr.Zero);
+//
+//            // create an attributes struct and initialize the size
+//            HIDImports.HIDD_ATTRIBUTES attrib = new HIDImports.HIDD_ATTRIBUTES();
+//            attrib.Size = Marshal.SizeOf(attrib);
+//
+//            // get the attributes of the current device
+//            if (HIDImports.HidD_GetAttributes(mHandle.DangerousGetHandle(), ref attrib))
+//            {
+//                // if the vendor and product IDs match up
+//                if (attrib.VendorID == VID && attrib.ProductID == PID)
+//                {
+//                    // create a nice .NET FileStream wrapping the handle above
+//                    mStream = new FileStream(mHandle, FileAccess.ReadWrite, REPORT_LENGTH, true);
+//
+//                    // start an async read operation on it
+//                    BeginAsyncRead();
+//
+//                    // read the calibration info from the controller
+//                    try
+//                    {
+//                        ReadWiimoteCalibration();
+//                    }
+//                    catch
+//                    {
+//                        // if we fail above, try the alternate HID writes
+//                        mAltWriteMethod = true;
+//                        ReadWiimoteCalibration();
+//                    }
+//
+//                    // force a status check to get the state of any extensions plugged in at startup
+//                    GetStatus();
+//                }
+//                else
+//                {
+//                    // otherwise this isn't the controller, so close up the file handle
+//                    mHandle.Dispose();
+//                    throw new WiimoteException("Attempted to open a non-Wiimote device.");
+//                }
+//            }
         }
 
         /// <summary>
@@ -246,11 +248,9 @@ namespace WiiMoteLibUWP
         public void Disconnect()
         {
             // close up the stream and handle
-            if (mStream != null)
-                mStream.Dispose();
+            mStream?.Dispose();
 
-            if (mHandle != null)
-                mHandle.Dispose();
+            mHandle?.Dispose();
         }
 
         /// <summary>
@@ -1283,10 +1283,7 @@ namespace WiiMoteLibUWP
         private void WriteReport()
         {
             Debug.WriteLine("WriteReport: " + mBuff[0].ToString("x"));
-            if (mAltWriteMethod)
-                HIDImports.HidD_SetOutputReport(this.mHandle.DangerousGetHandle(), mBuff, (uint)mBuff.Length);
-            else if (mStream != null)
-                mStream.Write(mBuff, 0, REPORT_LENGTH);
+            mStream.Write(mBuff, 0, REPORT_LENGTH);
 
             if (mBuff[0] == (byte)OutputReport.WriteMemory)
             {

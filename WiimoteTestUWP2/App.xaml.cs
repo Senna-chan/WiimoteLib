@@ -14,9 +14,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using WiiMoteLibUWP;
 
-namespace WiimoteTestUWP
+namespace WiimoteTestUWP2
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.

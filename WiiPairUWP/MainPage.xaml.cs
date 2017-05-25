@@ -1,24 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Enumeration;
 using Windows.Devices.HumanInterfaceDevice;
-using Windows.Devices.WiFiDirect;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Storage;
-using Windows.UI.Xaml;
+using Windows.Storage.Streams;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -117,11 +105,36 @@ namespace WiiPairUWP
                             }
                             else
                             {
-                                var blDevice = await BluetoothDevice.FromIdAsync(device.Id);
-                                blDevice.ConnectionStatusChanged += BlDevice_ConnectionStatusChanged;
-                                ConsoleWriteLine("Waiting 20 seconds in the hope that the device will be installed by then and the connection is not dropped");
-                                await Task.Delay(TimeSpan.FromSeconds(20));
-                                var hidDevice = await HidDevice.FromIdAsync(blDevice.DeviceId, FileAccessMode.ReadWrite);
+                                var hidSelector = HidDevice.GetDeviceSelector(0x01, 0x05);
+                                var hidDevices = await DeviceInformation.FindAllAsync(selector);
+
+                                if (hidDevices.Count > 0)
+                                {
+                                    // Open the target HID device
+                                    HidDevice hidDevice = await HidDevice.FromIdAsync(hidDevices.ElementAt(0).Id,
+                                                       FileAccessMode.ReadWrite);
+                                    var outputReport = hidDevice.CreateOutputReport();
+                                    var datawriter = new DataWriter();
+                                    byte[] mBuff = new byte[] { };
+                                    mBuff[0] = (byte)0x11;
+                                    mBuff[1] = (byte)(
+                                                (true ? 0x10 : 0x00) |
+                                                (true ? 0x20 : 0x00) |
+                                                (false ? 0x40 : 0x00) |
+                                                (true ? 0x80 : 0x00) |
+                                                0x00);
+                                    datawriter.WriteBytes(mBuff);
+                                    outputReport.Data = datawriter.DetachBuffer();
+                                    var bytesWritten = await hidDevice.SendOutputReportAsync(outputReport);
+                                    ConsoleWriteLine($"Written {bytesWritten} bytes");
+                                    // At this point the device is available to communicate with
+                                    // So we can send/receive HID reports from it or 
+                                    // query it for control descriptions
+                                }
+                                else
+                                {
+                                    ConsoleWriteLine("Didn't find a wiimote with HID");
+                                }
                             }
                         }
                     }

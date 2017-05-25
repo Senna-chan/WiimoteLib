@@ -114,17 +114,17 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WiimoteLib\WiimoteLib.csproj">
-      <Project>{37A555DF-7012-4B99-8A47-1C922A361E52}</Project>
-      <Name>WiimoteLib</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WiimoteLib\WiimoteLib.csproj">
+      <Project>{37a555df-7012-4b99-8a47-1c922a361e52}</Project>
+      <Name>WiimoteLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

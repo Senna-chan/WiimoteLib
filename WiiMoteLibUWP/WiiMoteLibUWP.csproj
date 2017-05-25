@@ -7,8 +7,8 @@
     <ProjectGuid>{E5F33C3A-1C0A-4F4C-969B-83CF5E319115}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WiiMoteLibUWP</RootNamespace>
-    <AssemblyName>WiiMoteLibUWP</AssemblyName>
+    <RootNamespace>WiimoteLibUWP</RootNamespace>
+    <AssemblyName>WiimoteLibUWP</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.15063.0</TargetPlatformVersion>
