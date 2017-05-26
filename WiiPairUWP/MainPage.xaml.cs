@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
+using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Devices.Enumeration;
 using Windows.Devices.HumanInterfaceDevice;
 using Windows.Storage;
@@ -29,7 +31,7 @@ namespace WiiPairUWP
         public async void ConnectToWiimote()
         {
             var found = false;
-            BluetoothAdapter bluetoothAdapter = await BluetoothAdapter.GetDefaultAsync();
+            /*BluetoothAdapter bluetoothAdapter = await Bluetooth.GetDefaultAsync();
             do
             {
                 if (bluetoothAdapter == null)
@@ -47,7 +49,7 @@ namespace WiiPairUWP
             password[3] = bluetoothAddress[3];
             password[4] = bluetoothAddress[4];
             password[5] = bluetoothAddress[5];
-
+*/
 
             //            int i = 0;
             //            char[] g = new char[6];
@@ -69,6 +71,77 @@ namespace WiiPairUWP
                     {
                         if (device.Name.Contains("Nintendo"))
                         {
+                            var hidSelector = HidDevice.GetDeviceSelector(0x01, 0x05);
+                            for (int i = 0; i < 6; i++)
+                            {
+                                var hidDevices = await DeviceInformation.FindAllAsync(hidSelector, null);
+
+                                if (hidDevices.Count > 0)
+                                {
+                                    string deviceId = hidDevices.ElementAt(0).Id;
+                                    List<KeyValuePair<string, object>> deviceProps = new List<KeyValuePair<string, object>>(hidDevices.ElementAt(0).Properties);
+                                    // Open the target HID device
+                                    foreach (var deviceProp in deviceProps)
+                                    {
+                                        if (deviceProp.Key == "System.Devices.DeviceInstanceId")
+                                            deviceId = deviceProp.Value.ToString();
+                                    }
+                                    var hidDevice = await HidDevice.FromIdAsync(deviceId,FileAccessMode.Read);
+                                    var outputReport = hidDevice.CreateOutputReport();
+                                    var datawriter = new DataWriter();
+                                    byte[] mBuff = new byte[] {};
+                                    mBuff[0] = (byte) 0x11;
+                                    mBuff[1] = (byte) (
+                                        (true ? 0x10 : 0x00) |
+                                        (true ? 0x20 : 0x00) |
+                                        (false ? 0x40 : 0x00) |
+                                        (true ? 0x80 : 0x00) |
+                                        0x00);
+                                    datawriter.WriteBytes(mBuff);
+                                    outputReport.Data = datawriter.DetachBuffer();
+                                    var bytesWritten = await hidDevice.SendOutputReportAsync(outputReport);
+                                    ConsoleWriteLine($"Written {bytesWritten} bytes");
+                                    break;
+                                }
+                                await Task.Delay(500);
+                            }
+
+                            for (int i = 0; i < 6; i++)
+                            {
+                                var hidDevices =
+                                    await DeviceInformation.FindAllAsync(
+                                        GattDeviceService.GetDeviceSelectorFromUuid(GattServiceUuids.HumanInterfaceDevice),
+                                        null);
+
+                                if (hidDevices.Count > 0)
+                                {
+                                    string deviceId = hidDevices.ElementAt(0).Id;
+                                    List<KeyValuePair<string, object>> deviceProps = new List<KeyValuePair<string, object>>(hidDevices.ElementAt(0).Properties);
+                                    // Open the target HID device
+                                    foreach (var deviceProp in deviceProps)
+                                    {
+                                        if (deviceProp.Key == "System.Devices.DeviceInstanceId")
+                                            deviceId = deviceProp.Value.ToString();
+                                    }
+                                    var hidDevice = await HidDevice.FromIdAsync(deviceId,FileAccessMode.Read);
+                                    var outputReport = hidDevice.CreateOutputReport();
+                                    var datawriter = new DataWriter();
+                                    byte[] mBuff = new byte[] {};
+                                    mBuff[0] = (byte) 0x11;
+                                    mBuff[1] = (byte) (
+                                        (true ? 0x10 : 0x00) |
+                                        (true ? 0x20 : 0x00) |
+                                        (false ? 0x40 : 0x00) |
+                                        (true ? 0x80 : 0x00) |
+                                        0x00);
+                                    datawriter.WriteBytes(mBuff);
+                                    outputReport.Data = datawriter.DetachBuffer();
+                                    var bytesWritten = await hidDevice.SendOutputReportAsync(outputReport);
+                                    ConsoleWriteLine($"Written {bytesWritten} bytes");
+                                    break;
+                                }
+                                await Task.Delay(500);
+                            }
                             var result = await device.Pairing.UnpairAsync();
                             if (result.Status != DeviceUnpairingResultStatus.Unpaired)
                             {
@@ -106,7 +179,8 @@ namespace WiiPairUWP
                             else
                             {
                                 var hidSelector = HidDevice.GetDeviceSelector(0x01, 0x05);
-                                var hidDevices = await DeviceInformation.FindAllAsync(selector);
+                                await Task.Delay(500);
+                                var hidDevices = await DeviceInformation.FindAllAsync(hidSelector);
 
                                 if (hidDevices.Count > 0)
                                 {
