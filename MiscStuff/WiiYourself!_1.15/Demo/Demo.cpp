@@ -286,7 +286,7 @@ reconnect:
 			
 		//  play audio whilst certain buttons are held
 		if(!remote.IsBalanceBoard()) {
-			ON_PRESS_RELEASE(  A, remote.PlaySquareWave(FREQ_3130HZ, 0x05), 
+			ON_PRESS_RELEASE(  A, remote.PlaySquareWave(FREQ_2470HZ, 0x40),
 								  remote.EnableSpeaker (false));
 			ON_PRESS_RELEASE(One, remote.PlaySample	   (sine_sample),
 								  remote.EnableSpeaker (false));

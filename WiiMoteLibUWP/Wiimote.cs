@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Devices.HumanInterfaceDevice;
 using Windows.Storage;
+using Windows.Storage.Streams;
 using WiiMoteLibUWP.DataTypes;
 using WiiMoteLibUWP.DataTypes.Enums;
 using WiiMoteLibUWP.Exceptions;
@@ -157,7 +158,9 @@ namespace WiiMoteLibUWP
             bool found = false;
             for (int i = 0; i < 6; i++)
             {
-                var devices = await DeviceInformation.FindAllAsync(HidDevice.GetDeviceSelector(0001, 0005));
+                if (found) break;
+                var selector = HidDevice.GetDeviceSelector(1, 5);
+                var devices = await DeviceInformation.FindAllAsync(selector);
                 var something = devices.Count;
                 if (devices.Count > 0)
                 {
@@ -165,10 +168,20 @@ namespace WiiMoteLibUWP
                     {
                         var deviceId = device.Id;
                         var foundDevice = await HidDevice.FromIdAsync(deviceId, FileAccessMode.Read);
-                        if(foundDevice == null)continue;
+                        if (foundDevice == null)continue;
                         // if the vendor and product IDs match up
                         if (foundDevice.VendorId == VID && foundDevice.ProductId == PID)
                         {
+                            var importReport = await foundDevice.GetInputReportAsync(0x20);
+                            var data = DataReader.FromBuffer(importReport.Data);
+                            var outputReport = foundDevice.CreateOutputReport();
+                            var datawriter = new DataWriter();
+                            byte[] mBuff = new byte[22];
+                            mBuff[0] = 0x11;
+                            mBuff[1] = 0x10 | 0x20 | 0x00 | 0x80 | 0x00;
+                            datawriter.WriteBytes(mBuff);
+                            outputReport.Data = datawriter.DetachBuffer();
+                            var bytesWritten = await foundDevice.SendOutputReportAsync(outputReport);
                             // it's a Wiimote
                             Debug.WriteLine("Found one!");
                             found = true;
@@ -367,7 +380,7 @@ namespace WiiMoteLibUWP
         /// <summary>
         /// Callback when data is ready to be processed
         /// </summary>
-        /// <param name="ar">State information for the callback</param>
+        /// <param name="buff">State information for the callback</param>
         private void OnReadData(byte[] buff)
         {
 

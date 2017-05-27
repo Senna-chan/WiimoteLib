@@ -320,7 +320,7 @@ bool wiimote::Connect (unsigned wiimote_index, bool force_hidwrites)
 			//  library can no longer detect if you've already connected a device
 			//  and will allow you to connect it twice!  So be careful ...
 			Handle = CreateFile(didetail->DevicePath, GENERIC_READ | GENERIC_WRITE,
-													FILE_SHARE_READ,
+													FILE_SHARE_READ | FILE_SHARE_WRITE,
 													NULL, OPEN_EXISTING,
 													FILE_FLAG_OVERLAPPED, NULL);
 			if(Handle == INVALID_HANDLE_VALUE) {
@@ -411,6 +411,7 @@ bool wiimote::Connect (unsigned wiimote_index, bool force_hidwrites)
 
 			//_ASSERT(UniqueID != 0); // if this fires, the calibration data didn't
 									//  arrive - this shouldn't happen
+									// Except on my wiimote(Its a bootleg)
 
 #ifdef ID2_FROM_DEVICEPATH		// (see comments in header)
 			// create a 2nd alternative id by simply adding all the characters

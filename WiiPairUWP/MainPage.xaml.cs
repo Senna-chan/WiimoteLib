@@ -86,7 +86,7 @@ namespace WiiPairUWP
                                         if (deviceProp.Key == "System.Devices.DeviceInstanceId")
                                             deviceId = deviceProp.Value.ToString();
                                     }
-                                    var hidDevice = await HidDevice.FromIdAsync(deviceId,FileAccessMode.Read);
+                                    var hidDevice = await HidDevice.FromIdAsync(deviceId,FileAccessMode.ReadWrite);
                                     if (hidDevice == null) continue;
                                     var outputReport = hidDevice.CreateOutputReport();
                                     var datawriter = new DataWriter();
