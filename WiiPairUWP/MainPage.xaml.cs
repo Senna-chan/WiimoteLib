@@ -87,16 +87,12 @@ namespace WiiPairUWP
                                             deviceId = deviceProp.Value.ToString();
                                     }
                                     var hidDevice = await HidDevice.FromIdAsync(deviceId,FileAccessMode.Read);
+                                    if (hidDevice == null) continue;
                                     var outputReport = hidDevice.CreateOutputReport();
                                     var datawriter = new DataWriter();
-                                    byte[] mBuff = new byte[] {};
-                                    mBuff[0] = (byte) 0x11;
-                                    mBuff[1] = (byte) (
-                                        (true ? 0x10 : 0x00) |
-                                        (true ? 0x20 : 0x00) |
-                                        (false ? 0x40 : 0x00) |
-                                        (true ? 0x80 : 0x00) |
-                                        0x00);
+                                    byte[] mBuff = {};
+                                    mBuff[0] = 0x11;
+                                    mBuff[1] = 0x10 | 0x20 | 0x00 | 0x80 | 0x00;
                                     datawriter.WriteBytes(mBuff);
                                     outputReport.Data = datawriter.DetachBuffer();
                                     var bytesWritten = await hidDevice.SendOutputReportAsync(outputReport);
@@ -124,16 +120,12 @@ namespace WiiPairUWP
                                             deviceId = deviceProp.Value.ToString();
                                     }
                                     var hidDevice = await HidDevice.FromIdAsync(deviceId,FileAccessMode.Read);
+                                    if (hidDevice == null) continue;
                                     var outputReport = hidDevice.CreateOutputReport();
                                     var datawriter = new DataWriter();
-                                    byte[] mBuff = new byte[] {};
-                                    mBuff[0] = (byte) 0x11;
-                                    mBuff[1] = (byte) (
-                                        (true ? 0x10 : 0x00) |
-                                        (true ? 0x20 : 0x00) |
-                                        (false ? 0x40 : 0x00) |
-                                        (true ? 0x80 : 0x00) |
-                                        0x00);
+                                    byte[] mBuff = {};
+                                    mBuff[0] = 0x11;
+                                    mBuff[1] = 0x10 | 0x20 | 0x00 | 0x80 | 0x00;
                                     datawriter.WriteBytes(mBuff);
                                     outputReport.Data = datawriter.DetachBuffer();
                                     var bytesWritten = await hidDevice.SendOutputReportAsync(outputReport);
@@ -174,7 +166,7 @@ namespace WiiPairUWP
                             var pairingResult = await device.Pairing.Custom.PairAsync(DevicePairingKinds.ProvidePin);
                             if (pairingResult.Status != DevicePairingResultStatus.Paired)
                             {
-                                ConsoleWriteLine($"Error: {pairingResult.Status.ToString()}");
+                                ConsoleWriteLine($"Error: {pairingResult.Status}");
                             }
                             else
                             {
@@ -189,14 +181,9 @@ namespace WiiPairUWP
                                                        FileAccessMode.ReadWrite);
                                     var outputReport = hidDevice.CreateOutputReport();
                                     var datawriter = new DataWriter();
-                                    byte[] mBuff = new byte[] { };
-                                    mBuff[0] = (byte)0x11;
-                                    mBuff[1] = (byte)(
-                                                (true ? 0x10 : 0x00) |
-                                                (true ? 0x20 : 0x00) |
-                                                (false ? 0x40 : 0x00) |
-                                                (true ? 0x80 : 0x00) |
-                                                0x00);
+                                    byte[] mBuff = { };
+                                    mBuff[0] = 0x11;
+                                    mBuff[1] = 0x10 | 0x20 | 0x00 | 0x80 | 0x00;
                                     datawriter.WriteBytes(mBuff);
                                     outputReport.Data = datawriter.DetachBuffer();
                                     var bytesWritten = await hidDevice.SendOutputReportAsync(outputReport);
@@ -204,6 +191,8 @@ namespace WiiPairUWP
                                     // At this point the device is available to communicate with
                                     // So we can send/receive HID reports from it or 
                                     // query it for control descriptions
+                                    found = true;
+
                                 }
                                 else
                                 {
