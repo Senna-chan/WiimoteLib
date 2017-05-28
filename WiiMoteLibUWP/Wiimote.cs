@@ -13,9 +13,11 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.Win32.SafeHandles;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.UserDataAccounts.SystemAccess;
 using Windows.Devices.Enumeration;
 using Windows.Devices.HumanInterfaceDevice;
 using Windows.Storage;
@@ -79,12 +81,6 @@ namespace WiiMoteLibUWP
         // width between board sensors
         private const int BSW = 24;
 
-        // read/write handle to the device
-        private SafeFileHandle mHandle;
-
-        // a pretty .NET stream to read/write from/to
-        private FileStream mStream;
-
         // report buffer
         private readonly byte[] mBuff = new byte[REPORT_LENGTH];
 
@@ -129,6 +125,8 @@ namespace WiiMoteLibUWP
         // Prevent MotionPlus from turning off upon init
         private bool mSuppressExtensionInit = false;
 
+        private HidDevice mWiiMote;
+
         /// <summary>
         /// Default constructor
         /// </summary>
@@ -139,6 +137,7 @@ namespace WiiMoteLibUWP
         internal Wiimote(string devicePath)
         {
             mDevicePath = devicePath;
+            this.Connect();
         }
 
         /// <summary>
@@ -147,10 +146,12 @@ namespace WiiMoteLibUWP
         /// <exception cref="WiimoteNotFoundException">Wiimote not found in HID device list</exception>
         public void Connect()
         {
+            if (mWiiMote != null) return;
             if (string.IsNullOrEmpty(mDevicePath))
                 FindWiimote(WiimoteFound);
             else
                 OpenWiimoteDeviceHandle(mDevicePath);
+            SetLEDs(true, false, false, true);
         }
 
         internal static async void FindWiimote(WiimoteFoundDelegate wiimoteFound)
@@ -161,7 +162,6 @@ namespace WiiMoteLibUWP
                 if (found) break;
                 var selector = HidDevice.GetDeviceSelector(1, 5);
                 var devices = await DeviceInformation.FindAllAsync(selector);
-                var something = devices.Count;
                 if (devices.Count > 0)
                 {
                     foreach (var device in devices)
@@ -172,22 +172,12 @@ namespace WiiMoteLibUWP
                         // if the vendor and product IDs match up
                         if (foundDevice.VendorId == VID && foundDevice.ProductId == PID)
                         {
-                            var importReport = await foundDevice.GetInputReportAsync(0x20);
-                            var data = DataReader.FromBuffer(importReport.Data);
-                            var outputReport = foundDevice.CreateOutputReport();
-                            var datawriter = new DataWriter();
-                            byte[] mBuff = new byte[22];
-                            mBuff[0] = 0x11;
-                            mBuff[1] = 0x10 | 0x20 | 0x00 | 0x80 | 0x00;
-                            datawriter.WriteBytes(mBuff);
-                            outputReport.Data = datawriter.DetachBuffer();
-                            var bytesWritten = await foundDevice.SendOutputReportAsync(outputReport);
                             // it's a Wiimote
                             Debug.WriteLine("Found one!");
                             found = true;
-
+                            foundDevice.Dispose();
                             // fire the callback function...if the callee doesn't care about more Wiimotes, break out
-                            if (!wiimoteFound(deviceId))
+                            if (wiimoteFound(deviceId))
                                 break;
                         }
                     }
@@ -210,49 +200,75 @@ namespace WiiMoteLibUWP
             return false;
         }
 
-        private void OpenWiimoteDeviceHandle(string devicePath)
+        private async void OpenWiimoteDeviceHandle(string devicePath)
         {
+            mWiiMote = await HidDevice.FromIdAsync(devicePath, FileAccessMode.ReadWrite);
+            if (mWiiMote == null)
+            {
+                var deviceAccessInfo = DeviceAccessInformation.CreateFromId(devicePath);
+                var status = deviceAccessInfo.CurrentStatus;
+            }
+            mWiiMote.InputReportReceived += MWiiMoteOnInputReportReceived; // Event for reading data
+            // read the calibration info from the controller
+            ReadWiimoteCalibration();
+            // force a status check to get the state of any extensions plugged in at startup
+            GetStatus();
             // open a read/write handle to our device using the DevicePath returned
-//            mHandle = HIDImports.CreateFile(devicePath, FileAccess.ReadWrite, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, HIDImports.EFileAttributes.Overlapped, IntPtr.Zero);
-//
-//            // create an attributes struct and initialize the size
-//            HIDImports.HIDD_ATTRIBUTES attrib = new HIDImports.HIDD_ATTRIBUTES();
-//            attrib.Size = Marshal.SizeOf(attrib);
-//
-//            // get the attributes of the current device
-//            if (HIDImports.HidD_GetAttributes(mHandle.DangerousGetHandle(), ref attrib))
-//            {
-//                // if the vendor and product IDs match up
-//                if (attrib.VendorID == VID && attrib.ProductID == PID)
-//                {
-//                    // create a nice .NET FileStream wrapping the handle above
-//                    mStream = new FileStream(mHandle, FileAccess.ReadWrite, REPORT_LENGTH, true);
-//
-//                    // start an async read operation on it
-//                    BeginAsyncRead();
-//
-//                    // read the calibration info from the controller
-//                    try
-//                    {
-//                        ReadWiimoteCalibration();
-//                    }
-//                    catch
-//                    {
-//                        // if we fail above, try the alternate HID writes
-//                        mAltWriteMethod = true;
-//                        ReadWiimoteCalibration();
-//                    }
-//
-//                    // force a status check to get the state of any extensions plugged in at startup
-//                    GetStatus();
-//                }
-//                else
-//                {
-//                    // otherwise this isn't the controller, so close up the file handle
-//                    mHandle.Dispose();
-//                    throw new WiimoteException("Attempted to open a non-Wiimote device.");
-//                }
-//            }
+            //            mHandle = HIDImports.CreateFile(devicePath, FileAccess.ReadWrite, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, HIDImports.EFileAttributes.Overlapped, IntPtr.Zero);
+            //
+            //            // create an attributes struct and initialize the size
+            //            HIDImports.HIDD_ATTRIBUTES attrib = new HIDImports.HIDD_ATTRIBUTES();
+            //            attrib.Size = Marshal.SizeOf(attrib);
+            //
+            //            // get the attributes of the current device
+            //            if (HIDImports.HidD_GetAttributes(mHandle.DangerousGetHandle(), ref attrib))
+            //            {
+            //                // if the vendor and product IDs match up
+            //                if (attrib.VendorID == VID && attrib.ProductID == PID)
+            //                {
+            //                    // create a nice .NET FileStream wrapping the handle above
+            //                    mStream = new FileStream(mHandle, FileAccess.ReadWrite, REPORT_LENGTH, true);
+            //
+            //                    // start an async read operation on it
+            //                    BeginAsyncRead();
+            //
+            //                    // read the calibration info from the controller
+            //                    try
+            //                    {
+            //                        ReadWiimoteCalibration();
+            //                    }
+            //                    catch
+            //                    {
+            //                        // if we fail above, try the alternate HID writes
+            //                        mAltWriteMethod = true;
+            //                        ReadWiimoteCalibration();
+            //                    }
+            //
+            //                    // force a status check to get the state of any extensions plugged in at startup
+            //                    GetStatus();
+            //                }
+            //                else
+            //                {
+            //                    // otherwise this isn't the controller, so close up the file handle
+            //                    mHandle.Dispose();
+            //                    throw new WiimoteException("Attempted to open a non-Wiimote device.");
+            //                }
+            //            }
+        }
+        /// <summary>
+        /// This reads the data from the wiimote
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void MWiiMoteOnInputReportReceived(HidDevice sender, HidInputReportReceivedEventArgs args)
+        {
+            byte[] data = new byte[22];
+            args.Report.Data.CopyTo(data);
+            if (ParseInputReport(data))
+            {
+                // post an event
+                WiimoteChanged?.Invoke(this, new WiimoteChangedEventArgs(mWiimoteState));
+            }
         }
 
         /// <summary>
@@ -261,9 +277,7 @@ namespace WiiMoteLibUWP
         public void Disconnect()
         {
             // close up the stream and handle
-            mStream?.Dispose();
-
-            mHandle?.Dispose();
+            mWiiMote.Dispose();
         }
 
         /// <summary>
@@ -271,7 +285,6 @@ namespace WiiMoteLibUWP
         /// </summary>
         public void ConnectMotionPlus()
         {
-            //BeginAsyncRead();
 
             // byte[] data;
 
@@ -361,61 +374,8 @@ namespace WiiMoteLibUWP
             mWiimoteState.MotionPlusState.Offset.Y = mWiimoteState.MotionPlusState.GyroRaw.Y;
             mWiimoteState.MotionPlusState.Offset.Z = mWiimoteState.MotionPlusState.GyroRaw.Z;
         }
-
-        /// <summary>
-        /// Start reading asynchronously from the controller
-        /// </summary>
-        private async void BeginAsyncRead()
-        {
-            // if the stream is valid and ready
-            if (mStream != null && mStream.CanRead)
-            {
-                // setup the read and the callback
-                byte[] buff = new byte[REPORT_LENGTH];
-                await mStream.ReadAsync(buff, 0, REPORT_LENGTH);
-                OnReadData(buff);
-            }
-        }
-
-        /// <summary>
-        /// Callback when data is ready to be processed
-        /// </summary>
-        /// <param name="buff">State information for the callback</param>
-        private void OnReadData(byte[] buff)
-        {
-
-            try
-            {
-                // end the current read
-                mStream.Dispose();
-
-                // parse it
-                try
-                {
-                    if (ParseInputReport(buff))
-                    {
-                        // post an event
-                        WiimoteChanged?.Invoke(this, new WiimoteChangedEventArgs(mWiimoteState));
-                    }
-                }
-                catch (WiimoteException e)
-                {
-                    Debug.WriteLine(e.StackTrace);
-                }
-
-                // start reading again
-                BeginAsyncRead();
-            }
-            catch (OperationCanceledException)
-            {
-                Debug.WriteLine("OperationCanceledException");
-            }
-            catch (IOException)
-            {
-                Debug.WriteLine("Oh no!");
-            }
-        }
-
+        
+       
         /// <summary>
         /// Parse a report sent by the Wiimote
         /// </summary>
@@ -475,7 +435,7 @@ namespace WiiMoteLibUWP
 
                         if (extension)
                         {
-                            BeginAsyncRead();
+                            //BeginAsyncRead();
                             InitializeExtension();
                         }
                         else
@@ -515,7 +475,7 @@ namespace WiiMoteLibUWP
                 mSuppressExtensionInit = false;
             }
             // start reading again
-            BeginAsyncRead();
+            //BeginAsyncRead();
 
             byte[] buff = ReadData(REGISTER_EXTENSION_TYPE, 6);
             long type = ((long)buff[0] << 40) | ((long)buff[1] << 32) | ((long)buff[2]) << 24 | ((long)buff[3]) << 16 | ((long)buff[4]) << 8 | buff[5];
@@ -1296,15 +1256,21 @@ namespace WiiMoteLibUWP
         private void WriteReport()
         {
             Debug.WriteLine("WriteReport: " + mBuff[0].ToString("x"));
-            mStream.Write(mBuff, 0, REPORT_LENGTH);
-
-            if (mBuff[0] == (byte)OutputReport.WriteMemory)
-            {
-                Debug.WriteLine("Wait");
-                if (!mWriteDone.WaitOne(1000))
-                    Debug.WriteLine("Wait failed");
-                //throw new WiimoteException("Error writing data to Wiimote...is it connected?");
-            }
+            var outputReport = mWiiMote.CreateOutputReport(mBuff[0]);
+            var dataWriter = new DataWriter();
+            dataWriter.WriteBytes(mBuff);
+            outputReport.Data = dataWriter.DetachBuffer();
+            dataWriter.Dispose();
+            mWiiMote.SendOutputReportAsync(outputReport).GetResults();
+//            mStream.Write(mBuff, 0, REPORT_LENGTH);
+//
+//            if (mBuff[0] == (byte)OutputReport.WriteMemory)
+//            {
+//                Debug.WriteLine("Wait");
+//                if (!mWriteDone.WaitOne(1000))
+//                    Debug.WriteLine("Wait failed");
+//                //throw new WiimoteException("Error writing data to Wiimote...is it connected?");
+//            }
         }
 
         /// <summary>

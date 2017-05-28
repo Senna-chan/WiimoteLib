@@ -27,7 +27,6 @@ namespace WiimoteTestUWP2
         public MainPage()
         {
             this.InitializeComponent();
-
             var mWc = new WiimoteCollection();
             try
             {
@@ -51,8 +50,12 @@ namespace WiimoteTestUWP2
 
             if (mWc.Count > 0)
             {
-                this.Frame.Navigate(typeof(SingleWiimote), mWc[0]);
+                result.Text = "Some found";
+                Frame.Navigate(typeof(SingleWiimote), mWc[0]);
+                result.Text = "U wot m8?";
             }
+            result.Text = "None found";
         }
+        
     }
 }

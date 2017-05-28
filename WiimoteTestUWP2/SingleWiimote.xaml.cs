@@ -18,6 +18,7 @@ using Windows.UI.Xaml.Shapes;
 using WiiMoteLibUWP;
 using WiiMoteLibUWP.DataTypes;
 using WiiMoteLibUWP.DataTypes.Enums;
+using WiiMoteLibUWP.Exceptions;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -35,6 +36,22 @@ namespace WiimoteTestUWP2
         {
             this.InitializeComponent();
             mWiimote = wiimote;
+            mWiimote.Connect();
+            mWiimote.WiimoteChanged += wm_WiimoteChanged;
+            mWiimote.WiimoteExtensionChanged += wm_WiimoteExtensionChanged;
+            mWiimote.SetReportType(InputReport.IRAccel, true);
+            mWiimote.SetLEDs(false, true, true, false);
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            mWiimote = (Wiimote) e.Parameter;
+            if (mWiimote == null)
+            {
+                throw new WiimoteNotFoundException("The programs bugged out m8");
+            }
+            mWiimote.Connect();
             mWiimote.WiimoteChanged += wm_WiimoteChanged;
             mWiimote.WiimoteExtensionChanged += wm_WiimoteExtensionChanged;
             mWiimote.SetReportType(InputReport.IRAccel, true);
