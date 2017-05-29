@@ -16,9 +16,11 @@ using System.Runtime.Serialization;
 using Microsoft.Win32.SafeHandles;
 using System.Threading;
 using System.Text;
+using System.Threading.Tasks;
 using WiimoteLib.DataTypes;
 using WiimoteLib.DataTypes.Enums;
 using WiiMoteLib.Exceptions;
+
 
 namespace WiimoteLib
 {
@@ -133,6 +135,11 @@ namespace WiimoteLib
         private bool mSuppressExtensionInit = false;
         // Used for switching between MotionPlus and Nunchuck if both connected
         private bool mMotionPlusConnected = false;
+
+
+        private WiimoteAudioSample currentSample = null;
+        private Task SampleThread = null;
+
         /// <summary>
         /// Default constructor
         /// </summary>
@@ -1411,6 +1418,14 @@ namespace WiimoteLib
         #endregion
 
         #region Experimental speaker support(Ported from WiiYourself)
+
+        private bool IsPlayingAudio() {
+            return (WiimoteState.Speaker.Frequency != SpeakerFreq.FREQ_NONE && WiimoteState.Speaker.Volume != 0);
+        }
+        private bool IsPlayingSample() {
+            return IsPlayingAudio() && (currentSample != null);
+        }
+
         /// <summary>
         /// This will mute or unmute the speaker
         /// </summary>
@@ -1460,6 +1475,30 @@ namespace WiimoteLib
             WiimoteState.Speaker.Enabled = on;
         }
 
+        private async void SampleStreamThread()
+        {
+            SampleThread.Dispose();
+            SampleThread = null;
+        }
+
+        private bool StartSampleThread()
+        {
+            if (SampleThread != null)
+                return true;
+
+            SampleThread = new Task(SampleStreamThread, TaskCreationOptions.RunContinuationsAsynchronously);
+
+            Debug.Assert(SampleThread == null);
+            if (SampleThread == null)
+            {
+                Debug.WriteLine("couldn't create sample thread!");
+                MuteSpeaker(true);
+                EnableSpeaker(false);
+                return false;
+            }
+            return true;
+        }
+
         private bool PlaySquareWave(SpeakerFreq freq, byte volume)
         {
             if (mHandle == null)
@@ -1467,7 +1506,7 @@ namespace WiimoteLib
 
             // if we're already playing a sample, stop it first
             if (IsPlayingSample())
-                CurrentSample = NULL;
+                currentSample = null;
             // if we're already playing a square wave at this freq and volume, return
             else if (IsPlayingAudio() && (WiimoteState.Speaker.Frequency == freq) &&
                                         (WiimoteState.Speaker.Volume == volume))
@@ -1475,7 +1514,7 @@ namespace WiimoteLib
 
             Debug.WriteLine("playing square wave.");
             // stop playing samples
-            CurrentSample = 0;
+            currentSample = null;
 
             EnableSpeaker(true);
             MuteSpeaker(true);
@@ -1486,7 +1525,7 @@ namespace WiimoteLib
             WriteData(0x04a20001, 0x08);
             // write default sound mode (4bit ADPCM, we assume) 7-byte configuration
             //  to registers 0xa20001-0xa20008 
-            byte[] bytes = new byte[7]{ 0x00, 0x00, 0x00, 10 + (byte)freq, volume, 0x00, 0x00 };
+            byte[] bytes = new byte[7]{ 0x00, 0x00, 0x00, (byte) (10 + (byte)freq), volume, 0x00, 0x00 };
             WriteData(0x04a20001, (byte)bytes.Length, bytes);
             // write 0x01 to register 0xa20008 
             WriteData(0x04a20008, 0x01);
