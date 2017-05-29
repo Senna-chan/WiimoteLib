@@ -159,6 +159,8 @@
     <Compile Include="DataTypes\AccelState.cs" />
     <Compile Include="DataTypes\CalibrationInfo\AccelCalibrationInfo.cs" />
     <Compile Include="DataTypes\ButtonState.cs" />
+    <Compile Include="DataTypes\WiimoteAudioSample.cs" />
+    <Compile Include="DataTypes\Enums\SpeakerFreq.cs" />
     <Compile Include="DataTypes\Enums\GuitarType.cs" />
     <Compile Include="DataTypes\Enums\IRSensitivity.cs" />
     <Compile Include="DataTypes\Enums\InputReport.cs" />
@@ -181,8 +183,12 @@
     <Compile Include="DataTypes\Point3.cs" />
     <Compile Include="DataTypes\Point3F.cs" />
     <Compile Include="DataTypes\PointF.cs" />
+    <Compile Include="DataTypes\SpeakerState.cs" />
     <Compile Include="DataTypes\WiimoteState.cs" />
     <Compile Include="Events.cs" />
+    <Compile Include="Exceptions\WiimoteException.cs" />
+    <Compile Include="Exceptions\WiimoteNotFoundException.cs" />
+    <Compile Include="Helpers\ConvertHelpers.cs" />
     <Compile Include="HIDImports.cs" />
     <Compile Include="Wiimote.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

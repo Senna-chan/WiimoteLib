@@ -17,6 +17,8 @@ using Microsoft.Win32.SafeHandles;
 using System.Threading;
 using System.Text;
 using WiimoteLib.DataTypes;
+using WiimoteLib.DataTypes.Enums;
+using WiiMoteLib.Exceptions;
 
 namespace WiimoteLib
 {
@@ -48,9 +50,12 @@ namespace WiimoteLib
             LEDs			= 0x11,
             Type			= 0x12,
             IR				= 0x13,
+            SpeakerEnable   = 0x14,
             Status			= 0x15,
             WriteMemory		= 0x16,
             ReadMemory		= 0x17,
+            SpeakerData     = 0x18,
+            SpeakerMute     = 0x19,
             IR2				= 0x1a,
         };
 
@@ -1404,85 +1409,96 @@ namespace WiimoteLib
                 Disconnect();
         }
         #endregion
-    }
 
-    /// <summary>
-    /// Thrown when no Wiimotes are found in the HID device list
-    /// </summary>
-    [Serializable]
-    public class WiimoteNotFoundException : ApplicationException
-    {
+        #region Experimental speaker support(Ported from WiiYourself)
         /// <summary>
-        /// Default constructor
+        /// This will mute or unmute the speaker
         /// </summary>
-        public WiimoteNotFoundException()
+        /// <param name="on">true for muting false for unmuting</param>
+        public void MuteSpeaker(bool on)
         {
+            if (mStream == null)
+                return;
+
+            if (WiimoteState.Speaker.Muted == on)
+                return;
+
+            if (on) Debug.WriteLine("muting speaker.");
+            else Debug.WriteLine("unmuting speaker.");
+
+            ClearReport();
+            mBuff[0] = (byte)OutputReport.SpeakerMute;
+            mBuff[1] = (byte) ((@on ? 0x04 : 0x00) | GetRumbleBit());
+            WriteReport();
+            WiimoteState.Speaker.Muted = on;
+        }
+        /// <summary>
+        /// E
+        /// </summary>
+        /// <param name="on">if true enables speaker if false disables speaker</param>
+        public void EnableSpeaker(bool on)
+        {
+            if (mHandle == null)
+                return;
+
+            if (WiimoteState.Speaker.Enabled == on)
+                return;
+
+            Debug.WriteLine(@on ? "enabling speaker." : "disabling speaker.");
+
+            mBuff[0] = (byte) OutputReport.SpeakerEnable;
+            mBuff[1] = (byte) ((@on ? 0x04 : 0x00) | GetRumbleBit());
+            WriteReport();
+
+            if (!on)
+            {
+                WiimoteState.Speaker.Frequency = 0;
+                WiimoteState.Speaker.Volume = 0;
+                MuteSpeaker(true);
+            }
+
+            WiimoteState.Speaker.Enabled = on;
         }
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="message">Error message</param>
-        public WiimoteNotFoundException(string message) : base(message)
+        private bool PlaySquareWave(SpeakerFreq freq, byte volume)
         {
+            if (mHandle == null)
+                return false;
+
+            // if we're already playing a sample, stop it first
+            if (IsPlayingSample())
+                CurrentSample = NULL;
+            // if we're already playing a square wave at this freq and volume, return
+            else if (IsPlayingAudio() && (WiimoteState.Speaker.Frequency == freq) &&
+                                        (WiimoteState.Speaker.Volume == volume))
+                return true;
+
+            Debug.WriteLine("playing square wave.");
+            // stop playing samples
+            CurrentSample = 0;
+
+            EnableSpeaker(true);
+            MuteSpeaker(true);
+
+            // write 0x01 to register 0xa20009 
+            WriteData(0x04a20009, 0x01);
+            // write 0x08 to register 0xa20001 
+            WriteData(0x04a20001, 0x08);
+            // write default sound mode (4bit ADPCM, we assume) 7-byte configuration
+            //  to registers 0xa20001-0xa20008 
+            byte[] bytes = new byte[7]{ 0x00, 0x00, 0x00, 10 + (byte)freq, volume, 0x00, 0x00 };
+            WriteData(0x04a20001, (byte)bytes.Length, bytes);
+            // write 0x01 to register 0xa20008 
+            WriteData(0x04a20008, 0x01);
+
+            WiimoteState.Speaker.Frequency = freq;
+            WiimoteState.Speaker.Volume = volume;
+
+            MuteSpeaker(false);
+            return StartSampleThread();
         }
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="message">Error message</param>
-        /// <param name="innerException">Inner exception</param>
-        public WiimoteNotFoundException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
+        #endregion
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="info">Serialization info</param>
-        /// <param name="context">Streaming context</param>
-        protected WiimoteNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
-    }
-
-    /// <summary>
-    /// Represents errors that occur during the execution of the Wiimote library
-    /// </summary>
-    [Serializable]
-    public class WiimoteException : ApplicationException
-    {
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        public WiimoteException()
-        {
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="message">Error message</param>
-        public WiimoteException(string message) : base(message)
-        {
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="message">Error message</param>
-        /// <param name="innerException">Inner exception</param>
-        public WiimoteException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="info">Serialization info</param>
-        /// <param name="context">Streaming context</param>
-        protected WiimoteException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
     }
 }

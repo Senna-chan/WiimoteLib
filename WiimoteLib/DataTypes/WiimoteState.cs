@@ -75,6 +75,10 @@ namespace WiimoteLib.DataTypes
         /// Current state of LEDs
         /// </summary>
         public LEDState LEDState;
+        /// <summary>
+        /// Current state of the speaker
+        /// </summary>
+        public SpeakerState Speaker;
 
         /// <summary>
         /// Constructor for WiimoteState class
