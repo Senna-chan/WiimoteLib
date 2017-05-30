@@ -12,7 +12,7 @@ namespace WiimoteLib.DataTypes
     /// </summary>
     public class WiimoteAudioSample
     {
-        public List<byte[]> samples = new List<byte[]>();
+        public byte[] samples;
         public int length;
         public SpeakerFreq freq;
 
@@ -27,7 +27,7 @@ namespace WiimoteLib.DataTypes
         /// <summary>
         /// This will make the object for the wiimote
         /// </summary>
-        public WiimoteAudioSample(List<byte[]> samples, int length, SpeakerFreq freq)
+        public WiimoteAudioSample(byte[] samples, int length, SpeakerFreq freq)
         {
             this.samples = samples;
             this.length = length;

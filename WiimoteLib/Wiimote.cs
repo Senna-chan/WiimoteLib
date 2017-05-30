@@ -9,16 +9,19 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Security.Cryptography;
 using Microsoft.Win32.SafeHandles;
 using System.Threading;
 using System.Text;
 using System.Threading.Tasks;
 using WiimoteLib.DataTypes;
 using WiimoteLib.DataTypes.Enums;
+using WiimoteLib.DataTypes.Structs;
 using WiiMoteLib.Exceptions;
 
 
@@ -60,6 +63,9 @@ namespace WiimoteLib
             SpeakerMute     = 0x19,
             IR2				= 0x1a,
         };
+
+        private static readonly List<int> FreqLookup = new List<int>{0, 4200, 3920, 3640, 3360,
+            3130,	2940, 2760, 2610, 2470 };
 
         // Wiimote registers
         private const int REGISTER_IR				= 0x04b00030;
@@ -1475,6 +1481,277 @@ namespace WiimoteLib
             WiimoteState.Speaker.Enabled = on;
         }
 
+        private byte[] Convert16bitMonoSamples(byte[] samples, int length, bool _signed, SpeakerFreq freq)
+	    {
+        // converts 16bit mono sample data to the native 4bit format used by the Wiimote,
+        //  and returns the data in a BYTE array (caller must delete[] when no
+        //  longer needed):
+	    if(samples == null || length == 0) return null;
+        
+            byte[] convertedSamples = new byte[] { };
+            Array.Copy();
+
+            // ADPCM code, adapted from
+            //  http://www.wiindows.org/index.php/Talk:Wiimote#Input.2FOutput_Reports
+            int[] index_table = {  -1,  -1,  -1,  -1,   2,   4,   6,   8,
+                                          -1,  -1,  -1,  -1,   2,   4,   6,   8 };
+        int[] diff_table = {   1,   3,   5,   7,   9,  11,  13,  15,
+                                          -1,  -3,  -5,  -7,  -9, -11, -13,  15 };
+        int[] step_scale = { 230, 230, 230, 230, 307, 409, 512, 614,
+                                         230, 230, 230, 230, 307, 409, 512, 614 };
+        // Encode to ADPCM, on initialization set adpcm_prev_value to 0 and adpcm_step
+        //  to 127 (these variables must be preserved across reports)
+        int adpcm_prev_value = 0;
+        int adpcm_step = 127;
+
+	    for(int i =0; i<samples.Length; i++)
+		{
+		// convert to 16bit signed
+		int value = samples[i];// (8bit) << 8);// | samples[i]; // dither it?
+		    if (!_signed)
+		    {
+		        value -= 32768;
+		    }
+		    // encode:
+		int diff = value - adpcm_prev_value;
+        int encoded_val = 0;
+		if(diff< 0) {
+			encoded_val |= 8;
+			diff = -diff;
+			}
+        diff = (diff << 2) / adpcm_step;
+		    if (diff > 7)
+		    {
+		        diff = 7;
+		    }
+		    encoded_val |= diff;
+		    adpcm_prev_value += ((adpcm_step* diff_table[encoded_val]) / 8);
+		    if (adpcm_prev_value > 0x7fff)
+		    {
+		        adpcm_prev_value = 0x7fff;
+		    }
+		    if (adpcm_prev_value < -0x8000)
+		    {
+		        adpcm_prev_value = -0x8000;
+		    }
+		    adpcm_step = (adpcm_step* step_scale[encoded_val]) >> 8;
+		if(adpcm_step< 127)
+
+            adpcm_step = 127;
+		    if (adpcm_step > 24567)
+		    {
+		        adpcm_step = 24567;
+		    }
+		    if (i % 1 == 0)
+		    {
+		        convertedSamples[i >> 1] |= (byte)encoded_val;
+		    }
+		    else
+		    {
+		        convertedSamples[i >> 1] |= (byte)(encoded_val << 4);
+		    }
+		}
+
+	return convertedSamples;
+	}
+
+        /// <summary>
+        /// Loads a mono 16-bit .wav audio file and parses it
+        /// </summary>
+        /// <param name="filepath">Full path to the file</param>
+        /// <param name="sampleOut"></param>
+        /// <returns>Returns the sample that is converted for use with a wii remote</returns>
+        public WiimoteAudioSample Load16bitMonoSampleWAV(string filepath, int frequency = 0)
+        {
+            // converts unsigned 16bit mono .wav audio data to the 4bit ADPCM variant
+            //  used by the Wiimote (at least the closest match so far), and returns
+            //  the data in a BYTE array (caller must delete[] it when no longer needed):
+            var wiimoteAudioSample = new WiimoteAudioSample();
+            Debug.WriteLine("Loading '%s'", filepath);
+
+            FileStream fileStream;
+            try
+            {
+                fileStream = File.OpenRead(filepath);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            if (fileStream == null)
+            {
+                Debug.WriteLine("Couldn't open '%s", filepath);
+                return null;
+            }
+            BinaryReader reader = new BinaryReader(fileStream);
+            // parse the .wav file
+            int chunkID = reader.ReadInt32();
+            int fileSize = reader.ReadInt32();
+            int riffType = reader.ReadInt32();
+            int fmtID = reader.ReadInt32();
+            int fmtSize = reader.ReadInt32();
+            int fmtCode = reader.ReadInt16();
+            int channels = reader.ReadInt16();
+            int tempsampleRate = reader.ReadInt32();
+            int fmtAvgBPS = reader.ReadInt32();
+            int fmtBlockAlign = reader.ReadInt16();
+            int bitDepth = reader.ReadInt16();
+
+            if (fmtSize == 18)
+            {
+                // Read any extra values
+                int fmtExtraSize = reader.ReadInt16();
+                reader.ReadBytes(fmtExtraSize);
+            }
+
+            int dataID = reader.ReadInt32();
+            int dataSize = reader.ReadInt32();
+            const int epsilon = 100; // for now
+            int sampleRate;
+            if (frequency == 0)
+            {
+                sampleRate = tempsampleRate;
+            }
+            else
+            {
+                sampleRate = frequency;
+            }
+            for (int index = 1; index < FreqLookup.Count; index++)
+            {
+                if ((sampleRate + epsilon) >= FreqLookup[index] &&
+                   (sampleRate - epsilon) <= FreqLookup[index])
+                {
+                    wiimoteAudioSample.freq = (SpeakerFreq)index;
+                    Debug.WriteLine(".. using speaker freq {0}", FreqLookup[index]);
+                    break;
+                }
+            }
+            if (wiimoteAudioSample.freq == SpeakerFreq.FREQ_NONE)
+            {
+                Debug.WriteLine("Couldn't (loosely) match .wav samplerate {0} Hz to speaker", sampleRate);
+            }
+            var samples = reader.ReadBytes(dataSize);
+            wiimoteAudioSample.samples = Convert16bitMonoSamples(samples, true, wiimoteAudioSample.freq);
+            //wiimoteAudioSample.samples = reader.ReadBytes(dataSize);
+            return null;
+        }
+
+        // find the format & data chunks
+        /*while (1)
+		{
+
+        READ(ChunkHeader);
+		
+		if(!strncmp(ChunkHeader.ckID, "fmt ", 4))
+			{
+			// not a valid .wav file?
+			if(ChunkHeader.ckSize< 16 ||
+
+               ChunkHeader.ckSize> sizeof(Waveformatextensible))
+				goto unsupported;
+
+
+            READ_SIZE((BYTE*)&wf.x, ChunkHeader.ckSize);
+
+// now we know it's true wav file
+bool extensible = (wf.x.wFormatTag == WAVE_FORMAT_EXTENSIBLE);
+int format = extensible ? wf.xe.SubFormat.Data1 :
+                              wf.x.wFormatTag;
+			// must be uncompressed PCM (the format comparisons also work on
+			//  the 'extensible' header, even though they're named differently)
+			if(format != WAVE_FORMAT_PCM) {
+
+                TRACE(_T(".. not uncompressed PCM"));
+				goto unsupported;
+				}
+
+			// must be mono, 16bit
+			if((wf.x.nChannels != 1) || (wf.x.wBitsPerSample != 16)) {
+
+                TRACE(_T(".. %d bit, %d channel%s"), wf.x.wBitsPerSample,
+													 wf.x.nChannels,
+													(wf.x.nChannels>1? _T("s"):_T("")));
+				goto unsupported;
+				}
+
+			// must be _near_ a supported speaker frequency range (but allow some
+			//  tolerance, especially as the speaker freq values aren't final yet):
+			unsigned sample_freq = wf.x.nSamplesPerSec;
+const unsigned epsilon = 100; // for now
+			
+			for(unsigned index=1; index<ARRAY_ENTRIES(FreqLookup); index++)
+				{
+				if((sample_freq+epsilon) >= FreqLookup[index] &&
+				   (sample_freq-epsilon) <= FreqLookup[index]) {
+					freq = (speaker_freq) index;
+
+                    TRACE(_T(".. using speaker freq %u"), FreqLookup[index]);
+					break;
+					}
+				}
+			if(freq == FREQ_NONE) {
+
+                WARN(_T("Couldn't (loosely) match .wav samplerate %u Hz to speaker"),
+					 sample_freq);
+				goto unsupported;
+				}
+			}
+		else if(!strncmp(chunk_header.ckID, "data", 4))
+			{
+			// make sure we got a valid fmt chunk first
+			if(!wf.x.nBlockAlign)
+    {
+    Debug.WriteLine(".wav file is corrupt");
+
+    file.Dispose
+    ();
+    return false;
+    }
+
+
+    // grab the data
+			unsigned total_samples = chunk_header.ckSize / wf.x.nBlockAlign;
+			if(total_samples == 0)
+				goto corrupt_file;
+			
+			short* samples = new short[total_samples];
+size_t read = fread(samples, 2, total_samples, file);
+
+            fclose(file);
+			if(read != total_samples)
+				{
+				if(read == 0) {
+					delete[] samples;
+					goto corrupt_file;
+					}
+                // got a different number, but use them anyway
+                WARN(_T("found %s .wav audio data than expected (%u/%u samples)"),
+					((read<total_samples)? _T("less") : _T("more")),
+					read, total_samples);
+
+				total_samples = read;
+				}
+
+			// and convert them
+			bool res = Convert16bitMonoSamples(samples, true, total_samples, freq,
+                                               out);
+delete[] samples;
+			return res;
+			}
+		else{
+			// unknown chunk, skip its data
+			DWORD chunk_bytes = (chunk_header.ckSize + 1) & ~1L;
+			if(fseek(file, chunk_bytes, SEEK_CUR))
+				goto corrupt_file;
+			}
+		}
+
+unsupported:
+
+    WARN(_T(".wav file format not supported (must be mono 16bit PCM)"));
+
+    fclose(file);*/
+
         private async void SampleStreamThread()
         {
             SampleThread.Dispose();
@@ -1487,7 +1764,6 @@ namespace WiimoteLib
                 return true;
 
             SampleThread = new Task(SampleStreamThread, TaskCreationOptions.RunContinuationsAsynchronously);
-
             Debug.Assert(SampleThread == null);
             if (SampleThread == null)
             {

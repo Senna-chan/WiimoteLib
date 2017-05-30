@@ -136,13 +136,19 @@ int _tmain ()
 		_tprintf(_T("\r") BLANK_LINE);
 		}
 	// and one (more convenient) .wav 
-	if(!wiimote::Load16bitMonoSampleWAV(_T("Daisy16 (3130).wav"), daisy_sample)) {
-		_tprintf(_T("\r  ** can't find 'Daisy16 (3130).wav' - (sample won't work!) **"));
+//	if(!wiimote::Load16bitMonoSampleWAV(_T("Daisy16 (3130).wav"), daisy_sample)) {
+//		_tprintf(_T("\r  ** can't find 'Daisy16 (3130).wav' - (sample won't work!) **"));
+//		Beep(100, 1000);
+//		Sleep(3000);
+//		_tprintf(_T("\r") BLANK_LINE);
+//		}
+
+	if (!wiimote::Load16bitMonoSampleWAV(_T("catfood.wav"), daisy_sample, 4200)) {
+		_tprintf(_T("\r  ** can't find 'catfood.wav' - (sample won't work!) **"));
 		Beep(100, 1000);
 		Sleep(3000);
 		_tprintf(_T("\r") BLANK_LINE);
-		}
-
+	}
 	// create a wiimote object
 	wiimote remote;
 	

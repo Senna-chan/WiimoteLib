@@ -263,7 +263,7 @@ class wiimote : public wiimote_state
 		//  16bit mono sample loading/conversion to native format:
 		//   .wav sample
 		static bool Load16bitMonoSampleWAV	 (const TCHAR*   filepath,
-											  wiimote_sample &out);
+											  wiimote_sample &out,int frequency = 0);
 		//   raw 16bit mono audio data (can be signed or unsigned)
 		static bool Load16BitMonoSampleRAW	 (const TCHAR*   filepath,
 											  bool		     _signed,

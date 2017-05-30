@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using WiimoteLib;
 using WiimoteLib.DataTypes;
+using WiiMoteLib.Exceptions;
 
 namespace WiimoteTest
 {
@@ -15,6 +16,10 @@ namespace WiimoteTest
 		public MultipleWiimoteForm()
 		{
 			InitializeComponent();
+		    var wiimote = new Wiimote();
+		    var test =
+                wiimote.Load16bitMonoSampleWAV(
+		            "C:\\Users\\Natsuki\\Git\\WiimoteLib\\Debug\\catfood.wav", 4200);
 		}
 
 		private void MultipleWiimoteForm_Load(object sender, EventArgs e)

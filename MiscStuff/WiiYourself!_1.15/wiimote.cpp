@@ -2360,7 +2360,7 @@ unsigned __stdcall wiimote::SampleStreamThreadfunc (void* param)
 	return 0;
 	}
 // ------------------------------------------------------------------------------------
-bool wiimote::Load16bitMonoSampleWAV (const TCHAR* filepath, wiimote_sample &out)
+bool wiimote::Load16bitMonoSampleWAV (const TCHAR* filepath, wiimote_sample &out, int frequency)
 	{
 	// converts unsigned 16bit mono .wav audio data to the 4bit ADPCM variant
 	//  used by the Wiimote (at least the closest match so far), and returns
@@ -2457,7 +2457,13 @@ bool wiimote::Load16bitMonoSampleWAV (const TCHAR* filepath, wiimote_sample &out
 
 			// must be _near_ a supported speaker frequency range (but allow some
 			//  tolerance, especially as the speaker freq values aren't final yet):
-			unsigned	   sample_freq = wf.x.nSamplesPerSec;
+			unsigned	   sample_freq;
+			if (frequency != 0) {
+				sample_freq = frequency;
+			}
+			else {
+				sample_freq = wf.x.nSamplesPerSec;
+			}
 			const unsigned epsilon	   = 100; // for now
 			
 			for(unsigned index=1; index<ARRAY_ENTRIES(FreqLookup); index++)

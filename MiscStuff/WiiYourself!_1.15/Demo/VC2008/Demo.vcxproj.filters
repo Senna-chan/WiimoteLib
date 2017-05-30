@@ -57,4 +57,9 @@
       <Filter>Resources</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="catfood.wav">
+      <Filter>Resources</Filter>
+    </Media>
+  </ItemGroup>
 </Project>
