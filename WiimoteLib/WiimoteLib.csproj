@@ -159,10 +159,6 @@
     <Compile Include="DataTypes\AccelState.cs" />
     <Compile Include="DataTypes\CalibrationInfo\AccelCalibrationInfo.cs" />
     <Compile Include="DataTypes\ButtonState.cs" />
-    <Compile Include="DataTypes\Structs\ChunkHeader.cs" />
-    <Compile Include="DataTypes\Structs\Waveformatextensible.cs" />
-    <Compile Include="DataTypes\Structs\Waveformatex.cs" />
-    <Compile Include="DataTypes\Structs\RiffChunkheader.cs" />
     <Compile Include="DataTypes\WiimoteAudioSample.cs" />
     <Compile Include="DataTypes\Enums\SpeakerFreq.cs" />
     <Compile Include="DataTypes\Enums\GuitarType.cs" />

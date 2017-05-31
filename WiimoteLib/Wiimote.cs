@@ -21,7 +21,6 @@ using System.Text;
 using System.Threading.Tasks;
 using WiimoteLib.DataTypes;
 using WiimoteLib.DataTypes.Enums;
-using WiimoteLib.DataTypes.Structs;
 using WiiMoteLib.Exceptions;
 
 
@@ -1481,15 +1480,14 @@ namespace WiimoteLib
             WiimoteState.Speaker.Enabled = on;
         }
 
-        private byte[] Convert16bitMonoSamples(byte[] samples, int length, bool _signed, SpeakerFreq freq)
+        private byte[] Convert16bitMonoSamples(byte[] samples, bool _signed, SpeakerFreq freq)
 	    {
         // converts 16bit mono sample data to the native 4bit format used by the Wiimote,
         //  and returns the data in a BYTE array (caller must delete[] when no
         //  longer needed):
-	    if(samples == null || length == 0) return null;
+	    if(samples == null || samples.Length == 0) return null;
         
-            byte[] convertedSamples = new byte[] { };
-            Array.Copy();
+            byte[] convertedSamples = new byte[1024];
 
             // ADPCM code, adapted from
             //  http://www.wiindows.org/index.php/Talk:Wiimote#Input.2FOutput_Reports
@@ -1567,7 +1565,7 @@ namespace WiimoteLib
             //  used by the Wiimote (at least the closest match so far), and returns
             //  the data in a BYTE array (caller must delete[] it when no longer needed):
             var wiimoteAudioSample = new WiimoteAudioSample();
-            Debug.WriteLine("Loading '%s'", filepath);
+            Debug.WriteLine("Loading '{0}'", filepath);
 
             FileStream fileStream;
             try
@@ -1580,7 +1578,7 @@ namespace WiimoteLib
             }
             if (fileStream == null)
             {
-                Debug.WriteLine("Couldn't open '%s", filepath);
+                Debug.WriteLine("Couldn't open {0}", filepath);
                 return null;
             }
             BinaryReader reader = new BinaryReader(fileStream);
@@ -1596,6 +1594,36 @@ namespace WiimoteLib
             int fmtAvgBPS = reader.ReadInt32();
             int fmtBlockAlign = reader.ReadInt16();
             int bitDepth = reader.ReadInt16();
+
+            if (channels == 0 && tempsampleRate == 0 && bitDepth == 0)
+            {
+                fileStream.Dispose();
+                reader.Dispose();
+                Debug.Assert(false, "Something is wrong with the audio file.");
+            }
+
+            if (channels != 1)
+            {
+                Debug.WriteLine("The file '{0}' is not in mono", filepath);
+                fileStream.Dispose();
+                reader.Dispose();
+                return null;
+            }
+            if (fmtCode != 1)
+            {
+                Debug.WriteLine("The file '{0}' is not a uncompressed .wav file",filepath);
+                fileStream.Dispose();
+                reader.Dispose();
+                return null;
+            }
+
+            if (bitDepth != 16)
+            {
+                Debug.WriteLine("The file '{0}' must be in 16 bit", filepath);
+                fileStream.Dispose();
+                reader.Dispose();
+                return null;
+            }
 
             if (fmtSize == 18)
             {
@@ -1632,126 +1660,13 @@ namespace WiimoteLib
             }
             var samples = reader.ReadBytes(dataSize);
             wiimoteAudioSample.samples = Convert16bitMonoSamples(samples, true, wiimoteAudioSample.freq);
+            reader.Dispose();
+            fileStream.Dispose();
             //wiimoteAudioSample.samples = reader.ReadBytes(dataSize);
             return null;
         }
 
-        // find the format & data chunks
-        /*while (1)
-		{
-
-        READ(ChunkHeader);
-		
-		if(!strncmp(ChunkHeader.ckID, "fmt ", 4))
-			{
-			// not a valid .wav file?
-			if(ChunkHeader.ckSize< 16 ||
-
-               ChunkHeader.ckSize> sizeof(Waveformatextensible))
-				goto unsupported;
-
-
-            READ_SIZE((BYTE*)&wf.x, ChunkHeader.ckSize);
-
-// now we know it's true wav file
-bool extensible = (wf.x.wFormatTag == WAVE_FORMAT_EXTENSIBLE);
-int format = extensible ? wf.xe.SubFormat.Data1 :
-                              wf.x.wFormatTag;
-			// must be uncompressed PCM (the format comparisons also work on
-			//  the 'extensible' header, even though they're named differently)
-			if(format != WAVE_FORMAT_PCM) {
-
-                TRACE(_T(".. not uncompressed PCM"));
-				goto unsupported;
-				}
-
-			// must be mono, 16bit
-			if((wf.x.nChannels != 1) || (wf.x.wBitsPerSample != 16)) {
-
-                TRACE(_T(".. %d bit, %d channel%s"), wf.x.wBitsPerSample,
-													 wf.x.nChannels,
-													(wf.x.nChannels>1? _T("s"):_T("")));
-				goto unsupported;
-				}
-
-			// must be _near_ a supported speaker frequency range (but allow some
-			//  tolerance, especially as the speaker freq values aren't final yet):
-			unsigned sample_freq = wf.x.nSamplesPerSec;
-const unsigned epsilon = 100; // for now
-			
-			for(unsigned index=1; index<ARRAY_ENTRIES(FreqLookup); index++)
-				{
-				if((sample_freq+epsilon) >= FreqLookup[index] &&
-				   (sample_freq-epsilon) <= FreqLookup[index]) {
-					freq = (speaker_freq) index;
-
-                    TRACE(_T(".. using speaker freq %u"), FreqLookup[index]);
-					break;
-					}
-				}
-			if(freq == FREQ_NONE) {
-
-                WARN(_T("Couldn't (loosely) match .wav samplerate %u Hz to speaker"),
-					 sample_freq);
-				goto unsupported;
-				}
-			}
-		else if(!strncmp(chunk_header.ckID, "data", 4))
-			{
-			// make sure we got a valid fmt chunk first
-			if(!wf.x.nBlockAlign)
-    {
-    Debug.WriteLine(".wav file is corrupt");
-
-    file.Dispose
-    ();
-    return false;
-    }
-
-
-    // grab the data
-			unsigned total_samples = chunk_header.ckSize / wf.x.nBlockAlign;
-			if(total_samples == 0)
-				goto corrupt_file;
-			
-			short* samples = new short[total_samples];
-size_t read = fread(samples, 2, total_samples, file);
-
-            fclose(file);
-			if(read != total_samples)
-				{
-				if(read == 0) {
-					delete[] samples;
-					goto corrupt_file;
-					}
-                // got a different number, but use them anyway
-                WARN(_T("found %s .wav audio data than expected (%u/%u samples)"),
-					((read<total_samples)? _T("less") : _T("more")),
-					read, total_samples);
-
-				total_samples = read;
-				}
-
-			// and convert them
-			bool res = Convert16bitMonoSamples(samples, true, total_samples, freq,
-                                               out);
-delete[] samples;
-			return res;
-			}
-		else{
-			// unknown chunk, skip its data
-			DWORD chunk_bytes = (chunk_header.ckSize + 1) & ~1L;
-			if(fseek(file, chunk_bytes, SEEK_CUR))
-				goto corrupt_file;
-			}
-		}
-
-unsupported:
-
-    WARN(_T(".wav file format not supported (must be mono 16bit PCM)"));
-
-    fclose(file);*/
-
+        
         private async void SampleStreamThread()
         {
             SampleThread.Dispose();
