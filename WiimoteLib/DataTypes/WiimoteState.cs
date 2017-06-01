@@ -24,6 +24,10 @@ namespace WiimoteLib.DataTypes
         /// </summary>
         public ButtonState ButtonState;
         /// <summary>
+        /// Last state of buttons
+        /// </summary>
+        public ButtonState OldButtonState;
+        /// <summary>
         /// Current state of IR sensors
         /// </summary>
         public IRState IRState;
@@ -79,12 +83,17 @@ namespace WiimoteLib.DataTypes
         /// Current state of the speaker
         /// </summary>
         public SpeakerState Speaker;
+        /// <summary>
+        /// Current sample for audio
+        /// </summary>
+        public WiimoteAudioSample CurrentSample;
 
         /// <summary>
         /// Constructor for WiimoteState class
         /// </summary>
         public WiimoteState()
         {
+            Speaker = new SpeakerState();
             IRState.IRSensors = new IRSensor[4];
         }
     }

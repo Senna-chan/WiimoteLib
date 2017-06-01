@@ -31,5 +31,10 @@ namespace WiimoteLib.Helpers
         {
             return 6000000 / sampleRate;
         }
+
+        public static int Min(int r, int g, int b)
+        {
+            return Math.Min(Math.Min(r, g), b);
+        }
     }
 }

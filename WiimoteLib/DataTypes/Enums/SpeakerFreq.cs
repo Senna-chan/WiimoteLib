@@ -28,5 +28,6 @@ namespace WiimoteLib.DataTypes.Enums
         FREQ_2760HZ = 7,    // +150
         FREQ_2610HZ = 8,    // +140
         FREQ_2470HZ = 9,
+        FREQ_4410HZ = 10
     };
 }

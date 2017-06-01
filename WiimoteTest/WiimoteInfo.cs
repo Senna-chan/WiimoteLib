@@ -9,11 +9,14 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Windows.Forms;
 using WiimoteLib;
 using WiimoteLib.DataTypes;
+using WiimoteLib.DataTypes.Enums;
 
 namespace WiimoteTest
 {
@@ -25,7 +28,7 @@ namespace WiimoteTest
 		private Bitmap b = new Bitmap(256, 192, PixelFormat.Format24bppRgb);
 		private Graphics g;
 		private Wiimote mWiimote;
-
+	    private WiimoteAudioSample catfood;
 		public WiimoteInfo()
 		{
 			InitializeComponent();
@@ -35,6 +38,7 @@ namespace WiimoteTest
 		public WiimoteInfo(Wiimote wm) : this()
 		{
 			mWiimote = wm;
+		    catfood = wm.Load16bitMonoSampleWAV(Path.Combine(Environment.CurrentDirectory, "Assets\\catfood.wav"),4200);
 		}
 
 		public void UpdateState(WiimoteChangedEventArgs args)
@@ -72,6 +76,12 @@ namespace WiimoteTest
 			clbButtons.SetItemChecked(8, ws.ButtonState. Down);
 			clbButtons.SetItemChecked(9, ws.ButtonState. Left);
 			clbButtons.SetItemChecked(10, ws.ButtonState.Right);
+
+
+
+		    
+		    mWiimote.OnPressedReleased("A", delegate() { mWiimote.PlaySample(catfood, 0x10); }, () => { mWiimote.EnableSpeaker(false); });
+            mWiimote.OnPressedReleased("B", () => { mWiimote.PlaySquareWave(SpeakerFreq.FREQ_2470HZ, 0x10); }, () => { mWiimote.EnableSpeaker(false); });
 
 			lblAccel.Text = ws.AccelState.Values.ToString();
 
@@ -208,7 +218,7 @@ namespace WiimoteTest
 			lblDevicePath.Text = "Device Path: " + mWiimote.HIDDevicePath;
 		}
 
-		private void UpdateIR(IRSensor irSensor, Label lblNorm, Label lblRaw, CheckBox chkFound, Color color)
+	    private void UpdateIR(IRSensor irSensor, Label lblNorm, Label lblRaw, CheckBox chkFound, Color color)
 		{
 			chkFound.Checked = irSensor.Found;
 

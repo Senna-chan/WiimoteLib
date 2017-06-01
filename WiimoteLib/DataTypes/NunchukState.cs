@@ -31,5 +31,6 @@ namespace WiimoteLib.DataTypes
         /// Digital button on Nunchuk extension
         /// </summary>
         public bool C, Z;
+        public bool OldC, OldZ;
     }
 }

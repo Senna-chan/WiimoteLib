@@ -17,12 +17,7 @@ namespace WiimoteTest
 		public MultipleWiimoteForm()
 		{
 			InitializeComponent();
-		    var wiimote = new Wiimote();
-		    var test1 = wiimote.Load16bitMonoSampleWAV(Path.Combine(Environment.CurrentDirectory, "assets\\catfood.wav"), 4200);
-		    var test2 = wiimote.Load16bitMonoSampleWAV(Path.Combine(Environment.CurrentDirectory, "assets\\project.wav"), 4200);
-		    var test3 = wiimote.Load16bitMonoSampleWAV(Path.Combine(Environment.CurrentDirectory, "assets\\1kSine16 (3130).wav"));
-		    var test4 = wiimote.Load16bitMonoSampleWAV(Path.Combine(Environment.CurrentDirectory, "assets\\Daisy16 (3130).wav"));
-		}
+        }
 
 		private void MultipleWiimoteForm_Load(object sender, EventArgs e)
 		{
@@ -84,10 +79,7 @@ namespace WiimoteTest
 			WiimoteInfo wi = mWiimoteMap[((Wiimote)sender).ID];
 			wi.UpdateExtension(e);
 
-			if(e.Inserted)
-				((Wiimote)sender).SetReportType(InputReport.IRExtensionAccel, true);
-			else
-				((Wiimote)sender).SetReportType(InputReport.IRAccel, true);
+		    ((Wiimote) sender).SetReportType(e.Inserted ? InputReport.IRExtensionAccel : InputReport.IRAccel, true);
 		}
 
 		private void MultipleWiimoteForm_FormClosing(object sender, FormClosingEventArgs e)

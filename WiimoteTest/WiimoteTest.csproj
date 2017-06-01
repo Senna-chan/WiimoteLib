@@ -133,7 +133,7 @@
     <Content Include="Assets\catfood.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Daisy16 %283130%29.wav">
+    <Content Include="Assets\daisy.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\project.wav">

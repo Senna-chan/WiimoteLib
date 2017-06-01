@@ -9,16 +9,19 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 using System;
+using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 using WiimoteLib;
 using WiimoteLib.DataTypes;
+using ButtonState = WiimoteLib.DataTypes.ButtonState;
 
 namespace WiimoteTest
 {
 	public partial class SingleWiimoteForm : Form
 	{
 		Wiimote wm = new Wiimote();
-
+	    private WiimoteAudioSample catfood, project;
 		public SingleWiimoteForm()
 		{
 			InitializeComponent();
@@ -33,6 +36,7 @@ namespace WiimoteTest
 			wm.Connect();
 			wm.SetReportType(InputReport.IRAccel, true);
 			wm.SetLEDs(false, true, true, false);
+		    catfood = wm.Load16bitMonoSampleWAV(Path.Combine(Environment.CurrentDirectory, "Assets\\catfood.wav"), 4200);
 		}
 
 		private void wm_WiimoteChanged(object sender, WiimoteChangedEventArgs args)

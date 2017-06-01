@@ -20,6 +20,10 @@ namespace WiimoteLib.DataTypes
 		/// </summary>
 		public ClassicControllerButtonState ButtonState;
 		/// <summary>
+		/// OldCurrent button state
+		/// </summary>
+		public ClassicControllerButtonState OldButtonState;
+		/// <summary>
 		/// Raw value of left joystick.  Values range between 0 - 255.
 		/// </summary>
 		public Point RawJoystickL;

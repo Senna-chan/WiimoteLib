@@ -15,5 +15,7 @@ namespace WiimoteLib.DataTypes
         /// Digital button on the Wiimote
         /// </summary>
         public bool A, B, Plus, Home, Minus, One, Two, Up, Down, Left, Right;
+
+        
     }
 }
