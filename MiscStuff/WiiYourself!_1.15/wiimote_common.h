@@ -15,17 +15,18 @@ enum speaker_freq
 	FREQ_NONE	= 0,
 	// my PC can't keep up with these using bUseHIDwrite, so I haven't
 	//  been able to tune them yet
-	FREQ_4200HZ = 1,
-	FREQ_3920HZ = 2,
-	FREQ_3640HZ = 3,
-	FREQ_3360HZ = 4,
+	FREQ_4410HZ = 1,
+	FREQ_4200HZ = 2,
+	FREQ_3920HZ = 3,
+	FREQ_3640HZ = 4,
+	FREQ_3360HZ = 5,
 	// these were tuned until the square-wave was glitch-free on my remote -
 	//  may not be exactly right
-	FREQ_3130HZ = 5,	// +190
-	FREQ_2940HZ = 6,	// +180
-	FREQ_2760HZ = 7,	// +150
-	FREQ_2610HZ = 8,	// +140
-	FREQ_2470HZ = 9,
+	FREQ_3130HZ = 6,	// +190
+	FREQ_2940HZ = 7,	// +180
+	FREQ_2760HZ = 8,	// +150
+	FREQ_2610HZ = 9,	// +140
+	FREQ_2470HZ = 10,
 	};
 
 // wiimote_sample - holds the audio sample in the native wiimote format

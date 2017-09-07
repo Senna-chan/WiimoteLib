@@ -15,6 +15,8 @@ namespace WiimoteLib.DataTypes
         public byte[] samples;
         public int length;
         public SpeakerFreq freq;
+        public string AudioName;
+        public bool Is8Bit;
 
         /// <summary>
         /// This is to create a object

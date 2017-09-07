@@ -8,7 +8,7 @@
 //
 //  demo.cpp  (tab = 4 spaces)
 #include "Demo.h"
-#include "..\wiimote.h"
+#include "../wiimote.h"
 #include <mmsystem.h>	// for timeGetTime
 
 // configs:
@@ -125,25 +125,16 @@ int _tmain ()
 	PrintTitle(console);
 
 	// let's load a couple of samples:
-	wiimote_sample sine_sample, daisy_sample;
+	wiimote_sample sample1, sample2;
 
-	// one .raw (just to demonstrate it)
-	if(!wiimote::Load16BitMonoSampleRAW(_T("1kSine16 (3130).raw"),
-										true, FREQ_3130HZ, sine_sample)) {
-		_tprintf(_T("\r  ** can't find 'Sine16 (3130).raw' - (sample won't work!) **"));
+	if(!wiimote::Load16bitMonoSampleWAV(_T("alarm.wav"), sample1)) {
+		_tprintf(_T("\r  ** can't find 'sample' - (sample won't work!) **"));
 		Beep(100, 1000);
 		Sleep(3000);
 		_tprintf(_T("\r") BLANK_LINE);
 		}
-	// and one (more convenient) .wav 
-//	if(!wiimote::Load16bitMonoSampleWAV(_T("Daisy16 (3130).wav"), daisy_sample)) {
-//		_tprintf(_T("\r  ** can't find 'Daisy16 (3130).wav' - (sample won't work!) **"));
-//		Beep(100, 1000);
-//		Sleep(3000);
-//		_tprintf(_T("\r") BLANK_LINE);
-//		}
 
-	if (!wiimote::Load16bitMonoSampleWAV(_T("catfood.wav"), daisy_sample, 4200)) {
+	if (!wiimote::Load16bitMonoSampleWAV(_T("chargingpenguin.wav"), sample2)) {
 		_tprintf(_T("\r  ** can't find 'catfood.wav' - (sample won't work!) **"));
 		Beep(100, 1000);
 		Sleep(3000);
@@ -231,7 +222,7 @@ reconnect:
 
 	// print the button event instructions:
 	BRIGHT_WHITE;
-	_tprintf(_T("\r  -- TRY: B = rumble, A = square, 1 = sine, 2 = daisy, Home = Exit --\n"));
+	_tprintf(_T("\r  -- TRY: B = rumble, A = square, 1 = sample1, 2 = sample2, Home = Exit --\n"));
 
 	// (stuff for animations)
 	DWORD	 last_rumble_time = timeGetTime(); // for rumble text animation
@@ -292,11 +283,11 @@ reconnect:
 			
 		//  play audio whilst certain buttons are held
 		if(!remote.IsBalanceBoard()) {
-			ON_PRESS_RELEASE(  A, remote.PlaySquareWave(FREQ_2470HZ, 0x40),
+			ON_PRESS_RELEASE(  A, remote.PlaySquareWave(FREQ_4410HZ, 0x05),
 								  remote.EnableSpeaker (false));
-			ON_PRESS_RELEASE(One, remote.PlaySample	   (sine_sample),
+			ON_PRESS_RELEASE(One, remote.PlaySample	   (sample1, 0x05),
 								  remote.EnableSpeaker (false));
-			ON_PRESS_RELEASE(Two, remote.PlaySample	   (daisy_sample),
+			ON_PRESS_RELEASE(Two, remote.PlaySample	   (sample2, 0x05),
 								  remote.EnableSpeaker (false));
 			}
 

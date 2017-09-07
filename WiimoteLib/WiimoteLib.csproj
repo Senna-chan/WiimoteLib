@@ -188,6 +188,7 @@
     <Compile Include="Events.cs" />
     <Compile Include="Exceptions\WiimoteException.cs" />
     <Compile Include="Exceptions\WiimoteNotFoundException.cs" />
+    <Compile Include="Helpers\ExtensionMethods.cs" />
     <Compile Include="Helpers\ConvertHelpers.cs" />
     <Compile Include="HIDImports.cs" />
     <Compile Include="Wiimote.cs" />

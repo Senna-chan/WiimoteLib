@@ -45,7 +45,8 @@ namespace WiiMoteLibUWP
 
         // VID = Nintendo, PID = Wiimote
         private const int VID = 0x057e;
-        private const int PID = 0x0306;
+        private const int PIDO = 0x0306; // Old (Motion plus) wiimote
+        private const int PIDN = 0x0330; // New Motion plus wiimote
 
         // sure, we could find this out the hard way using HID, but trust me, it's 22
         private const int REPORT_LENGTH = 22;
@@ -151,7 +152,6 @@ namespace WiiMoteLibUWP
                 FindWiimote(WiimoteFound);
             else
                 OpenWiimoteDeviceHandle(mDevicePath);
-            SetLEDs(true, false, false, true);
         }
 
         internal static async void FindWiimote(WiimoteFoundDelegate wiimoteFound)
@@ -160,21 +160,23 @@ namespace WiiMoteLibUWP
             for (int i = 0; i < 6; i++)
             {
                 if (found) break;
-                var selector = HidDevice.GetDeviceSelector(1, 5);
+                var selector = HidDevice.GetDeviceSelector(1, 5, 0x057e, 0x330);
                 var devices = await DeviceInformation.FindAllAsync(selector);
                 if (devices.Count > 0)
                 {
                     foreach (var device in devices)
                     {
                         var deviceId = device.Id;
+                        //var something = new UnmanagedFileLoader(deviceId);
                         var foundDevice = await HidDevice.FromIdAsync(deviceId, FileAccessMode.Read);
                         if (foundDevice == null)continue;
                         // if the vendor and product IDs match up
-                        if (foundDevice.VendorId == VID && foundDevice.ProductId == PID)
+                        if (foundDevice.VendorId == VID && (foundDevice.ProductId == PIDO || foundDevice.ProductId == PIDN))
                         {
                             // it's a Wiimote
                             Debug.WriteLine("Found one!");
                             found = true;
+                            var properties = new List<KeyValuePair<string, object>>(device.Properties);
                             foundDevice.Dispose();
                             // fire the callback function...if the callee doesn't care about more Wiimotes, break out
                             if (wiimoteFound(deviceId))
@@ -202,11 +204,36 @@ namespace WiiMoteLibUWP
 
         private async void OpenWiimoteDeviceHandle(string devicePath)
         {
+//            FileStream something, filer, filerw;
+//            await Task.Run(() =>
+//            {
+//                Task.Yield();
+//                something = new FileStream(devicePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite, 22,
+//                    FileOptions.Asynchronous);
+//                filer = File.Open(devicePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+//                filerw = File.Open(devicePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+//            });
+//            
+            
+
             mWiiMote = await HidDevice.FromIdAsync(devicePath, FileAccessMode.ReadWrite);
             if (mWiiMote == null)
             {
-                var deviceAccessInfo = DeviceAccessInformation.CreateFromId(devicePath);
-                var status = deviceAccessInfo.CurrentStatus;
+                var deviceAccessStatus = DeviceAccessInformation.CreateFromId(devicePath).CurrentStatus;
+                switch (deviceAccessStatus)
+                {
+                    case DeviceAccessStatus.DeniedByUser:
+                        throw new Exception("User denied the access!");
+                    case DeviceAccessStatus.DeniedBySystem:
+                        throw new Exception("System denied the access!");
+                    case DeviceAccessStatus.Unspecified:
+                        break;
+                    case DeviceAccessStatus.Allowed:
+                        break;
+                    default:
+                        break;
+                }
+                throw new WiimoteException("Could not connect to the wiimote");
             }
             mWiiMote.InputReportReceived += MWiiMoteOnInputReportReceived; // Event for reading data
             // read the calibration info from the controller

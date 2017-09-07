@@ -45,7 +45,8 @@ namespace WiimoteLib
 
         // VID = Nintendo, PID = Wiimote
         private const int VID = 0x057e;
-        private const int PID = 0x0306;
+        private const int PIDO = 0x0306;
+        private const int PIDN = 0x0330;
 
         // sure, we could find this out the hard way using HID, but trust me, it's 22
         private const int REPORT_LENGTH = 22;
@@ -146,6 +147,10 @@ namespace WiimoteLib
 
         private WiimoteAudioSample currentSample = null;
         private Task SampleThread = null;
+        public int FreqOverride = 0;
+
+        private CancellationTokenSource _sampleThreadCancellationTokenSource = new CancellationTokenSource();
+
 
         /// <summary>
         /// Default constructor
@@ -214,7 +219,7 @@ namespace WiimoteLib
                     if (HIDImports.SetupDiGetDeviceInterfaceDetail(hDevInfo, ref diData, ref diDetail, size, out size,
                         IntPtr.Zero))
                     {
-                        if (!diDetail.DevicePath.Contains("2057e_pid&0306"))
+                        if (!diDetail.DevicePath.Contains("2057e_pid&03"))
                         {
                             index++;
                             continue;
@@ -234,7 +239,7 @@ namespace WiimoteLib
                         if (HIDImports.HidD_GetAttributes(mHandle.DangerousGetHandle(), ref attrib))
                         {
                             // if the vendor and product IDs match up
-                            if (attrib.VendorID == VID && attrib.ProductID == PID)
+                            if (attrib.VendorID == VID && (attrib.ProductID == PIDO || attrib.ProductID == PIDN))
                             {
                                 // it's a Wiimote
                                 Debug.WriteLine("Found one!");
@@ -289,28 +294,29 @@ namespace WiimoteLib
             if(HIDImports.HidD_GetAttributes(mHandle.DangerousGetHandle(), ref attrib))
             {
                 // if the vendor and product IDs match up
-                if(attrib.VendorID == VID && attrib.ProductID == PID)
+                if(attrib.VendorID == VID && (attrib.ProductID == PIDO || attrib.ProductID == PIDN))
                 {
                     // create a nice .NET FileStream wrapping the handle above
                     mStream = new FileStream(mHandle, FileAccess.ReadWrite, REPORT_LENGTH, true);
 
                     // start an async read operation on it
                     BeginAsyncRead();
+                    Thread.Sleep(1000);
 
-                    // read the calibration info from the controller
+                    // force a status check to get the state of any extensions plugged in at startup
                     try
                     {
-                        ReadWiimoteCalibration();
+                        GetStatus();
                     }
                     catch
                     {
                         // if we fail above, try the alternate HID writes
                         mAltWriteMethod = true;
-                        ReadWiimoteCalibration();
+                        GetStatus();
                     }
 
-                    // force a status check to get the state of any extensions plugged in at startup
-                    GetStatus();
+                    // read the calibration info from the controller
+                    ReadWiimoteCalibration();
                 }
                 else
                 {
@@ -327,11 +333,9 @@ namespace WiimoteLib
         public void Disconnect()
         {
             // close up the stream and handle
-            if(mStream != null)
-                mStream.Close();
+            mStream?.Close();
 
-            if(mHandle != null)
-                mHandle.Close();
+            mHandle?.Close();
         }
 
         /// <summary>
@@ -427,7 +431,7 @@ namespace WiimoteLib
         private bool ParseInputReport(byte[] buff)
         {
             InputReport type = (InputReport)buff[0];
-
+            //Debug.WriteLine("InputReport: " + type.ToString());
             switch (type)
             {
                 case InputReport.Buttons:
@@ -495,7 +499,8 @@ namespace WiimoteLib
                     ParseReadData(buff);
                     break;
                 case InputReport.OutputReportAck:
-                    Debug.WriteLine("ack: " + buff[0] + " " +  buff[1] + " " +buff[2] + " " +buff[3] + " " +buff[4]);
+                    Debug.Write("ack " +  "OutputReport: " +(OutputReport)buff[3] + " Error: ");
+                    Debug.WriteLine(buff[4] == 0 ? "false" : "true");
                     mWriteDone.Set();
                     break;
                 default:
@@ -1065,8 +1070,12 @@ namespace WiimoteLib
             Array.Copy(buff, 6, mReadBuff, offset - mAddress, size);
 
             // if we've read it all, set the event
-            if(mAddress + mSize == offset + size)
+            if (mAddress + mSize == offset + size)
                 mReadDone.Set();
+            else
+            {
+                Debug.WriteLine("Something went wrong");
+            }
         }
 
         /// <summary>
@@ -1084,7 +1093,17 @@ namespace WiimoteLib
         private void ReadWiimoteCalibration()
         {
             // this appears to change the report type to 0x31
-            byte[] buff = ReadData(0x0016, 7);
+            byte[] buff;
+            buff = ReadData(0x0016, 7);
+            if (buff[0] == 0 && buff[1] == 0 && buff[2] == 0 && buff[4] == 0 && buff[5] == 0 && buff[6] == 0)
+            {
+                buff = ReadData(0x0020, 7);
+                if (buff[0] == 0 && buff[1] == 0 && buff[2] == 0 && buff[4] == 0 && buff[5] == 0 && buff[6] == 0)
+                {
+                    //Debug.Assert(false, "Something is wrong.\r\nCould not get CalibrationData.");
+                    //throw new WiimoteException("Something is wrong.\r\nCould not get CalibrationData.");
+                }
+            }
 
             mWiimoteState.AccelCalibrationInfo.X0 = buff[0];
             mWiimoteState.AccelCalibrationInfo.Y0 = buff[1];
@@ -1216,7 +1235,7 @@ namespace WiimoteLib
             WriteReport();
 
             // signal the status report finished
-            if(!mStatusDone.WaitOne(3000, false))
+            if(!mStatusDone.WaitOne(1000, false))
                 throw new WiimoteException("Timed out waiting for status report");
         }
 
@@ -1304,12 +1323,14 @@ namespace WiimoteLib
         /// </summary>
         private void WriteReport()
         {
-            Debug.WriteLine("WriteReport: " + mBuff[0].ToString("x"));
+            Debug.WriteLine("WriteReport: " + ((OutputReport)mBuff[0]).ToString());
             if(mAltWriteMethod)
                 HIDImports.HidD_SetOutputReport(this.mHandle.DangerousGetHandle(), mBuff, (uint)mBuff.Length);
-            else if(mStream != null)
+            else if (mStream != null)
+            {
                 mStream.Write(mBuff, 0, REPORT_LENGTH);
-
+                mStream.Flush();
+            }
             if(mBuff[0] == (byte)OutputReport.WriteMemory)
             {
                 Debug.WriteLine("Wait");
@@ -1346,8 +1367,9 @@ namespace WiimoteLib
 
             WriteReport();
 
-            if(!mReadDone.WaitOne(1000, false))
+            if(!mReadDone.WaitOne(3000, false))
                 throw new WiimoteException("Error reading data from Wiimote...is it connected?");
+                //Debug.WriteLine("Error reading data from Wiimote...is it connected?");
 
             return mReadBuff;
         }
@@ -1467,49 +1489,50 @@ namespace WiimoteLib
         /// <summary>
         /// This will mute or unmute the speaker
         /// </summary>
-        /// <param name="on">true = mute. false = unmute</param>
-        public void MuteSpeaker(bool on)
+        /// <param name="mute">true = mute. false = unmute</param>
+        public void MuteSpeaker(bool mute)
         {
             if (mStream == null)
                 return;
 
-            if (WiimoteState.Speaker.Muted == on)
+            if (WiimoteState.Speaker.Muted == mute)
                 return;
 
-            Debug.WriteLine(@on ? "muting speaker." : "unmuting speaker.");
+            Debug.WriteLine(mute ? "muting speaker." : "unmuting speaker.");
 
             ClearReport();
             mBuff[0] = (byte)OutputReport.SpeakerMute;
-            mBuff[1] = (byte) ((@on ? 0x04 : 0x00) | GetRumbleBit());
+            mBuff[1] = (byte) ((mute ? 0x04 : 0x00) | GetRumbleBit());
             WriteReport();
-            WiimoteState.Speaker.Muted = on;
+            WiimoteState.Speaker.Muted = mute;
         }
         /// <summary>
-        /// Turns the speaker on or off depending on the book
+        /// Turns the speaker on or off
         /// </summary>
-        /// <param name="on">true = on. false = off</param>
-        public void EnableSpeaker(bool on)
+        /// <param name="enable">true = on. false = off</param>
+        public void EnableSpeaker(bool enable)
         {
             if (mHandle == null)
                 return;
 
-            if (WiimoteState.Speaker.Enabled == on)
+            if (WiimoteState.Speaker.Enabled == enable)
                 return;
 
-            Debug.WriteLine(@on ? "enabling speaker." : "disabling speaker.");
+            Debug.WriteLine(enable ? "enabling speaker." : "disabling speaker.");
 
             mBuff[0] = (byte) OutputReport.SpeakerEnable;
-            mBuff[1] = (byte) ((@on ? 0x04 : 0x00) | GetRumbleBit());
+            mBuff[1] = (byte) ((enable ? 0x04 : 0x00) | GetRumbleBit());
             WriteReport();
 
-            if (!on)
+            if (!enable)
             {
-                WiimoteState.Speaker.Frequency = 0;
+                WiimoteState.Speaker.Frequency = SpeakerFreq.FREQ_NONE;
                 WiimoteState.Speaker.Volume = 0;
                 MuteSpeaker(true);
+                _sampleThreadCancellationTokenSource.Cancel(true);
             }
 
-            WiimoteState.Speaker.Enabled = on;
+            WiimoteState.Speaker.Enabled = enable;
         }
 
         private byte[] Convert16bitMonoSamples(byte[] samples, bool _signed, SpeakerFreq freq)
@@ -1519,30 +1542,30 @@ namespace WiimoteLib
         //  longer needed):
 	    if(samples == null || samples.Length == 0) return null;
         
-            byte[] convertedSamples = new byte[1024];
+        byte[] convertedSamples = new byte[1024];
 
-            // ADPCM code, adapted from
-            //  http://www.wiindows.org/index.php/Talk:Wiimote#Input.2FOutput_Reports
-            int[] index_table = {  -1,  -1,  -1,  -1,   2,   4,   6,   8,
-                                          -1,  -1,  -1,  -1,   2,   4,   6,   8 };
-            int[] diff_table = {   1,   3,   5,   7,   9,  11,  13,  15,
-                                              -1,  -3,  -5,  -7,  -9, -11, -13,  15 };
-            int[] step_scale = { 230, 230, 230, 230, 307, 409, 512, 614,
-                                             230, 230, 230, 230, 307, 409, 512, 614 };
-            // Encode to ADPCM, on initialization set adpcm_prev_value to 0 and adpcm_step
-            //  to 127 (these variables must be preserved across reports)
-            int adpcm_prev_value = 0;
-            int adpcm_step = 127;
+        // ADPCM code, adapted from
+        //  http://www.wiindows.org/index.php/Talk:Wiimote#Input.FOutput_Reports
+        int[] index_table = {  -1,  -1,  -1,  -1,   2,   4,   6,   8,
+                                        -1,  -1,  -1,  -1,   2,   4,   6,   8 };
+        int[] diff_table = {   1,   3,   5,   7,   9,  11,  13,  15,
+                                            -1,  -3,  -5,  -7,  -9, -11, -13,  15 };
+        int[] step_scale = { 230, 230, 230, 230, 307, 409, 512, 614,
+                                            230, 230, 230, 230, 307, 409, 512, 614 };
+        // Encode to ADPCM, on initialization set adpcm_prev_value to 0 and adpcm_step
+        //  to 127 (these variables must be preserved across reports)
+        int adpcm_prev_value = 0;
+        int adpcm_step = 127;
 
-	        for(int i =0; i<samples.Length; i++)
-		    {
+	    for(int i =0; i<samples.Length; i++)
+		{
 		    // convert to 16bit signed
 		    int value = samples[i];// (8bit) << 8);// | samples[i]; // dither it?
-		        if (!_signed)
-		        {
-		            value -= 32768;
-		        }
-		        // encode:
+		    if (!_signed)
+		    {
+		        value -= 32768;
+		    }
+		    // encode:
 		    int diff = value - adpcm_prev_value;
             int encoded_val = 0;
 		    if(diff< 0) {
@@ -1550,37 +1573,38 @@ namespace WiimoteLib
 			    diff = -diff;
 			    }
             diff = (diff << 2) / adpcm_step;
-		        if (diff > 7)
-		        {
-		            diff = 7;
-		        }
-		        encoded_val |= diff;
-		        adpcm_prev_value += ((adpcm_step* diff_table[encoded_val]) / 8);
-		        if (adpcm_prev_value > 0x7fff)
-		        {
-		            adpcm_prev_value = 0x7fff;
-		        }
-		        if (adpcm_prev_value < -0x8000)
-		        {
-		            adpcm_prev_value = -0x8000;
-		        }
-		        adpcm_step = (adpcm_step* step_scale[encoded_val]) >> 8;
-		    if(adpcm_step< 127)
-
-                adpcm_step = 127;
-		        if (adpcm_step > 24567)
-		        {
-		            adpcm_step = 24567;
-		        }
-		        if (i % 1 == 0)
-		        {
-		            convertedSamples[i >> 1] |= (byte)encoded_val;
-		        }
-		        else
-		        {
-		            convertedSamples[i >> 1] |= (byte)(encoded_val << 4);
-		        }
+		    if (diff > 7)
+		    {
+		        diff = 7;
 		    }
+		    encoded_val |= diff;
+		    adpcm_prev_value += ((adpcm_step* diff_table[encoded_val]) / 8);
+		    if (adpcm_prev_value > 0x7fff)
+		    {
+		        adpcm_prev_value = 0x7fff;
+		    }
+		    if (adpcm_prev_value < -0x8000)
+		    {
+		        adpcm_prev_value = -0x8000;
+		    }
+		    adpcm_step = (adpcm_step* step_scale[encoded_val]) >> 8;
+		    if (adpcm_step < 127)
+		    {
+		        adpcm_step = 127;
+		    }
+		    if (adpcm_step > 24567)
+		    {
+		        adpcm_step = 24567;
+		    }
+		    if (i % 1 == 0)
+		    {
+		        convertedSamples[i >> 1] |= (byte)encoded_val;
+		    }
+		    else
+		    {
+		        convertedSamples[i >> 1] |= (byte)(encoded_val << 4);
+		    }
+		}
 
 	    return convertedSamples;
 	    }
@@ -1593,12 +1617,17 @@ namespace WiimoteLib
         /// <returns>Returns the sample that is converted for use with a wii remote</returns>
         public WiimoteAudioSample Load16bitMonoSampleWAV(string filepath, int frequency = 0)
         {
+            if (filepath == String.Empty)
+            {
+                Debug.WriteLine("No filepath given.");
+                return null;
+            }
             // converts unsigned 16bit mono .wav audio data to the 4bit ADPCM variant
             //  used by the Wiimote (at least the closest match so far), and returns
             //  the data in a BYTE array (caller must delete[] it when no longer needed):
             var wiimoteAudioSample = new WiimoteAudioSample();
-            Debug.WriteLine("Loading '{0}'", filepath);
-
+            Debug.WriteLine($"Loading '{filepath}'");
+            wiimoteAudioSample.AudioName = Path.GetFileNameWithoutExtension(filepath);
             FileStream fileStream;
             try
             {
@@ -1626,7 +1655,6 @@ namespace WiimoteLib
             int fmtAvgBPS = reader.ReadInt32();
             int fmtBlockAlign = reader.ReadInt16();
             int bitDepth = reader.ReadInt16();
-
             if (channels == 0 && tempsampleRate == 0 && bitDepth == 0)
             {
                 fileStream.Dispose();
@@ -1636,14 +1664,14 @@ namespace WiimoteLib
 
             if (channels != 1)
             {
-                Debug.WriteLine("The file '{0}' is not in mono", filepath);
+                Debug.WriteLine($"The file '{Path.GetFileName(filepath)}' is not in mono");
                 fileStream.Dispose();
                 reader.Dispose();
                 return null;
             }
             if (fmtCode != 1)
             {
-                Debug.WriteLine("The file '{0}' is not a uncompressed .wav file",filepath);
+                Debug.WriteLine($"The file '{Path.GetFileName(filepath)}' is not a uncompressed .wav file");
                 fileStream.Dispose();
                 reader.Dispose();
                 return null;
@@ -1651,7 +1679,7 @@ namespace WiimoteLib
 
             if (bitDepth != 16)
             {
-                Debug.WriteLine("The file '{0}' must be in 16 bit", filepath);
+                Debug.WriteLine($"The file '{Path.GetFileName(filepath)}' must be in 16 bit");
                 fileStream.Dispose();
                 reader.Dispose();
                 return null;
@@ -1666,7 +1694,7 @@ namespace WiimoteLib
 
             int dataID = reader.ReadInt32();
             int dataSize = reader.ReadInt32();
-            const int epsilon = 100; // for now
+            const int freqOffSet = 100; // for now
             int sampleRate;
             if (frequency == 0)
             {
@@ -1678,8 +1706,8 @@ namespace WiimoteLib
             }
             for (int index = 1; index < FreqLookup.Count; index++)
             {
-                if ((sampleRate + epsilon) >= FreqLookup[index] &&
-                   (sampleRate - epsilon) <= FreqLookup[index])
+                if ((sampleRate + freqOffSet) >= FreqLookup[index] &&
+                   (sampleRate - freqOffSet) <= FreqLookup[index])
                 {
                     wiimoteAudioSample.freq = (SpeakerFreq)index;
                     Debug.WriteLine(".. using speaker freq {0}", FreqLookup[index]);
@@ -1688,33 +1716,40 @@ namespace WiimoteLib
             }
             if (wiimoteAudioSample.freq == SpeakerFreq.FREQ_NONE)
             {
-                Debug.WriteLine("Couldn't (loosely) match .wav samplerate {0} Hz to speaker", sampleRate);
+                Debug.WriteLine($"Couldn't (loosely) match .wav samplerate {sampleRate} Hz to speaker");
             }
             var samples = reader.ReadBytes(dataSize);
-            wiimoteAudioSample.samples = Convert16bitMonoSamples(samples, true, wiimoteAudioSample.freq);
+            wiimoteAudioSample.samples = Convert16bitMonoSamples(samples, false, wiimoteAudioSample.freq);
+            wiimoteAudioSample.length = dataSize;
+            wiimoteAudioSample.Is8Bit = false;
             reader.Dispose();
             fileStream.Dispose();
             //wiimoteAudioSample.samples = reader.ReadBytes(dataSize);
-            return null;
+            return wiimoteAudioSample;
         }
-        /// <summary>
-        /// Loads a mono 4-bit .wav audio file and parses it to a sample
-        /// </summary>
-        /// <param name="filepath">Full path to the file</param>
-        /// <param name="frequency"> Frequency override in Hertz(Converters don't really change the headers for frequency)</param>
-        /// <returns>Returns the sample that is converted for use with a wii remote</returns>
-        public WiimoteAudioSample Load4bitMonoSampleWAV(string filepath, int frequency = 0)
+
+
+        public WiimoteAudioSample Load8bitMonoSampleWAV(string filepath, int frequency = 0)
         {
-            // converts unsigned 16bit mono .wav audio data to the 4bit ADPCM variant
+            if (filepath == String.Empty)
+            {
+                Debug.WriteLine("No filepath given.");
+                return null;
+            }
+            //  converts unsigned 8bit mono .wav audio data to the 4bit ADPCM variant
             //  used by the Wiimote (at least the closest match so far), and returns
             //  the data in a BYTE array (caller must delete[] it when no longer needed):
             var wiimoteAudioSample = new WiimoteAudioSample();
-            Debug.WriteLine("Loading '{0}'", filepath);
-
+            Debug.WriteLine($"Loading '{filepath}'");
+            wiimoteAudioSample.AudioName = Path.GetFileNameWithoutExtension(filepath);
             FileStream fileStream;
             try
             {
                 fileStream = File.OpenRead(filepath);
+            }
+            catch (FileNotFoundException ex)
+            {
+                throw new FileNotFoundException($"Can't find {ex.FileName} are you sure its added to the resources and not deleted.");
             }
             catch (Exception ex)
             {
@@ -1738,7 +1773,6 @@ namespace WiimoteLib
             int fmtAvgBPS = reader.ReadInt32();
             int fmtBlockAlign = reader.ReadInt16();
             int bitDepth = reader.ReadInt16();
-
             if (channels == 0 && tempsampleRate == 0 && bitDepth == 0)
             {
                 fileStream.Dispose();
@@ -1755,15 +1789,15 @@ namespace WiimoteLib
             }
             if (fmtCode != 1)
             {
-                Debug.WriteLine("The file '{0}' is not a uncompressed .wav file",filepath);
+                Debug.WriteLine("The file '{0}' is not a uncompressed .wav file", filepath);
                 fileStream.Dispose();
                 reader.Dispose();
                 return null;
             }
 
-            if (bitDepth != 4)
+            if (bitDepth != 8)
             {
-                Debug.WriteLine("The file '{0}' must be in 4 bit", filepath);
+                Debug.WriteLine("The file '{0}' must be in 8 bit", filepath);
                 fileStream.Dispose();
                 reader.Dispose();
                 return null;
@@ -1804,20 +1838,26 @@ namespace WiimoteLib
             }
             var samples = reader.ReadBytes(dataSize);
             wiimoteAudioSample.samples = samples;
+            wiimoteAudioSample.length = dataSize;
+            wiimoteAudioSample.Is8Bit = true;
             reader.Dispose();
             fileStream.Dispose();
-            return null;
+            //wiimoteAudioSample.samples = reader.ReadBytes(dataSize);
+            return wiimoteAudioSample;
         }
 
-        
+
         private async void SampleStreamThread()
         {
             Debug.WriteLine("(starting sample thread)");
             // sends a simple square wave sample stream
 
             byte[] squarewave_report =
-                { (byte)OutputReport.SpeakerData, 20<<3, 0xC3,0xC3,0xC3,0xC3,0xC3,0xC3,0xC3,0xC3,0xC3,0xC3,
+                { (byte)OutputReport.SpeakerData, 20<<3, 0xC1,0xC1,0xC1,0xC1,0xC3,0xC3,0xC3,0xC3,0xC3,0xC3,
                                    0xC3,0xC3,0xC3,0xC3,0xC3,0xC3,0xC3,0xC3,0xC3,0xC3, };
+//            byte[] squarewave_report =
+//                { (byte)OutputReport.SpeakerData, 20<<3, 0xC3,0xC3,0xC3,0xC3,0xC3,0xC3,0xC3,0xC3,0xC3,0xC3,
+//                                   0xC3,0xC3,0xC3,0xC3,0xC3,0xC3,0xC3,0xC3,0xC3,0xC3, };
             byte[] sample_report = new byte[REPORT_LENGTH]
                 { (byte)OutputReport.SpeakerData, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 
@@ -1829,7 +1869,7 @@ namespace WiimoteLib
             WiimoteAudioSample current_sample = null;
 
             // TODO: duration!!
-            while (mHandle != null)
+            while (!_sampleThreadCancellationTokenSource.Token.IsCancellationRequested)
             {
                 bool playing = IsPlayingAudio();
 
@@ -1837,7 +1877,15 @@ namespace WiimoteLib
                     await Task.Delay(TimeSpan.FromMilliseconds(0.10));
                 else
                 {
-                    int freq_hz = FreqLookup[(int)WiimoteState.Speaker.Frequency];
+                    int freq_hz;
+                    if (FreqOverride == 0)
+                    {
+                        freq_hz = FreqLookup[(int) WiimoteState.Speaker.Frequency];
+                    }
+                    else
+                    {
+                        freq_hz = FreqOverride;
+                    }
                     float frame_ms = 1000 / (freq_hz / 40); // 20bytes = 40 samples per write
                     // has the sample just changed?
                     bool sample_changed = (current_sample != WiimoteState.CurrentSample);
@@ -1910,8 +1958,10 @@ namespace WiimoteLib
             Debug.WriteLine("(ending sample thread)");
             MuteSpeaker(true);
             EnableSpeaker(false);
+//            SampleThreadCancellationToken.cancel
             SampleThread.Dispose();
             SampleThread = null;
+
         }
         
         private bool StartSampleThread()
@@ -1919,7 +1969,7 @@ namespace WiimoteLib
             if (SampleThread != null)
                 return true;
 
-            SampleThread = new Task(SampleStreamThread, TaskCreationOptions.RunContinuationsAsynchronously);
+            SampleThread = new Task(SampleStreamThread, _sampleThreadCancellationToken, TaskCreationOptions.PreferFairness);
             if (SampleThread.Status != TaskStatus.Created)
             {
                 Debug.WriteLine("couldn't create sample thread!");
@@ -1931,11 +1981,23 @@ namespace WiimoteLib
             return true;
         }
 
-        public bool PlaySquareWave(SpeakerFreq freq, byte volume)
+        /// <summary>
+        /// This will play a squarewave at the frequency that is defined
+        /// </summary>
+        /// <param name="freq">Frequency Enum value</param>
+        /// <param name="vol">Volume 1 to 100%</param>
+        /// <returns></returns>
+        public bool PlaySquareWave(SpeakerFreq freq, int vol)
         {
+            if (vol > 100)
+            {
+                vol = 100;
+            }
             if (mHandle == null)
                 return false;
 
+
+            var volume = (byte)vol.Map(0, 100, 0x00, 0x40);
             // if we're already playing a sample, stop it first
             if (IsPlayingSample())
                 currentSample = null;
@@ -1944,6 +2006,7 @@ namespace WiimoteLib
                                         (WiimoteState.Speaker.Volume == volume))
                 return true;
 
+            
             Debug.WriteLine("playing square wave.");
             // stop playing samples
             currentSample = null;
@@ -1957,8 +2020,9 @@ namespace WiimoteLib
             WriteData(0x04a20001, 0x08);
             // write default sound mode (4bit ADPCM, we assume) 7-byte configuration
             //  to registers 0xa20001-0xa20008 
-            byte[] frequency = ConvertHelpers.INT2LE(ConvertHelpers.AdpcmToWiimoteRate(FreqLookup[(int) freq]));
-            byte[] bytes = new byte[7]{ 0x00, 0x00, 0x00, (byte) (10 + (byte)freq), volume, 0x00, 0x00 };
+            byte[] frequency;
+            frequency = ConvertHelpers.INT2LE(FreqOverride == 0 ? ConvertHelpers.AdpcmToWiimoteRate(FreqLookup[(int) freq], false) : ConvertHelpers.AdpcmToWiimoteRate(FreqOverride, false));
+            byte[] bytes = new byte[7]{ 0x00, 0x00, frequency[0], frequency[1], volume, 0x00, 0x00 };
             WriteData(0x04a20001, (byte)bytes.Length, bytes);
             // write 0x01 to register 0xa20008 
             WriteData(0x04a20008, 0x01);
@@ -1970,40 +2034,46 @@ namespace WiimoteLib
             return StartSampleThread();
         }
 
-        public void PlaySample(WiimoteAudioSample sample, byte volume,
-                         SpeakerFreq freq_override = SpeakerFreq.FREQ_NONE)
+        public void PlaySample(WiimoteAudioSample sample, int vol, SpeakerFreq freq_override = SpeakerFreq.FREQ_NONE)
 	    {
             
-	        if(mHandle != null)
+	        if(mHandle == null || sample == null)
 		        return;
 
-	        var freq = freq_override != SpeakerFreq.FREQ_NONE ? sample.freq : freq_override;
-
+	        SpeakerFreq freq;
+	        if (freq_override != SpeakerFreq.FREQ_NONE)
+	        {
+	            freq = freq_override;
+	        }
+	        else
+	        {
+	            freq = sample.freq;
+	        }
 
             Debug.WriteLine("playing sample.");
 
             EnableSpeaker(true);
 
             MuteSpeaker(true);
-
-            byte[] frequency = ConvertHelpers.INT2LE(ConvertHelpers.AdpcmToWiimoteRate(FreqLookup[(int)freq]));
+	        var volume = (byte) vol.Map(0, 100, 0x00, sample.Is8Bit ? 0xff : 0x40);
+            // Get the frequency in Little Endian bytes
+            byte[] frequency = ConvertHelpers.INT2LE(ConvertHelpers.AdpcmToWiimoteRate(FreqLookup[(int)freq], sample.Is8Bit));
 
             // Write 0x01 to register 0x04a20009 
             WriteData(0x04a20009, 0x01);
             // Write 0x08 to register 0x04a20001 
             WriteData(0x04a20001, 0x08);
-                // Write 7-byte configuration to registers 0x04a20001-0x04a20008 
-                byte[] bytes = { 0x00, 0x00, 0x00, (byte) (10 + freq), volume, 0x00, 0x00 };
+            // Write 7-byte configuration to registers 0x04a20001-0x04a20008 
+            byte[] bytes = { 0x00, 0x00, frequency[0], frequency[1], volume, 0x00, 0x00 };
 
             WriteData(0x04a20001, (byte)bytes.Length, bytes);
             // + Write 0x01 to register 0x04a20008 
             WriteData(0x04a20008, 0x01);
 
-            WiimoteState.Speaker.Frequency   = freq;
+            WiimoteState.Speaker.Frequency = freq;
             WiimoteState.Speaker.Volume = volume;
             WiimoteState.CurrentSample = sample;
-
-
+            
             MuteSpeaker(false);
 
 	        StartSampleThread();

@@ -71,69 +71,6 @@ namespace WiiPairUWP
                     {
                         if (device.Name.Contains("Nintendo"))
                         {
-                            var hidSelector = HidDevice.GetDeviceSelector(0x01, 0x05);
-                            for (int i = 0; i < 6; i++)
-                            {
-                                var hidDevices = await DeviceInformation.FindAllAsync(hidSelector, null);
-
-                                if (hidDevices.Count > 0)
-                                {
-                                    string deviceId = hidDevices.ElementAt(0).Id;
-                                    List<KeyValuePair<string, object>> deviceProps = new List<KeyValuePair<string, object>>(hidDevices.ElementAt(0).Properties);
-                                    // Open the target HID device
-                                    foreach (var deviceProp in deviceProps)
-                                    {
-                                        if (deviceProp.Key == "System.Devices.DeviceInstanceId")
-                                            deviceId = deviceProp.Value.ToString();
-                                    }
-                                    var hidDevice = await HidDevice.FromIdAsync(deviceId,FileAccessMode.ReadWrite);
-                                    if (hidDevice == null) continue;
-                                    var outputReport = hidDevice.CreateOutputReport();
-                                    var datawriter = new DataWriter();
-                                    byte[] mBuff = {};
-                                    mBuff[0] = 0x11;
-                                    mBuff[1] = 0x10 | 0x20 | 0x00 | 0x80 | 0x00;
-                                    datawriter.WriteBytes(mBuff);
-                                    outputReport.Data = datawriter.DetachBuffer();
-                                    var bytesWritten = await hidDevice.SendOutputReportAsync(outputReport);
-                                    ConsoleWriteLine($"Written {bytesWritten} bytes");
-                                    break;
-                                }
-                                await Task.Delay(500);
-                            }
-
-                            for (int i = 0; i < 6; i++)
-                            {
-                                var hidDevices =
-                                    await DeviceInformation.FindAllAsync(
-                                        GattDeviceService.GetDeviceSelectorFromUuid(GattServiceUuids.HumanInterfaceDevice),
-                                        null);
-
-                                if (hidDevices.Count > 0)
-                                {
-                                    string deviceId = hidDevices.ElementAt(0).Id;
-                                    List<KeyValuePair<string, object>> deviceProps = new List<KeyValuePair<string, object>>(hidDevices.ElementAt(0).Properties);
-                                    // Open the target HID device
-                                    foreach (var deviceProp in deviceProps)
-                                    {
-                                        if (deviceProp.Key == "System.Devices.DeviceInstanceId")
-                                            deviceId = deviceProp.Value.ToString();
-                                    }
-                                    var hidDevice = await HidDevice.FromIdAsync(deviceId,FileAccessMode.Read);
-                                    if (hidDevice == null) continue;
-                                    var outputReport = hidDevice.CreateOutputReport();
-                                    var datawriter = new DataWriter();
-                                    byte[] mBuff = {};
-                                    mBuff[0] = 0x11;
-                                    mBuff[1] = 0x10 | 0x20 | 0x00 | 0x80 | 0x00;
-                                    datawriter.WriteBytes(mBuff);
-                                    outputReport.Data = datawriter.DetachBuffer();
-                                    var bytesWritten = await hidDevice.SendOutputReportAsync(outputReport);
-                                    ConsoleWriteLine($"Written {bytesWritten} bytes");
-                                    break;
-                                }
-                                await Task.Delay(500);
-                            }
                             var result = await device.Pairing.UnpairAsync();
                             if (result.Status != DeviceUnpairingResultStatus.Unpaired)
                             {
@@ -152,8 +89,7 @@ namespace WiiPairUWP
             while (!found)
             {
                 ConsoleWriteLine("Searching for devices");
-                devices =
-                    await DeviceInformation.FindAllAsync(selector);
+                devices = await DeviceInformation.FindAllAsync(selector);
                 if (devices.Count != 0)
                 {
                     ConsoleWriteLine($"Found {devices.Count} devices.");
@@ -176,21 +112,8 @@ namespace WiiPairUWP
 
                                 if (hidDevices.Count > 0)
                                 {
-                                    // Open the target HID device
                                     HidDevice hidDevice = await HidDevice.FromIdAsync(hidDevices.ElementAt(0).Id,
-                                                       FileAccessMode.ReadWrite);
-                                    var outputReport = hidDevice.CreateOutputReport();
-                                    var datawriter = new DataWriter();
-                                    byte[] mBuff = { };
-                                    mBuff[0] = 0x11;
-                                    mBuff[1] = 0x10 | 0x20 | 0x00 | 0x80 | 0x00;
-                                    datawriter.WriteBytes(mBuff);
-                                    outputReport.Data = datawriter.DetachBuffer();
-                                    var bytesWritten = await hidDevice.SendOutputReportAsync(outputReport);
-                                    ConsoleWriteLine($"Written {bytesWritten} bytes");
-                                    // At this point the device is available to communicate with
-                                    // So we can send/receive HID reports from it or 
-                                    // query it for control descriptions
+                                                       FileAccessMode.Read);
                                     found = true;
 
                                 }

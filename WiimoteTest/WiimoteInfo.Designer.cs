@@ -88,16 +88,23 @@
             this.clbDrums = new System.Windows.Forms.CheckedListBox();
             this.btnMPConnect = new System.Windows.Forms.Button();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
-            this.lblMPRawPitch = new System.Windows.Forms.Label();
-            this.lblMPRawRoll = new System.Windows.Forms.Label();
-            this.lblMPRawYaw = new System.Windows.Forms.Label();
-            this.chcMPPitchSlow = new System.Windows.Forms.CheckBox();
-            this.chcMPRollSlow = new System.Windows.Forms.CheckBox();
-            this.chcMPYawSlow = new System.Windows.Forms.CheckBox();
-            this.lblMPPitch = new System.Windows.Forms.Label();
-            this.lblMPRoll = new System.Windows.Forms.Label();
-            this.lblMPYaw = new System.Windows.Forms.Label();
             this.lblMPCallibrate = new System.Windows.Forms.Button();
+            this.lblMPYaw = new System.Windows.Forms.Label();
+            this.lblMPRoll = new System.Windows.Forms.Label();
+            this.lblMPPitch = new System.Windows.Forms.Label();
+            this.chcMPYawSlow = new System.Windows.Forms.CheckBox();
+            this.chcMPRollSlow = new System.Windows.Forms.CheckBox();
+            this.chcMPPitchSlow = new System.Windows.Forms.CheckBox();
+            this.lblMPRawYaw = new System.Windows.Forms.Label();
+            this.lblMPRawRoll = new System.Windows.Forms.Label();
+            this.lblMPRawPitch = new System.Windows.Forms.Label();
+            this.groupBox12 = new System.Windows.Forms.GroupBox();
+            this.lblSpeakerVolume = new System.Windows.Forms.Label();
+            this.chkSpeakerMuted = new System.Windows.Forms.CheckBox();
+            this.chkSpeakerEnabled = new System.Windows.Forms.CheckBox();
+            this.lblSpeakerSample = new System.Windows.Forms.Label();
+            this.lblSpeakerFrequency = new System.Windows.Forms.Label();
+            this.tbFreqOverride = new System.Windows.Forms.TextBox();
             this.groupBox8.SuspendLayout();
             this.groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbIR)).BeginInit();
@@ -110,6 +117,7 @@
             this.groupBox9.SuspendLayout();
             this.groupBox10.SuspendLayout();
             this.groupBox11.SuspendLayout();
+            this.groupBox12.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox8
@@ -766,52 +774,42 @@
             this.groupBox11.TabStop = false;
             this.groupBox11.Text = "MotionPlus";
             // 
-            // lblMPRawPitch
+            // lblMPCallibrate
             // 
-            this.lblMPRawPitch.AutoSize = true;
-            this.lblMPRawPitch.Location = new System.Drawing.Point(7, 20);
-            this.lblMPRawPitch.Name = "lblMPRawPitch";
-            this.lblMPRawPitch.Size = new System.Drawing.Size(53, 13);
-            this.lblMPRawPitch.TabIndex = 0;
-            this.lblMPRawPitch.Text = "RawPitch";
+            this.lblMPCallibrate.Location = new System.Drawing.Point(10, 140);
+            this.lblMPCallibrate.Name = "lblMPCallibrate";
+            this.lblMPCallibrate.Size = new System.Drawing.Size(98, 28);
+            this.lblMPCallibrate.TabIndex = 9;
+            this.lblMPCallibrate.Text = "Callibrate";
+            this.lblMPCallibrate.UseVisualStyleBackColor = true;
+            this.lblMPCallibrate.Click += new System.EventHandler(this.lblMPCallibrate_Click);
             // 
-            // lblMPRawRoll
+            // lblMPYaw
             // 
-            this.lblMPRawRoll.AutoSize = true;
-            this.lblMPRawRoll.Location = new System.Drawing.Point(7, 35);
-            this.lblMPRawRoll.Name = "lblMPRawRoll";
-            this.lblMPRawRoll.Size = new System.Drawing.Size(47, 13);
-            this.lblMPRawRoll.TabIndex = 1;
-            this.lblMPRawRoll.Text = "RawRoll";
+            this.lblMPYaw.AutoSize = true;
+            this.lblMPYaw.Location = new System.Drawing.Point(7, 114);
+            this.lblMPYaw.Name = "lblMPYaw";
+            this.lblMPYaw.Size = new System.Drawing.Size(28, 13);
+            this.lblMPYaw.TabIndex = 8;
+            this.lblMPYaw.Text = "Yaw";
             // 
-            // lblMPRawYaw
+            // lblMPRoll
             // 
-            this.lblMPRawYaw.AutoSize = true;
-            this.lblMPRawYaw.Location = new System.Drawing.Point(7, 51);
-            this.lblMPRawYaw.Name = "lblMPRawYaw";
-            this.lblMPRawYaw.Size = new System.Drawing.Size(50, 13);
-            this.lblMPRawYaw.TabIndex = 2;
-            this.lblMPRawYaw.Text = "RawYaw";
+            this.lblMPRoll.AutoSize = true;
+            this.lblMPRoll.Location = new System.Drawing.Point(7, 101);
+            this.lblMPRoll.Name = "lblMPRoll";
+            this.lblMPRoll.Size = new System.Drawing.Size(25, 13);
+            this.lblMPRoll.TabIndex = 7;
+            this.lblMPRoll.Text = "Roll";
             // 
-            // chcMPPitchSlow
+            // lblMPPitch
             // 
-            this.chcMPPitchSlow.AutoSize = true;
-            this.chcMPPitchSlow.Location = new System.Drawing.Point(59, 16);
-            this.chcMPPitchSlow.Name = "chcMPPitchSlow";
-            this.chcMPPitchSlow.Size = new System.Drawing.Size(49, 17);
-            this.chcMPPitchSlow.TabIndex = 3;
-            this.chcMPPitchSlow.Text = "Slow";
-            this.chcMPPitchSlow.UseVisualStyleBackColor = true;
-            // 
-            // chcMPRollSlow
-            // 
-            this.chcMPRollSlow.AutoSize = true;
-            this.chcMPRollSlow.Location = new System.Drawing.Point(59, 34);
-            this.chcMPRollSlow.Name = "chcMPRollSlow";
-            this.chcMPRollSlow.Size = new System.Drawing.Size(49, 17);
-            this.chcMPRollSlow.TabIndex = 4;
-            this.chcMPRollSlow.Text = "Slow";
-            this.chcMPRollSlow.UseVisualStyleBackColor = true;
+            this.lblMPPitch.AutoSize = true;
+            this.lblMPPitch.Location = new System.Drawing.Point(7, 88);
+            this.lblMPPitch.Name = "lblMPPitch";
+            this.lblMPPitch.Size = new System.Drawing.Size(31, 13);
+            this.lblMPPitch.TabIndex = 6;
+            this.lblMPPitch.Text = "Pitch";
             // 
             // chcMPYawSlow
             // 
@@ -823,47 +821,128 @@
             this.chcMPYawSlow.Text = "Slow";
             this.chcMPYawSlow.UseVisualStyleBackColor = true;
             // 
-            // lblMPPitch
+            // chcMPRollSlow
             // 
-            this.lblMPPitch.AutoSize = true;
-            this.lblMPPitch.Location = new System.Drawing.Point(7, 88);
-            this.lblMPPitch.Name = "lblMPPitch";
-            this.lblMPPitch.Size = new System.Drawing.Size(31, 13);
-            this.lblMPPitch.TabIndex = 6;
-            this.lblMPPitch.Text = "Pitch";
+            this.chcMPRollSlow.AutoSize = true;
+            this.chcMPRollSlow.Location = new System.Drawing.Point(59, 34);
+            this.chcMPRollSlow.Name = "chcMPRollSlow";
+            this.chcMPRollSlow.Size = new System.Drawing.Size(49, 17);
+            this.chcMPRollSlow.TabIndex = 4;
+            this.chcMPRollSlow.Text = "Slow";
+            this.chcMPRollSlow.UseVisualStyleBackColor = true;
             // 
-            // lblMPRoll
+            // chcMPPitchSlow
             // 
-            this.lblMPRoll.AutoSize = true;
-            this.lblMPRoll.Location = new System.Drawing.Point(7, 101);
-            this.lblMPRoll.Name = "lblMPRoll";
-            this.lblMPRoll.Size = new System.Drawing.Size(25, 13);
-            this.lblMPRoll.TabIndex = 7;
-            this.lblMPRoll.Text = "Roll";
+            this.chcMPPitchSlow.AutoSize = true;
+            this.chcMPPitchSlow.Location = new System.Drawing.Point(59, 16);
+            this.chcMPPitchSlow.Name = "chcMPPitchSlow";
+            this.chcMPPitchSlow.Size = new System.Drawing.Size(49, 17);
+            this.chcMPPitchSlow.TabIndex = 3;
+            this.chcMPPitchSlow.Text = "Slow";
+            this.chcMPPitchSlow.UseVisualStyleBackColor = true;
             // 
-            // lblMPYaw
+            // lblMPRawYaw
             // 
-            this.lblMPYaw.AutoSize = true;
-            this.lblMPYaw.Location = new System.Drawing.Point(7, 114);
-            this.lblMPYaw.Name = "lblMPYaw";
-            this.lblMPYaw.Size = new System.Drawing.Size(28, 13);
-            this.lblMPYaw.TabIndex = 8;
-            this.lblMPYaw.Text = "Yaw";
+            this.lblMPRawYaw.AutoSize = true;
+            this.lblMPRawYaw.Location = new System.Drawing.Point(7, 51);
+            this.lblMPRawYaw.Name = "lblMPRawYaw";
+            this.lblMPRawYaw.Size = new System.Drawing.Size(50, 13);
+            this.lblMPRawYaw.TabIndex = 2;
+            this.lblMPRawYaw.Text = "RawYaw";
             // 
-            // lblMPCallibrate
+            // lblMPRawRoll
             // 
-            this.lblMPCallibrate.Location = new System.Drawing.Point(10, 140);
-            this.lblMPCallibrate.Name = "lblMPCallibrate";
-            this.lblMPCallibrate.Size = new System.Drawing.Size(98, 28);
-            this.lblMPCallibrate.TabIndex = 9;
-            this.lblMPCallibrate.Text = "Callibrate";
-            this.lblMPCallibrate.UseVisualStyleBackColor = true;
-            this.lblMPCallibrate.Click += new System.EventHandler(this.lblMPCallibrate_Click);
+            this.lblMPRawRoll.AutoSize = true;
+            this.lblMPRawRoll.Location = new System.Drawing.Point(7, 35);
+            this.lblMPRawRoll.Name = "lblMPRawRoll";
+            this.lblMPRawRoll.Size = new System.Drawing.Size(47, 13);
+            this.lblMPRawRoll.TabIndex = 1;
+            this.lblMPRawRoll.Text = "RawRoll";
+            // 
+            // lblMPRawPitch
+            // 
+            this.lblMPRawPitch.AutoSize = true;
+            this.lblMPRawPitch.Location = new System.Drawing.Point(7, 20);
+            this.lblMPRawPitch.Name = "lblMPRawPitch";
+            this.lblMPRawPitch.Size = new System.Drawing.Size(53, 13);
+            this.lblMPRawPitch.TabIndex = 0;
+            this.lblMPRawPitch.Text = "RawPitch";
+            // 
+            // groupBox12
+            // 
+            this.groupBox12.Controls.Add(this.tbFreqOverride);
+            this.groupBox12.Controls.Add(this.lblSpeakerVolume);
+            this.groupBox12.Controls.Add(this.chkSpeakerMuted);
+            this.groupBox12.Controls.Add(this.chkSpeakerEnabled);
+            this.groupBox12.Controls.Add(this.lblSpeakerSample);
+            this.groupBox12.Controls.Add(this.lblSpeakerFrequency);
+            this.groupBox12.Location = new System.Drawing.Point(556, 298);
+            this.groupBox12.Name = "groupBox12";
+            this.groupBox12.Size = new System.Drawing.Size(136, 142);
+            this.groupBox12.TabIndex = 43;
+            this.groupBox12.TabStop = false;
+            this.groupBox12.Text = "Speaker";
+            // 
+            // lblSpeakerVolume
+            // 
+            this.lblSpeakerVolume.AutoSize = true;
+            this.lblSpeakerVolume.Location = new System.Drawing.Point(3, 83);
+            this.lblSpeakerVolume.Name = "lblSpeakerVolume";
+            this.lblSpeakerVolume.Size = new System.Drawing.Size(82, 13);
+            this.lblSpeakerVolume.TabIndex = 6;
+            this.lblSpeakerVolume.Text = "SpeakerVolume";
+            // 
+            // chkSpeakerMuted
+            // 
+            this.chkSpeakerMuted.AutoSize = true;
+            this.chkSpeakerMuted.Location = new System.Drawing.Point(7, 48);
+            this.chkSpeakerMuted.Name = "chkSpeakerMuted";
+            this.chkSpeakerMuted.Size = new System.Drawing.Size(56, 17);
+            this.chkSpeakerMuted.TabIndex = 5;
+            this.chkSpeakerMuted.Text = "Muted";
+            this.chkSpeakerMuted.UseVisualStyleBackColor = true;
+            // 
+            // chkSpeakerEnabled
+            // 
+            this.chkSpeakerEnabled.AutoSize = true;
+            this.chkSpeakerEnabled.Location = new System.Drawing.Point(7, 25);
+            this.chkSpeakerEnabled.Name = "chkSpeakerEnabled";
+            this.chkSpeakerEnabled.Size = new System.Drawing.Size(65, 17);
+            this.chkSpeakerEnabled.TabIndex = 4;
+            this.chkSpeakerEnabled.Text = "Enabled";
+            this.chkSpeakerEnabled.UseVisualStyleBackColor = true;
+            // 
+            // lblSpeakerSample
+            // 
+            this.lblSpeakerSample.AutoSize = true;
+            this.lblSpeakerSample.Location = new System.Drawing.Point(3, 96);
+            this.lblSpeakerSample.Name = "lblSpeakerSample";
+            this.lblSpeakerSample.Size = new System.Drawing.Size(82, 13);
+            this.lblSpeakerSample.TabIndex = 3;
+            this.lblSpeakerSample.Text = "SpeakerSample";
+            // 
+            // lblSpeakerFrequency
+            // 
+            this.lblSpeakerFrequency.AutoSize = true;
+            this.lblSpeakerFrequency.Location = new System.Drawing.Point(3, 68);
+            this.lblSpeakerFrequency.Name = "lblSpeakerFrequency";
+            this.lblSpeakerFrequency.Size = new System.Drawing.Size(97, 13);
+            this.lblSpeakerFrequency.TabIndex = 2;
+            this.lblSpeakerFrequency.Text = "SpeakerFrequency";
+            // 
+            // tbFreqOverride
+            // 
+            this.tbFreqOverride.Location = new System.Drawing.Point(6, 114);
+            this.tbFreqOverride.Name = "tbFreqOverride";
+            this.tbFreqOverride.Size = new System.Drawing.Size(100, 20);
+            this.tbFreqOverride.TabIndex = 7;
+            this.tbFreqOverride.TextChanged += new System.EventHandler(this.tbFreqOverride_TextChanged);
             // 
             // WiimoteInfo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.groupBox12);
             this.Controls.Add(this.groupBox11);
             this.Controls.Add(this.groupBox10);
             this.Controls.Add(this.lblDevicePath);
@@ -900,6 +979,8 @@
             this.groupBox10.ResumeLayout(false);
             this.groupBox11.ResumeLayout(false);
             this.groupBox11.PerformLayout();
+            this.groupBox12.ResumeLayout(false);
+            this.groupBox12.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -977,5 +1058,12 @@
         private System.Windows.Forms.Label lblMPRoll;
         private System.Windows.Forms.Label lblMPPitch;
         private System.Windows.Forms.Button lblMPCallibrate;
+        private System.Windows.Forms.GroupBox groupBox12;
+        private System.Windows.Forms.Label lblSpeakerSample;
+        private System.Windows.Forms.Label lblSpeakerFrequency;
+        private System.Windows.Forms.CheckBox chkSpeakerMuted;
+        private System.Windows.Forms.CheckBox chkSpeakerEnabled;
+        private System.Windows.Forms.Label lblSpeakerVolume;
+        private System.Windows.Forms.TextBox tbFreqOverride;
     }
 }

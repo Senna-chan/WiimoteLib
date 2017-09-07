@@ -60,6 +60,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AudioFiles.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AudioFiles.resx</DependentUpon>
+    </Compile>
     <Compile Include="SingleWiimoteForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -74,6 +79,10 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="AudioFiles.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AudioFiles.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="SingleWiimoteForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>SingleWiimoteForm.cs</DependentUpon>
@@ -126,19 +135,15 @@
       <Name>WiimoteLib</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Content Include="Assets\1kSine16 %283130%29.wav">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\catfood.wav">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\daisy.wav">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\project.wav">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <None Include="Assets\alarm.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\chargingpenguin.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\sweep.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

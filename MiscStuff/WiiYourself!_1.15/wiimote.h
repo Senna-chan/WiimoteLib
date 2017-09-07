@@ -61,7 +61,7 @@
 
 // array sizes
 #define	TOTAL_BUTTON_BITS	16	// Number of bits for (Classic)ButtonNameFromBit[]
-#define	TOTAL_FREQUENCIES	10	// Number of frequencies (see speaker_freq[])
+#define	TOTAL_FREQUENCIES	11	// Number of frequencies (see speaker_freq[])
 
  // clarity
 typedef HANDLE EVENT;
@@ -371,7 +371,8 @@ class wiimote : public wiimote_state
 		static const int IN_READADDRESS					= 0x21;
 		// wiimote device IDs:
 		static const int VID							= 0x057e; // 'Nintendo'
-		static const int PID							= 0x0306; // 'Wiimote'
+		static const int PIDO							= 0x0306; // 'Wiimote'
+		static const int PIDN							= 0x0330; // 'Wiimote TR'
 		// we could find this out the hard way using HID, but it's 22
 		static const int REPORT_LENGTH					= 22;
 		// wiimote registers

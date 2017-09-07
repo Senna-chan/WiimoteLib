@@ -108,28 +108,13 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	WCHAR pass[6];
 
-
-	char answer;
-
-	std::cout << "Do you want to use custom pairing? Y/N   ";
-	std::cin >> answer;
-
-	if (answer == 'y' || answer == 'Y')
-	{
-		std::cout << "Enter the bluetooth mac-address in this way 00:00:00:00:00:00\r\n";
-		scanf_s("%x:%x:%x:%x:%x:%x", pass[5], 2, pass[4], 2, pass[3], 2, pass[2], 2, pass[1], 2, pass[0]);
-
-	}
-	else
-	{
-		// MAC address is passphrase
-		pass[0] = radioInfo.address.rgBytes[0];
-		pass[1] = radioInfo.address.rgBytes[1];
-		pass[2] = radioInfo.address.rgBytes[2];
-		pass[3] = radioInfo.address.rgBytes[3];
-		pass[4] = radioInfo.address.rgBytes[4];
-		pass[5] = radioInfo.address.rgBytes[5];
-	}
+	// MAC address is passphrase
+	pass[0] = radioInfo.address.rgBytes[0];
+	pass[1] = radioInfo.address.rgBytes[1];
+	pass[2] = radioInfo.address.rgBytes[2];
+	pass[3] = radioInfo.address.rgBytes[3];
+	pass[4] = radioInfo.address.rgBytes[4];
+	pass[5] = radioInfo.address.rgBytes[5];
 
 	while (nPaired == 0)
 	{
@@ -154,9 +139,9 @@ int _tmain(int argc, _TCHAR* argv[])
 		{
 			do
 			{
-				_tprintf(_T("Found: %s\n"), btdi.szName);
+ 				_tprintf(_T("Found: %s\n"), btdi.szName);
 
-				if (!wcscmp(btdi.szName, L"Nintendo RVL-WBC-01") || !wcscmp(btdi.szName, L"Nintendo RVL-CNT-01"))
+				if (!wcscmp(btdi.szName, L"Nintendo RVL-WBC-01") || !wcscmp(btdi.szName, L"Nintendo RVL-CNT-01") || !wcscmp(btdi.szName, L"Nintendo RVL-CNT-01-TR"))
 				{
 
 					DWORD pcServices = 16;

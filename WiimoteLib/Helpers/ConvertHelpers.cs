@@ -22,13 +22,19 @@ namespace WiimoteLib.Helpers
             b[3] = (byte)(((uint)data >> 24) & 0xFF);
             return b;
         }
+
         /// <summary>
         /// Converts the sample rate given to what the wiiremote excpects
         /// </summary>
         /// <param name="sampleRate">The samplerate in Hertz</param>
-        /// <returns></returns>
-        public static int AdpcmToWiimoteRate(int sampleRate)
+        /// <param name="is8Bit">Is the samplerate for 8 bit pcm playback</param>
+        /// <returns>the samplerate in wii terms</returns>
+        public static int AdpcmToWiimoteRate(int sampleRate, bool is8Bit)
         {
+            if (is8Bit)
+            {
+                return 12000000 / sampleRate;
+            }
             return 6000000 / sampleRate;
         }
 
@@ -36,5 +42,7 @@ namespace WiimoteLib.Helpers
         {
             return Math.Min(Math.Min(r, g), b);
         }
+
+        
     }
 }

@@ -15,18 +15,18 @@ namespace WiimoteLib.DataTypes
         /// <summary>
         /// Speaker muted
         /// </summary>
-        public bool Muted;
+        public bool Muted = true;
         /// <summary>
         /// Speaker on(Different then muted)
         /// </summary>
-        public bool Enabled;
+        public bool Enabled = false;
         /// <summary>
         /// Speaker volume. Min = 0x00, Max = 0x40 (We run in 4 bit ADPCM mode for better sound)
         /// </summary>
-        public int Volume;
+        public int Volume = 0;
         /// <summary>
         /// Speaker frequency range is 1 to 5 kHz(Need to check this)
         /// </summary>
-        public SpeakerFreq Frequency;
+        public SpeakerFreq Frequency = SpeakerFreq.FREQ_NONE;
     }
 }

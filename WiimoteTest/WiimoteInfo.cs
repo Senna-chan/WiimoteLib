@@ -28,7 +28,7 @@ namespace WiimoteTest
 		private Bitmap b = new Bitmap(256, 192, PixelFormat.Format24bppRgb);
 		private Graphics g;
 		private Wiimote mWiimote;
-	    private WiimoteAudioSample catfood;
+	    private WiimoteAudioSample catfood, sample;
 		public WiimoteInfo()
 		{
 			InitializeComponent();
@@ -38,7 +38,9 @@ namespace WiimoteTest
 		public WiimoteInfo(Wiimote wm) : this()
 		{
 			mWiimote = wm;
-		    catfood = wm.Load16bitMonoSampleWAV(Path.Combine(Environment.CurrentDirectory, "Assets\\catfood.wav"),4200);
+		    //catfood = wm.Load16bitMonoSampleWAV(Path.Combine(Environment.CurrentDirectory, "Assets\\catfood.wav"),4200);
+		    sample = wm.Load8bitMonoSampleWAV(Path.Combine(Environment.CurrentDirectory, "Assets\\chargingpenguin.wav"));
+
 		}
 
 		public void UpdateState(WiimoteChangedEventArgs args)
@@ -80,8 +82,8 @@ namespace WiimoteTest
 
 
 		    
-		    mWiimote.OnPressedReleased("A", delegate() { mWiimote.PlaySample(catfood, 0x10); }, () => { mWiimote.EnableSpeaker(false); });
-            mWiimote.OnPressedReleased("B", () => { mWiimote.PlaySquareWave(SpeakerFreq.FREQ_2470HZ, 0x10); }, () => { mWiimote.EnableSpeaker(false); });
+		    mWiimote.OnPressedReleased("A", () => { mWiimote.PlaySample(sample, 30); }, () => { mWiimote.EnableSpeaker(false); });
+            mWiimote.OnPressedReleased("B", () => { mWiimote.PlaySquareWave(SpeakerFreq.FREQ_2470HZ, 20); }, () => { mWiimote.EnableSpeaker(false); });
 
 			lblAccel.Text = ws.AccelState.Values.ToString();
 
@@ -89,8 +91,25 @@ namespace WiimoteTest
 			chkLED2.Checked = ws.LEDState.LED2;
 			chkLED3.Checked = ws.LEDState.LED3;
 			chkLED4.Checked = ws.LEDState.LED4;
+            
+		    chkSpeakerEnabled.Checked = ws.Speaker.Enabled;
+		    chkSpeakerMuted.Checked = ws.Speaker.Muted;
+		    lblSpeakerFrequency.Text = ws.Speaker.Frequency + " Hz";
+            lblSpeakerVolume.Text = ws.Speaker.Volume + "%";
+		    if (ws.CurrentSample != null)
+		    {
+		        lblSpeakerSample.Text = ws.CurrentSample.AudioName;
+		    }
+            else if (ws.CurrentSample == null && ws.Speaker.Frequency != SpeakerFreq.FREQ_NONE && ws.Speaker.Enabled)
+		    {
+		        lblSpeakerSample.Text = "SquareWave";
+		    }
+		    else
+		    {
+		        lblSpeakerSample.Text = "Not playing";
+		    }
 
-			switch(ws.ExtensionType)
+		    switch(ws.ExtensionType)
 			{
 				case ExtensionType.Nunchuk:
 					lblChuk.Text = ws.NunchukState.AccelState.Values.ToString();
@@ -254,6 +273,12 @@ namespace WiimoteTest
                 btnMPConnect.Text = "Disconnect"; 
             }
             
+        }
+
+        private void tbFreqOverride_TextChanged(object sender, EventArgs e)
+        {
+            var input = ((TextBox) sender).Text;
+            mWiimote.FreqOverride = input == string.Empty ? 0 : int.Parse(input);
         }
 
         private void lblMPCallibrate_Click(object sender, EventArgs e)
