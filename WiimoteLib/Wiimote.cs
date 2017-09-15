@@ -14,6 +14,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using Microsoft.Win32.SafeHandles;
@@ -22,8 +23,8 @@ using System.Text;
 using System.Threading.Tasks;
 using WiimoteLib.DataTypes;
 using WiimoteLib.DataTypes.Enums;
+using WiimoteLib.Exceptions;
 using WiimoteLib.Helpers;
-using WiiMoteLib.Exceptions;
 
 
 namespace WiimoteLib
@@ -500,7 +501,14 @@ namespace WiimoteLib
                     break;
                 case InputReport.OutputReportAck:
                     Debug.Write("ack " +  "OutputReport: " +(OutputReport)buff[3] + " Error: ");
-                    Debug.WriteLine(buff[4] == 0 ? "false" : "true");
+                    if (buff[4] == 0)
+                    {
+                        Debug.WriteLine("false");
+                    }
+                    else
+                    {
+                        Debug.WriteLine("true");
+                    }
                     mWriteDone.Set();
                     break;
                 default:
@@ -543,6 +551,7 @@ namespace WiimoteLib
                 case ExtensionType.Guitar:
                 case ExtensionType.BalanceBoard:
                 case ExtensionType.Drums:
+                case ExtensionType.UDraw:
                     mWiimoteState.ExtensionType = (ExtensionType)type;
                     this.SetReportType(InputReport.ButtonsExtension, true);
                     break;
@@ -906,7 +915,35 @@ namespace WiimoteLib
                             break;
                     }
                     break;
+                case ExtensionType.UDraw:
+                    mWiimoteState.TabletState.OldPoint = mWiimoteState.TabletState.Point;
+                    mWiimoteState.TabletState.OldButtonUp=mWiimoteState.TabletState.ButtonUp;
+                    mWiimoteState.TabletState.OldButtonDown=mWiimoteState.TabletState.ButtonDown;
+                    //const int BUTTON_DATA_OFFSET = 5;
+                    const int FIRST_BOX_START = 0x62;
 
+                    //Ge(t the pressure state
+                    if (buff[offset+2] == 0xFF)
+                        mWiimoteState.TabletState.PressureType = TabletPressure.NotPressed;
+                    else
+                        mWiimoteState.TabletState.PressureType = TabletPressure.PenPressed;
+
+                    //Get the pen pressure
+                    mWiimoteState.TabletState.PenPressure = (ushort)(buff[3]);
+
+                    //Get the (singular) pressure point
+                    mWiimoteState.TabletState.BoxPosition.X = (buff[offset + 2] & 0x0F);
+                    mWiimoteState.TabletState.BoxPosition.Y = ((buff[offset + 2] >> 4) & 0x0F);
+                    mWiimoteState.TabletState.RawPosition.X = buff[offset + 0];
+                    mWiimoteState.TabletState.RawPosition.Y = buff[offset + 1];
+                    var x = mWiimoteState.TabletState.BoxPosition.X == 0 ? mWiimoteState.TabletState.RawPosition.X - FIRST_BOX_START : (0x100 - FIRST_BOX_START) + ((mWiimoteState.TabletState.BoxPosition.X - 1) * 0x100) + mWiimoteState.TabletState.RawPosition.X;
+                    var y = mWiimoteState.TabletState.BoxPosition.Y == 0 ? mWiimoteState.TabletState.RawPosition.Y - FIRST_BOX_START : (0x100 - FIRST_BOX_START) + ((mWiimoteState.TabletState.BoxPosition.Y - 1) * 0x100) + mWiimoteState.TabletState.RawPosition.Y;
+                    mWiimoteState.TabletState.Position.X = x;
+                    mWiimoteState.TabletState.Position.Y = 1340 - y;
+                    mWiimoteState.TabletState.Point = (buff[offset + 5] & 0x04) == 4; // For some reason this is inverted
+                    mWiimoteState.TabletState.ButtonUp = (buff[offset + 5] & 0x01) == 0;
+                    mWiimoteState.TabletState.ButtonDown = (buff[offset + 5] & 0x02) == 0;
+                    break;
                 case ExtensionType.Drums:
                     // it appears the joystick values are only 6 bits
                     mWiimoteState.DrumsState.RawJoystick.X	= (buff[offset + 0] & 0x3f);
@@ -1959,7 +1996,7 @@ namespace WiimoteLib
             MuteSpeaker(true);
             EnableSpeaker(false);
 //            SampleThreadCancellationToken.cancel
-            SampleThread.Dispose();
+            _sampleThreadCancellationTokenSource.Cancel();
             SampleThread = null;
 
         }
@@ -1969,7 +2006,7 @@ namespace WiimoteLib
             if (SampleThread != null)
                 return true;
 
-            SampleThread = new Task(SampleStreamThread, _sampleThreadCancellationToken, TaskCreationOptions.PreferFairness);
+            SampleThread = new Task(SampleStreamThread, _sampleThreadCancellationTokenSource.Token, TaskCreationOptions.PreferFairness);
             if (SampleThread.Status != TaskStatus.Created)
             {
                 Debug.WriteLine("couldn't create sample thread!");
@@ -1987,7 +2024,7 @@ namespace WiimoteLib
         /// <param name="freq">Frequency Enum value</param>
         /// <param name="vol">Volume 1 to 100%</param>
         /// <returns></returns>
-        public bool PlaySquareWave(SpeakerFreq freq, int vol)
+        public bool PlaySquareWave(SpeakerFreq freq, byte vol)
         {
             if (vol > 100)
             {
@@ -1996,14 +2033,14 @@ namespace WiimoteLib
             if (mHandle == null)
                 return false;
 
-
-            var volume = (byte)vol.Map(0, 100, 0x00, 0x40);
+            byte volume = vol;
+            //byte volume = vol.Map(0, 100, 0, 64);
             // if we're already playing a sample, stop it first
             if (IsPlayingSample())
                 currentSample = null;
             // if we're already playing a square wave at this freq and volume, return
             else if (IsPlayingAudio() && (WiimoteState.Speaker.Frequency == freq) &&
-                                        (WiimoteState.Speaker.Volume == volume))
+                                        (WiimoteState.Speaker.Volume == vol))
                 return true;
 
             
@@ -2015,9 +2052,9 @@ namespace WiimoteLib
             MuteSpeaker(true);
 
             // write 0x01 to register 0xa20009 
-            WriteData(0x04a20009, 0x01);
+            WriteData(0xa20009, 0x01);
             // write 0x08 to register 0xa20001 
-            WriteData(0x04a20001, 0x08);
+            WriteData(0xa20001, 0x08);
             // write default sound mode (4bit ADPCM, we assume) 7-byte configuration
             //  to registers 0xa20001-0xa20008 
             byte[] frequency;
@@ -2025,7 +2062,7 @@ namespace WiimoteLib
             byte[] bytes = new byte[7]{ 0x00, 0x00, frequency[0], frequency[1], volume, 0x00, 0x00 };
             WriteData(0x04a20001, (byte)bytes.Length, bytes);
             // write 0x01 to register 0xa20008 
-            WriteData(0x04a20008, 0x01);
+            WriteData(0xa20008, 0x01);
 
             WiimoteState.Speaker.Frequency = freq;
             WiimoteState.Speaker.Volume = volume;

@@ -159,6 +159,8 @@
     <Compile Include="DataTypes\AccelState.cs" />
     <Compile Include="DataTypes\CalibrationInfo\AccelCalibrationInfo.cs" />
     <Compile Include="DataTypes\ButtonState.cs" />
+    <Compile Include="DataTypes\Enums\TabletPressure.cs" />
+    <Compile Include="DataTypes\TabletState.cs" />
     <Compile Include="DataTypes\WiimoteAudioSample.cs" />
     <Compile Include="DataTypes\Enums\SpeakerFreq.cs" />
     <Compile Include="DataTypes\Enums\GuitarType.cs" />

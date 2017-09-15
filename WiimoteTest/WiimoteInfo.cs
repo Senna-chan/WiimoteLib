@@ -26,13 +26,16 @@ namespace WiimoteTest
 		private delegate void UpdateExtensionChangedDelegate(WiimoteExtensionChangedEventArgs args);
 
 		private Bitmap b = new Bitmap(256, 192, PixelFormat.Format24bppRgb);
+		private Bitmap b2 = new Bitmap(256, 192, PixelFormat.Format24bppRgb);
 		private Graphics g;
+		private Graphics g2;
 		private Wiimote mWiimote;
 	    private WiimoteAudioSample catfood, sample;
 		public WiimoteInfo()
 		{
 			InitializeComponent();
 			g = Graphics.FromImage(b);
+			g2 = Graphics.FromImage(b2);
 		}
 
 		public WiimoteInfo(Wiimote wm) : this()
@@ -83,7 +86,7 @@ namespace WiimoteTest
 
 		    
 		    mWiimote.OnPressedReleased("A", () => { mWiimote.PlaySample(sample, 30); }, () => { mWiimote.EnableSpeaker(false); });
-            mWiimote.OnPressedReleased("B", () => { mWiimote.PlaySquareWave(SpeakerFreq.FREQ_2470HZ, 20); }, () => { mWiimote.EnableSpeaker(false); });
+            mWiimote.OnPressedReleased("B", () => { mWiimote.PlaySquareWave(SpeakerFreq.FREQ_4410HZ, 50); }, () => { mWiimote.EnableSpeaker(false); });
 
 			lblAccel.Text = ws.AccelState.Values.ToString();
 
@@ -96,7 +99,7 @@ namespace WiimoteTest
 		    chkSpeakerMuted.Checked = ws.Speaker.Muted;
 		    lblSpeakerFrequency.Text = ws.Speaker.Frequency + " Hz";
             lblSpeakerVolume.Text = ws.Speaker.Volume + "%";
-		    if (ws.CurrentSample != null)
+		    if (ws.CurrentSample != null && ws.Speaker.Enabled)
 		    {
 		        lblSpeakerSample.Text = ws.CurrentSample.AudioName;
 		    }
@@ -217,6 +220,21 @@ namespace WiimoteTest
                     lblMPPitch.Text = ws.MotionPlusState.Gyro.X.ToString("000.00");
                     lblMPRoll.Text  = ws.MotionPlusState.Gyro.Y.ToString("000.00");
                     lblMPYaw.Text   = ws.MotionPlusState.Gyro.Z.ToString("000.00");
+                    break;
+                case ExtensionType.UDraw:
+                    g2.Clear(Color.Black);
+                    if (ws.TabletState.PressureType != TabletPressure.NotPressed)
+                    {
+                        g2.DrawEllipse(new Pen(Color.DarkBlue), ws.TabletState.Position.X / 6, ws.TabletState.Position.Y / 6, ws.TabletState.PenPressure / 4, ws.TabletState.PenPressure / 4);
+                    }
+                    pbTablet.Image = b2;
+                    chkPenPress.Checked = ws.TabletState.Point;
+                    chkPenUp.Checked = ws.TabletState.ButtonUp;
+                    chkPenDown.Checked = ws.TabletState.ButtonDown;
+                    lblTabletBox.Text = ws.TabletState.BoxPosition.ToString();
+                    lblTabletRaw.Text = ws.TabletState.RawPosition.ToString();
+                    lblPenPressure.Text = ws.TabletState.PenPressure.ToString();
+                    lblPenPosition.Text = ws.TabletState.Position.ToString();
                     break;
 			}
 

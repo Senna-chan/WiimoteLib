@@ -4,7 +4,8 @@ using System.IO;
 using System.Windows.Forms;
 using WiimoteLib;
 using WiimoteLib.DataTypes;
-using WiiMoteLib.Exceptions;
+using WiimoteLib.DataTypes.Enums;
+using WiimoteLib.Exceptions;
 
 namespace WiimoteTest
 {

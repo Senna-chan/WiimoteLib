@@ -12,5 +12,13 @@ namespace WiimoteLib.Helpers
         {
             return (value - fromSource) / (toSource - fromSource) * (toTarget - fromTarget) + fromTarget;
         }
+        public static byte Map(this byte value, byte fromSource, byte toSource, byte fromTarget, byte toTarget)
+        {
+            return (byte) ((value - fromSource) / (toSource - fromSource) * (toTarget - fromTarget) + fromTarget);
+        }
+        public static decimal Map(this decimal value, decimal fromSource, decimal toSource, decimal fromTarget, decimal toTarget)
+        {
+            return (value - fromSource) / (toSource - fromSource) * (toTarget - fromTarget) + fromTarget;
+        }
     }
 }

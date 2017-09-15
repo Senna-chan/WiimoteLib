@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WiimoteLib.DataTypes
+﻿namespace WiimoteLib.DataTypes.Enums
 {
     /// <summary>
 	/// The mode of data reported for the IR sensor

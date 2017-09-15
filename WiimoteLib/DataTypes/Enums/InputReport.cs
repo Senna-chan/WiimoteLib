@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WiimoteLib.DataTypes
+﻿namespace WiimoteLib.DataTypes.Enums
 {
     /// <summary>
 	/// The report format in which the Wiimote should return data
@@ -31,6 +25,10 @@ namespace WiimoteLib.DataTypes
         /// Button and accelerometer data
         /// </summary>
         ButtonsAccel = 0x31,
+        /// <summary>
+        /// Button and tablet data
+        /// </summary>
+        ButtonsTablet = 0x32,
         /// <summary>
         /// IR sensor and accelerometer data
         /// </summary>

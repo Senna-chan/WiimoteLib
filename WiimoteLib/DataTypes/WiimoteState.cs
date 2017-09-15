@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WiimoteLib.DataTypes.CalibrationInfo;
+using WiimoteLib.DataTypes.Enums;
 
 namespace WiimoteLib.DataTypes
 {
@@ -79,6 +81,10 @@ namespace WiimoteLib.DataTypes
         /// Current state of LEDs
         /// </summary>
         public LEDState LEDState;
+        /// <summary>
+        /// Current state of UDraw Tablet
+        /// </summary>
+        public TabletState TabletState;
         /// <summary>
         /// Current state of the speaker
         /// </summary>

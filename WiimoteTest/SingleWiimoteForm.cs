@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using WiimoteLib;
 using WiimoteLib.DataTypes;
+using WiimoteLib.DataTypes.Enums;
 using ButtonState = WiimoteLib.DataTypes.ButtonState;
 
 namespace WiimoteTest

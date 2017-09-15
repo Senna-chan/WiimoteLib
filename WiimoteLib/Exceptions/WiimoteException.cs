@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WiiMoteLib.Exceptions
+namespace WiimoteLib.Exceptions
 {
 
     /// <summary>

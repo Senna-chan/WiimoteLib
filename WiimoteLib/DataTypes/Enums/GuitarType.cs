@@ -1,4 +1,4 @@
-﻿namespace WiimoteLib.DataTypes
+﻿namespace WiimoteLib.DataTypes.Enums
 {
 
     /// <summary>

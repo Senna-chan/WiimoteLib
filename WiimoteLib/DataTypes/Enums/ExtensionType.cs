@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WiimoteLib.DataTypes
+﻿namespace WiimoteLib.DataTypes.Enums
 {
     /// <summary>
 	/// The extension plugged into the Wiimote
@@ -39,6 +33,10 @@ namespace WiimoteLib.DataTypes
         /// Wii Fit Balance Board controller
         /// </summary>
         BalanceBoard = 0x0000a4200402,
+        /// <summary>
+        /// Wii Fit Balance Board controller
+        /// </summary>
+        UDraw = 280378218643730,
         /// <summary>
         /// Partially inserted extension.  This is an error condition.
         /// </summary>

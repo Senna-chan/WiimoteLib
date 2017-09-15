@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace WiiMoteLib.Exceptions
+namespace WiimoteLib.Exceptions
 {
     /// <summary>
     /// Thrown when no Wiimotes are found in the HID device list
