@@ -9,19 +9,16 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 using System;
-using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
 using WiimoteLib;
-using WiimoteLib.DataTypes;
 using WiimoteLib.DataTypes.Enums;
-using ButtonState = WiimoteLib.DataTypes.ButtonState;
 
 namespace WiimoteTest
 {
 	public partial class SingleWiimoteForm : Form
 	{
 		Wiimote wm = new Wiimote();
+
 		public SingleWiimoteForm()
 		{
 			InitializeComponent();

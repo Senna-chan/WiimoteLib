@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Windows.Forms;
 using WiimoteLib;
-using WiimoteLib.DataTypes;
 using WiimoteLib.DataTypes.Enums;
 using WiimoteLib.Exceptions;
 
@@ -18,7 +16,7 @@ namespace WiimoteTest
 		public MultipleWiimoteForm()
 		{
 			InitializeComponent();
-        }
+		}
 
 		private void MultipleWiimoteForm_Load(object sender, EventArgs e)
 		{
@@ -80,7 +78,10 @@ namespace WiimoteTest
 			WiimoteInfo wi = mWiimoteMap[((Wiimote)sender).ID];
 			wi.UpdateExtension(e);
 
-		    ((Wiimote) sender).SetReportType(e.Inserted ? InputReport.IRExtensionAccel : InputReport.IRAccel, true);
+			if(e.Inserted)
+				((Wiimote)sender).SetReportType(InputReport.IRExtensionAccel, true);
+			else
+				((Wiimote)sender).SetReportType(InputReport.IRAccel, true);
 		}
 
 		private void MultipleWiimoteForm_FormClosing(object sender, FormClosingEventArgs e)
