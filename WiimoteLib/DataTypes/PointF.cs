@@ -14,7 +14,7 @@ namespace WiimoteLib.DataTypes
 		/// <summary>
 		/// X, Y coordinates of this point
 		/// </summary>
-		public float X, Y;
+		public double X, Y;
 
 		/// <summary>
 		/// Convert to human-readable string

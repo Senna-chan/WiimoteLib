@@ -48,12 +48,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Template\Keyboard.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
-    <Compile Include="Template\Mouse.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
     <Compile Include="InputMapper.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -62,16 +56,25 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="InputMapperTemplate.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Compile>
     <Compile Include="script.cs" />
+    <Compile Include="Template\DataValidater.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Template\InputMapperTemplate.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Template\Keyboard.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Template\Mouse.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Template\ucVarShow.cs">
       <SubType>UserControl</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Template\ucVarShow.Designer.cs">
-      <DependentUpon>ucVarShow.cs</DependentUpon>
+      <SubType>UserControl</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Template\VarShower.cs">
@@ -79,7 +82,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Template\VarShower.Designer.cs">
-      <DependentUpon>VarShower.cs</DependentUpon>
+      <SubType>UserControl</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Template\XBox.cs">

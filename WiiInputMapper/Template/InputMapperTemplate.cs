@@ -27,6 +27,7 @@ namespace WiiInputMapper.Template
 		private Mouse Mouse;
 		private Keyboard Keyboard;
 		private bool initvarshower = false; // This is now for showing vars
+		private bool initscp = false; // If true than we will connect the scp bus. If not then we do not need to init it
 		private VarShower varShower = new VarShower();
 		public InputMapperTemplate()
 		{
@@ -38,8 +39,11 @@ namespace WiiInputMapper.Template
 			mWiimote.WiimoteExtensionChanged += ExtensionChanged;
 			try
 			{
-				_scpBus = new ScpBus();
-				_scpBus.PlugIn(1);
+				if (initscp)
+				{
+					_scpBus = new ScpBus();
+					_scpBus.PlugIn(1);
+				}
 			}
 			catch (Exception ex)
 			{
@@ -51,7 +55,7 @@ namespace WiiInputMapper.Template
 				Console.WriteLine("Connecting to a wiiremote");
 				mWiimote.Connect();
 			}
-			catch (WiimoteNotFoundException ex)
+			catch (WiimoteNotFoundException)
 			{
 				MessageBox.Show("There is no wiimote found");
 			}
@@ -67,7 +71,7 @@ namespace WiiInputMapper.Template
 		public void StopScript()
 		{
 			mWiimote.Disconnect();
-			_scpBus.Unplug(1);
+			if(_scpBus != null) _scpBus.Unplug(1);
 			varShower.Close();
 			Mouse.Stop();
 			Keyboard.Stop();
@@ -78,7 +82,7 @@ namespace WiiInputMapper.Template
 		//GLOBALS
 		private void CodeExecutor(WiimoteState Wiimote)
 		{
-			//USERCODE
+//USERCODE
 		}
 		//endregion  
 
@@ -86,7 +90,7 @@ namespace WiiInputMapper.Template
 		{
 			CodeExecutor(e.WiimoteState);
 			XBox.populateController();
-			_scpBus.Report(1, _controller.GetReport(), _outputReport);
+			if (_scpBus != null) _scpBus.Report(1, _controller.GetReport(), _outputReport);
 		}
 
 

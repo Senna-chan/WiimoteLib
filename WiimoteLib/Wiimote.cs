@@ -808,7 +808,7 @@ namespace WiimoteLib
 
                     if(mWiimoteState.Nunchuk.CalibrationInfo.MaxY != 0x00)
                         mWiimoteState.Nunchuk.Joystick.Y = (float)(((float)mWiimoteState.Nunchuk.RawJoystick.Y - mWiimoteState.Nunchuk.CalibrationInfo.MidY) / 
-                            ((float)mWiimoteState.Nunchuk.CalibrationInfo.MaxY - mWiimoteState.Nunchuk.CalibrationInfo.MinY)) * 2 * 100;
+                            ((float)mWiimoteState.Nunchuk.CalibrationInfo.MaxY - mWiimoteState.Nunchuk.CalibrationInfo.MinY)) * 2 * 100 * -1; // Up is normaly negative and down is positive. But this doesn't make sense
 
                     break;
 

@@ -121,7 +121,6 @@
             this.lblRawBuff = new System.Windows.Forms.Label();
             this.chkRawBuff = new System.Windows.Forms.CheckBox();
             this.groupBox13 = new System.Windows.Forms.GroupBox();
-            this.btnConfigureSCP = new System.Windows.Forms.Button();
             this.groupBox8.SuspendLayout();
             this.groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbIR)).BeginInit();
@@ -1119,21 +1118,10 @@
             this.groupBox13.TabStop = false;
             this.groupBox13.Text = "UDraw";
             // 
-            // btnConfigureSCP
-            // 
-            this.btnConfigureSCP.Location = new System.Drawing.Point(266, 453);
-            this.btnConfigureSCP.Name = "btnConfigureSCP";
-            this.btnConfigureSCP.Size = new System.Drawing.Size(175, 23);
-            this.btnConfigureSCP.TabIndex = 43;
-            this.btnConfigureSCP.Text = "Configure SCP interface";
-            this.btnConfigureSCP.UseVisualStyleBackColor = true;
-            this.btnConfigureSCP.Click += new System.EventHandler(this.btnConfigureSCP_Click);
-            // 
             // WiimoteInfo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.btnConfigureSCP);
             this.Controls.Add(this.groupBox13);
             this.Controls.Add(this.chkRawBuff);
             this.Controls.Add(this.lblRawBuff);
@@ -1280,6 +1268,5 @@
         public System.Windows.Forms.Label lblAccelMinMax;
         public System.Windows.Forms.Label lblNunchukAccelMinMax;
         private System.Windows.Forms.GroupBox groupBox13;
-        private System.Windows.Forms.Button btnConfigureSCP;
     }
 }

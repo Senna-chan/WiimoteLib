@@ -27,6 +27,7 @@ namespace WiiInputMapper
 		private Mouse Mouse;
 		private Keyboard Keyboard;
 		private bool initvarshower = false; // This is now for showing vars
+		private bool initscp = false; // If true than we will connect the scp bus. If not then we do not need to init it
 		private VarShower varShower = new VarShower();
 		public InputMapperTemplate()
 		{
@@ -38,8 +39,11 @@ namespace WiiInputMapper
 			mWiimote.WiimoteExtensionChanged += ExtensionChanged;
 			try
 			{
-				_scpBus = new ScpBus();
-				_scpBus.PlugIn(1);
+				if (initscp)
+				{
+					_scpBus = new ScpBus();
+					_scpBus.PlugIn(1);
+				}
 			}
 			catch (Exception ex)
 			{
@@ -51,7 +55,7 @@ namespace WiiInputMapper
 				Console.WriteLine("Connecting to a wiiremote");
 				mWiimote.Connect();
 			}
-			catch (WiimoteNotFoundException ex)
+			catch (WiimoteNotFoundException)
 			{
 				MessageBox.Show("There is no wiimote found");
 			}
@@ -68,7 +72,7 @@ namespace WiiInputMapper
 		public void StopScript()
 		{
 			mWiimote.Disconnect();
-			_scpBus.Unplug(1);
+			if(_scpBus != null) _scpBus.Unplug(1);
 			varShower.Close();
 			Mouse.Stop();
 			Keyboard.Stop();
@@ -76,14 +80,28 @@ namespace WiiInputMapper
 
 
 		//region userblock
-		
+		double mousespeed = 0.1;
+
 		private void CodeExecutor(WiimoteState Wiimote)
 		{
-						varShower.ShowVar("Wiimote.Nunchuk.Accel.IMU.Pitch", Wiimote.Nunchuk.Accel.IMU.Pitch);
-			varShower.ShowVar("Wiimote.Nunchuk.Accel.IMU.Roll", Wiimote.Nunchuk.Accel.IMU.Roll);
-			Keyboard.Down(Keyboard.Key.Shift, Wiimote.Nunchuk.Accel.IMU.Pitch <  -40);
-			Keyboard.Up(Keyboard.Key.Shift, Wiimote.Nunchuk.Accel.IMU.Pitch >  40);
-			Keyboard.Press(Keyboard.Key.R, Wiimote.Nunchuk.Accel.IMU.Roll < -40);
+			varShower.ShowVar("mousespeed", mousespeed);
+			varShower.ShowVar("Wiimote.Nunchuk.Z", Wiimote.Nunchuk.Z);
+			varShower.ShowVar("Wiimote.Nunchuk.Joystick.X", Wiimote.Nunchuk.Joystick.X);
+			varShower.ShowVar("Wiimote.Nunchuk.Joystick.Y", Wiimote.Nunchuk.Joystick.Y);
+			
+			if (Wiimote.Nunchuk.Z) { 
+			
+				Mouse.MoveRel(Wiimote.Nunchuk.Joystick.X * mousespeed, Wiimote.Nunchuk.Joystick.Y * mousespeed);
+			}
+			
+			if(Wiimote.Buttons.Plus != Wiimote.OldButtons.Plus){
+				if(mousespeed < 1.5) mousespeed += 0.1;
+			
+			}
+			
+			if(Wiimote.Buttons.Minus != Wiimote.OldButtons.Minus){
+				if(mousespeed > 0.1) mousespeed -= 0.1;
+			}
 
 		}
 		//endregion  
@@ -92,7 +110,7 @@ namespace WiiInputMapper
 		{
 			CodeExecutor(e.WiimoteState);
 			XBox.populateController();
-			_scpBus.Report(1, _controller.GetReport(), _outputReport);
+			if (_scpBus != null) _scpBus.Report(1, _controller.GetReport(), _outputReport);
 		}
 
 

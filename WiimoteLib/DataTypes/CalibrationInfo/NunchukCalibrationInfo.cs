@@ -17,5 +17,9 @@
 		/// Joystick Y-axis calibration
 		/// </summary>
 		public byte MinY, MidY, MaxY;
+		/// <summary>
+		/// Joystick offset calibration
+		/// </summary>
+		public byte OffsetX, OffsetY;
 	}
 }

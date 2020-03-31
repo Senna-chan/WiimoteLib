@@ -71,11 +71,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AudioFiles.resx</DependentUpon>
     </Compile>
-    <Compile Include="InputMapper.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="InputMapper.Designer.cs">
-      <DependentUpon>InputMapper.cs</DependentUpon>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SingleWiimoteForm.cs">
       <SubType>Form</SubType>
@@ -95,9 +94,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>AudioFiles.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="InputMapper.resx">
-      <DependentUpon>InputMapper.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="SingleWiimoteForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>SingleWiimoteForm.cs</DependentUpon>
@@ -108,18 +104,13 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="WiimoteInfo.resx">
       <DependentUpon>WiimoteInfo.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -154,11 +145,6 @@
       <Project>{37a555df-7012-4b99-8a47-1c922a361e52}</Project>
       <Name>WiimoteLib</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Assets\InputMapperTemplate.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\alarm.wav" />

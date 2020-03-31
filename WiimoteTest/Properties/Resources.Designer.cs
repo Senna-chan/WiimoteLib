@@ -59,35 +59,5 @@ namespace WiimoteTest.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to using System;
-        ///using WiimoteLib;
-        ///using WiimoteLib.DataTypes;
-        ///using WiimoteLib.DataTypes.Enums;
-        ///using WiimoteLib.Helpers;
-        ///using ScpDriverInterface;
-        ///
-        ///namespace WiimoteTest
-        ///{
-        ///	public class InputMapperExecutor
-        ///	{
-        ///		private Wiimote mWiimote;
-        ///		private ScpBus _scpBus;
-        ///		private X360Controller _controller = new X360Controller();
-        ///		private byte[] _outputReport = new byte[8];
-        ///		public InputMapperExecutor(Wiimote wiimote)
-        ///		{
-        ///			mWiimote = wiimote;
-        ///			try
-        ///			{
-        ///				_scpBus = new ScpBus();
-        ///				_scpB [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string InputMapperTemplate {
-            get {
-                return ResourceManager.GetString("InputMapperTemplate", resourceCulture);
-            }
-        }
     }
 }

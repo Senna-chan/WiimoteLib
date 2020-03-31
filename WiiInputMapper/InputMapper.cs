@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WiiInputMapper.Properties;
@@ -102,7 +103,7 @@ namespace WiiInputMapper
 				//userCodeStr = userCodeStr.Replace("Keyboard.Press", "//Keyboard.KeyPress");
 				var tabAmounts = userCodeStr.Length - userCodeStr.Replace("\t", "").Length;
 
-				userCodeStr.Replace("\t", ""); // We add tabs ourself and this is beter for StartsWith
+				userCodeStr = userCodeStr.Replace("\t", ""); // We add tabs ourself and this is beter for StartsWith
 				if (isCodeBlock)
 				{
 					if (tabAmounts != codeBlockAmount)
@@ -123,10 +124,56 @@ namespace WiiInputMapper
 						isCodeBlock = false;
 					}
 				}
+
+				if (userCodeStr.Contains("Accel.IMU.Pitch") && !userCodeStr.StartsWith("show("))  // We need to validate the pitch.
+				{
+
+					string nonPitchInstruction = userCodeStr.Substring(0,userCodeStr.IndexOf("Wiimote"));
+					string pitchInstruction = userCodeStr.Substring(userCodeStr.IndexOf("Wiimote"));
+					RegexOptions options = RegexOptions.None;
+					Regex regex = new Regex("[ ]{2,}", options);
+					pitchInstruction = regex.Replace(pitchInstruction, " ");
+					char compareChar = ' ';
+					if (pitchInstruction.Contains(">")) compareChar = '>';
+					if (pitchInstruction.Contains("<")) compareChar = '<';
+					if (pitchInstruction.Contains("=")) compareChar = '=';
+					string[] pitchInstructionparts = pitchInstruction.Split(' ');
+					string newPitchInstruction = $"DataValidater.ValidatePitch({pitchInstructionparts[0]}, {pitchInstructionparts[0].Replace(".Pitch", ".Roll")}, {pitchInstructionparts[2].Replace(";","")}, '{compareChar}')";
+					userCodeStr = $"{nonPitchInstruction}{newPitchInstruction}";
+				}
+				if (userCodeStr.Contains("XBox."))
+				{
+					if (!initCode.ContainsKey("initscp"))
+					{
+						initCode.Add("initscp", "initscp = true;");
+					}
+				}
+				if (userCodeStr.StartsWith("Mouse"))
+				{
+					//Mouse.X = Wiimote.Nunchuk.Joystick.X;
+					//Mouse = Wiimote.Nunchuck.Joystick;
+					string MouseInstruction = userCodeStr.Substring(0, userCodeStr.IndexOf("=")).Trim();
+					string WiimoteInstruction = userCodeStr.Substring(userCodeStr.IndexOf("=") + 1).Replace(";","").Trim();
+					if (MouseInstruction.Contains("."))
+					{
+						if (MouseInstruction.Contains("X"))
+						{
+							userCodeStr = $"Mouse.MoveRel({WiimoteInstruction} * mousespeed, 0);";
+						}
+						else if (MouseInstruction.Contains("Y"))
+						{
+							userCodeStr = $"Mouse.MoveRel(0, {WiimoteInstruction} * mousespeed);";
+						}
+					}
+					else
+					{
+						userCodeStr = $"Mouse.MoveRel({WiimoteInstruction}.X * mousespeed, {WiimoteInstruction}.Y * mousespeed);";
+					}
+				}
 				if (userCodeStr.StartsWith("var "))
 				{
-					String varname = userCodeStr.Replace("var ", "").Split('=')[0].Trim();
-					String varvalue = userCodeStr.Replace("var ", "").Split('=')[1].Trim().Replace(";","");
+					string varname = userCodeStr.Replace("var ", "").Split('=')[0].Trim();
+					string varvalue = userCodeStr.Replace("var ", "").Split('=')[1].Trim().Replace(";","");
 					try {
 						variables.Add(varname, varvalue);
 					} catch(ArgumentException ex)
@@ -138,14 +185,14 @@ namespace WiiInputMapper
 				}
 				else if (userCodeStr.StartsWith("show("))
 				{
-					String varname = userCodeStr.Replace("show(", "").Replace(")", "").Replace(";","").Trim();
+					string varname = userCodeStr.Replace("show(", "").Replace(")", "").Replace(";","").Trim();
 					userCodeStr = $"varShower.ShowVar(\"{varname}\", {varname});";
 					if (!initCode.ContainsKey("initvarshower"))
 					{
 						initCode.Add("initvarshower", "initvarshower = true;");
 					}
 				}
-				else if (userCodeStr.StartsWith("if("))
+				else if (userCodeStr.StartsWith("if(") && !userCodeStr.EndsWith("{"))
 				{
 					isCodeBlock = true;
 					userCodeStr = userCodeStr + "{";
@@ -153,30 +200,22 @@ namespace WiiInputMapper
 				}
 				else if (userCodeStr.Contains("Keyboard."))
 				{
+					string KeyboardInstruction = userCodeStr.Substring(0,userCodeStr.IndexOf('=')).Trim();
+					string keyInstruction = userCodeStr.Substring(userCodeStr.IndexOf('=') + 1).Replace(';', ' ').Trim();
 					if (userCodeStr.Contains("Keyboard.Press"))
 					{
-						string KeyboardInstruction = userCodeStr.Split('=')[0].Trim();
-						string keyInstruction = userCodeStr.Split('=')[1].Replace(';', ' ').Trim();
 						userCodeStr = $"Keyboard.Press(Keyboard.{KeyboardInstruction.Replace("Keyboard.Press.", "Key.")}, {keyInstruction});";
 					} 
 					else if (userCodeStr.Contains("Keyboard.KeyUp"))
 					{
-						string KeyboardInstruction = userCodeStr.Split('=')[0].Trim();
-						string keyInstruction = userCodeStr.Split('=')[1].Replace(';', ' ').Trim();
 						userCodeStr = $"Keyboard.Up(Keyboard.{KeyboardInstruction.Replace("Keyboard.KeyUp.", "Key.")}, {keyInstruction});";
 					} 
 					else if (userCodeStr.Contains("Keyboard.KeyDown"))
 					{
-						string KeyboardInstruction = userCodeStr.Split('=')[0].Trim();
-						string keyInstruction = userCodeStr.Split('=')[1].Replace(';', ' ').Trim();
 						userCodeStr = $"Keyboard.Down(Keyboard.{KeyboardInstruction.Replace("Keyboard.KeyDown.", "Key.")}, {keyInstruction});";
 					}
 					else
 					{
-						// Keyboard.X = Wiimote.Buttons.B
-						// Keyboard.Press(Key.X,Wiimote.ButtonState.B);
-						string KeyboardInstruction = userCodeStr.Split('=')[0].Trim();
-						string keyInstruction = userCodeStr.Split('=')[1].Replace(';', ' ').Trim();
 						userCodeStr = $"Keyboard.Press(Keyboard.{KeyboardInstruction.Replace("Keyboard.", "Key.")}, {keyInstruction});";
 					}
 				}
@@ -187,17 +226,28 @@ namespace WiiInputMapper
 				}
 				userCode.AppendLine(userCodeStr);
 			}
+			if (!variables.ContainsKey("mousespeed")) variables.Add("mousespeed", "1.0");
 			StringBuilder variableString = new StringBuilder();
 			foreach(KeyValuePair<String, String> varKV in variables)
 			{
-				variableString.AppendLine($"dynamic {varKV.Key} = {varKV.Value};");
+				string varName = varKV.Key;
+				string varValue = varKV.Value;
+				string varType = "string";
+				Regex numberRegex = new Regex("[^a-z ]*([0-9])*\\d", RegexOptions.None);
+				if (numberRegex.IsMatch(varKV.Value))
+				{
+					varType = "float";
+					varValue += "f";
+				}
+				if (varKV.Value.Contains("true") || varKV.Value.Contains("false")) varType = "bool";
+				variableString.AppendLine($"{varType} {varName} = {varValue};");
 			}
 			StringBuilder initString = new StringBuilder();
 			foreach (String initStr in initCode.Values)
 			{
 				initString.AppendLine(initStr);
 			}
-			String code = Resources.InputMapperTemplate;
+			String code = File.ReadAllText("./Template/InputMapperTemplate.cs");
 			code = code.Replace("//USERCODE", userCode.ToString());
 			code = code.Replace("//GLOBALS", variableString.ToString());
 			code = code.Replace("//INIT", initString.ToString());
@@ -228,7 +278,18 @@ namespace WiiInputMapper
 			string[] references = { "System.dll", "System.Data.dll" };
 			CompilerParams.ReferencedAssemblies.AddRange(references);
 			CompilerParams.ReferencedAssemblies.AddRange(Assembly.GetExecutingAssembly().GetReferencedAssemblies().Select(a => a.Name + ".dll").ToArray());
-			var fileContents = Directory.GetFiles("./Template").Select(x => File.ReadAllText(x)).ToList();
+			List<String> fileContents = new List<String>();
+			var files = Directory.GetFiles("./Template");
+			//Directory.GetFiles("./Template").Select(x => File.ReadAllText(x)).ToList();
+			foreach (var file in files)
+			{
+				var extension = Path.GetExtension(file);
+				if (extension.Equals(".cs"))
+				{
+					if (Path.GetFileNameWithoutExtension(file).Equals("InputMapperTemplate")) continue; // We do not need to compile this since it is already included as the code parameter
+					fileContents.Add(File.ReadAllText(file));
+				}
+			}
 			fileContents.Add(code);
 			CSharpCodeProvider provider = new CSharpCodeProvider();
 			CompilerResults compile = provider.CompileAssemblyFromSource(CompilerParams, fileContents.ToArray());

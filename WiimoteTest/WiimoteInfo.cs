@@ -393,11 +393,6 @@ namespace WiimoteTest
             mWiimote.FreqOverride = input == string.Empty ? 0 : int.Parse(input);
         }
 
-		private void btnConfigureSCP_Click(object sender, EventArgs e)
-		{
-			new InputMapper(mWiimote).Show();
-		}
-
 		private void lblMPCallibrate_Click(object sender, EventArgs e)
         {
             mWiimote.CalibrateMotionPlus();

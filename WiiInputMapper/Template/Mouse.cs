@@ -20,5 +20,14 @@ namespace WiiInputMapper.Template
         internal void Stop()
         {
         }
+
+        internal void MoveRel(double x, double y)
+        {
+			if (x > -5 && x < 5) x = 0; // Deadzone
+			if (y > -5 && y < 5) y = 0; // Deadzone
+			int mX = (int)(x);
+			int mY = (int)(y);
+			inputSimulator.Mouse.MoveMouseBy(mX, mY);
+        }
     }
 }

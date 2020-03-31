@@ -158,7 +158,7 @@ namespace WiiInputMapper.Template
         {
 			foreach(var keyStateKV in keyStateMap)
 			{
-				Down(keyStateKV.Key, true); // Make sure all the keys are not pressed anymore
+				inputSimulator.Keyboard.KeyUp((VirtualKeyCode)(keyStateKV.Key)); // Make sure all the keys are not pressed anymore
 			}
         }
 

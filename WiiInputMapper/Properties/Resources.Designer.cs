@@ -59,35 +59,5 @@ namespace WiiInputMapper.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to using System;
-        ///using System.Data;
-        ///using System.IO;
-        ///using System.Text;
-        ///using System.Threading.Tasks;
-        ///using System.Windows.Forms;
-        ///using WiimoteLib;
-        ///using WiimoteLib.DataTypes;
-        ///using WiimoteLib.DataTypes.Enums;
-        ///using WiimoteLib.Helpers;
-        ///using ScpDriverInterface;
-        ///using WindowsInput;
-        ///using WindowsInput.Native;
-        ///using System.Collections.Generic;
-        ///using WiimoteLib.Exceptions;
-        ///
-        ///namespace WiiInputMapper.Template
-        ///{
-        ///	public class InputMapperTemplate
-        ///	{
-        ///		private Wiimote mWiimote = new Wiimote();
-        ///		pr [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string InputMapperTemplate {
-            get {
-                return ResourceManager.GetString("InputMapperTemplate", resourceCulture);
-            }
-        }
     }
 }
