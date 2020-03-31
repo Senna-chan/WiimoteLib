@@ -55,5 +55,9 @@ namespace WiimoteTest
 			wm.Disconnect();
 		}
 
+        private void wiimoteInfo1_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

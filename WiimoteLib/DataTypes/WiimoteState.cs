@@ -20,19 +20,19 @@ namespace WiimoteLib.DataTypes
         /// <summary>
         /// Current state of accelerometers
         /// </summary>
-        public AccelState AccelState;
+        public AccelState Accel;
         /// <summary>
         /// Current state of buttons
         /// </summary>
-        public ButtonState ButtonState;
+        public ButtonState Buttons;
         /// <summary>
         /// Last state of buttons
         /// </summary>
-        public ButtonState OldButtonState;
+        public ButtonState OldButtons;
         /// <summary>
         /// Current state of IR sensors
         /// </summary>
-        public IRState IRState;
+        public IRState IR;
         /// <summary>
         /// Raw byte value of current battery level
         /// </summary>
@@ -56,35 +56,35 @@ namespace WiimoteLib.DataTypes
         /// <summary>
         /// Current state of Nunchuk extension
         /// </summary>
-        public NunchukState NunchukState;
+        public NunchukState Nunchuk;
         /// <summary>
         /// Current state of Classic Controller extension
         /// </summary>
-        public ClassicControllerState ClassicControllerState;
+        public ClassicControllerState ClassicController;
         /// <summary>
         /// Current state of Guitar extension
         /// </summary>
-        public GuitarState GuitarState;
+        public GuitarState Guitar;
         /// <summary>
         /// Current state of Drums extension
         /// </summary>
-        public DrumsState DrumsState;
+        public DrumsState Drums;
         /// <summary>
         /// Current state of the Wii Fit Balance Board
         /// </summary>
-        public BalanceBoardState BalanceBoardState;
+        public BalanceBoardState BalanceBoard;
         /// <summary>
         /// Current state of the MotionPlus
         /// </summary>
-        public MotionPlusState MotionPlusState;
+        public MotionPlusState MotionPlus;
         /// <summary>
         /// Current state of LEDs
         /// </summary>
-        public LEDState LEDState;
+        public LEDState LED;
         /// <summary>
         /// Current state of UDraw Tablet
         /// </summary>
-        public TabletState TabletState;
+        public TabletState Tablet;
         /// <summary>
         /// Current state of the speaker
         /// </summary>
@@ -93,14 +93,26 @@ namespace WiimoteLib.DataTypes
         /// Current sample for audio
         /// </summary>
         public WiimoteAudioSample CurrentSample;
+        /// <summary>
+        /// Raw complete buffer.
+        /// </summary>
+        public byte[] RawBuff;
 
         /// <summary>
         /// Constructor for WiimoteState class
         /// </summary>
         public WiimoteState()
         {
+            RawBuff = new byte[22];
             Speaker = new SpeakerState();
-            IRState.IRSensors = new IRSensor[4];
+            IR.IRSensors = new IRSensor[4];
+            Accel.Values.X = 0;
+            Accel.Values.Y = 0;
+            Accel.Values.Z = 0;
+            Nunchuk.Accel.Values.X = 0;
+            Nunchuk.Accel.Values.Y = 0;
+            Nunchuk.Accel.Values.Z = 0;
         }
+
     }
 }

@@ -19,7 +19,7 @@ namespace WiimoteTest.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -57,6 +57,36 @@ namespace WiimoteTest.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using WiimoteLib;
+        ///using WiimoteLib.DataTypes;
+        ///using WiimoteLib.DataTypes.Enums;
+        ///using WiimoteLib.Helpers;
+        ///using ScpDriverInterface;
+        ///
+        ///namespace WiimoteTest
+        ///{
+        ///	public class InputMapperExecutor
+        ///	{
+        ///		private Wiimote mWiimote;
+        ///		private ScpBus _scpBus;
+        ///		private X360Controller _controller = new X360Controller();
+        ///		private byte[] _outputReport = new byte[8];
+        ///		public InputMapperExecutor(Wiimote wiimote)
+        ///		{
+        ///			mWiimote = wiimote;
+        ///			try
+        ///			{
+        ///				_scpBus = new ScpBus();
+        ///				_scpB [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string InputMapperTemplate {
+            get {
+                return ResourceManager.GetString("InputMapperTemplate", resourceCulture);
             }
         }
     }

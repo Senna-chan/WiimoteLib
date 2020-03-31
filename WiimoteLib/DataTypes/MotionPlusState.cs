@@ -39,7 +39,13 @@ namespace WiimoteLib.DataTypes
         /// Passthroughmode enabled or not
         /// </summary>
         public bool PassThroughMode;
-        
-
+        /// <summary>
+        /// IMU State for fusion stuff
+        /// </summary>
+        public IMUState IMU;
+        /// <summary>
+        /// This holds the time between samples(For the fusion code)
+        /// </summary>
+        public long LastMillis;
     }
 }

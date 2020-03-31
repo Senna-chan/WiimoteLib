@@ -19,15 +19,15 @@ namespace WiimoteLib.DataTypes
         /// <summary>
         /// Current button state of the Guitar
         /// </summary>
-        public GuitarButtonState ButtonState;
+        public GuitarButtonState Buttons;
         /// <summary>
         /// Current fret button state of the Guitar
         /// </summary>
-        public GuitarFretButtonState FretButtonState;
+        public GuitarFretButtonState FretButtons;
         /// <summary>
         /// Current touchbar state of the Guitar
         /// </summary>
-        public GuitarFretButtonState TouchbarState;
+        public GuitarFretButtonState Touchbar;
         /// <summary>
         /// Raw joystick position.  Values range between 0 - 63.
         /// </summary>

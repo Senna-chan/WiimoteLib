@@ -147,6 +147,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MathFloat, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MathFloat.1.0.1.0\lib\net20\MathFloat.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -160,6 +163,7 @@
     <Compile Include="DataTypes\CalibrationInfo\AccelCalibrationInfo.cs" />
     <Compile Include="DataTypes\ButtonState.cs" />
     <Compile Include="DataTypes\Enums\TabletPressure.cs" />
+    <Compile Include="DataTypes\IMUState.cs" />
     <Compile Include="DataTypes\TabletState.cs" />
     <Compile Include="DataTypes\WiimoteAudioSample.cs" />
     <Compile Include="DataTypes\Enums\SpeakerFreq.cs" />
@@ -192,6 +196,7 @@
     <Compile Include="Exceptions\WiimoteNotFoundException.cs" />
     <Compile Include="Helpers\ExtensionMethods.cs" />
     <Compile Include="Helpers\ConvertHelpers.cs" />
+    <Compile Include="Helpers\Mahony.cs" />
     <Compile Include="HIDImports.cs" />
     <Compile Include="Wiimote.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -202,6 +207,7 @@
     <Content Include="docs\copyright.txt" />
     <Content Include="docs\license.txt" />
     <Content Include="docs\readme.txt" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\APIHelp\AdditionalContent\copyright.topic" />

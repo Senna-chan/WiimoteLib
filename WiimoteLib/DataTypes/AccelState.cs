@@ -20,5 +20,9 @@ namespace WiimoteLib.DataTypes
         /// Normalized accelerometer data.  Values range between 0 - ?, but values > 3 and &lt; -3 are inaccurate.
         /// </summary>
         public Point3F Values;
+        /// <summary>
+        /// Roll and pitch
+        /// </summary>
+        public IMUState IMU;
     }
 }

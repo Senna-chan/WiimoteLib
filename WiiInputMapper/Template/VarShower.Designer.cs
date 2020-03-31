@@ -1,6 +1,6 @@
-﻿namespace WiiInputMapper
+﻿namespace WiiInputMapper.Template
 {
-    partial class Form1
+    partial class VarShower
     {
         /// <summary>
         /// Required designer variable.
@@ -28,34 +28,30 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
+            this.pnlVarShower = new System.Windows.Forms.FlowLayoutPanel();
             this.SuspendLayout();
             // 
-            // label1
+            // pnlVarShower
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 23);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "label1";
+            this.pnlVarShower.Location = new System.Drawing.Point(0, 2);
+            this.pnlVarShower.Name = "pnlVarShower";
+            this.pnlVarShower.Size = new System.Drawing.Size(780, 450);
+            this.pnlVarShower.TabIndex = 0;
             // 
-            // Form1
+            // VarShower
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(973, 569);
-            this.Controls.Add(this.label1);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.ClientSize = new System.Drawing.Size(784, 451);
+            this.Controls.Add(this.pnlVarShower);
+            this.Name = "VarShower";
+            this.Text = "VarShower";
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.FlowLayoutPanel pnlVarShower;
     }
 }
-

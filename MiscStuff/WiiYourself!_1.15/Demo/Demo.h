@@ -7,7 +7,6 @@
 // _______________________________________________________________________________
 //
 //  demo.h  (tab = 4 spaces)
-
 // print-related defines (so we don't clutter the .cpp)
 #define _SETCOL(flags) SetConsoleTextAttribute(console, flags)
 

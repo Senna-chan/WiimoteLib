@@ -19,7 +19,7 @@ namespace WiimoteLib.DataTypes
         /// <summary>
         /// State of accelerometers
         /// </summary>
-        public AccelState AccelState;
+        public AccelState Accel;
         /// <summary>
         /// Raw joystick position before normalization.  Values range between 0 and 255.
         /// </summary>

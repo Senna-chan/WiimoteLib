@@ -14,9 +14,11 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
+using ScpDriverInterface;
 using WiimoteLib;
 using WiimoteLib.DataTypes;
 using WiimoteLib.DataTypes.Enums;
+using WiimoteLib.Helpers;
 
 namespace WiimoteTest
 {
@@ -31,20 +33,26 @@ namespace WiimoteTest
 		private Graphics g2;
 		private Wiimote mWiimote;
 	    private WiimoteAudioSample catfood, sample;
-		public WiimoteInfo()
+
+	    private Point3F minWiimoteAccel;
+	    private Point3F maxWiimoteAccel;
+	    private Point3F minNunchukAccel;
+	    private Point3F maxNunchukAccel;
+        public WiimoteInfo()
 		{
 			InitializeComponent();
 			g = Graphics.FromImage(b);
 			g2 = Graphics.FromImage(b2);
-		}
+
+            
+        }
 
 		public WiimoteInfo(Wiimote wm) : this()
 		{
 			mWiimote = wm;
-		    //catfood = wm.Load16bitMonoSampleWAV(Path.Combine(Environment.CurrentDirectory, "Assets\\catfood.wav"),4200);
+            //catfood = wm.Load16bitMonoSampleWAV(Path.Combine(Environment.CurrentDirectory, "Assets\\catfood.wav"),4200);
 		    sample = wm.Load8bitMonoSampleWAV(Path.Combine(Environment.CurrentDirectory, "Assets\\chargingpenguin.wav"));
-
-		}
+        }
 
 		public void UpdateState(WiimoteChangedEventArgs args)
 		{
@@ -70,30 +78,60 @@ namespace WiimoteTest
 		{
 			WiimoteState ws = args.WiimoteState;
 
-			clbButtons.SetItemChecked(0, ws.ButtonState. A);
-			clbButtons.SetItemChecked(1, ws.ButtonState. B);
-			clbButtons.SetItemChecked(2, ws.ButtonState. Minus);
-			clbButtons.SetItemChecked(3, ws.ButtonState. Home);
-			clbButtons.SetItemChecked(4, ws.ButtonState. Plus);
-			clbButtons.SetItemChecked(5, ws.ButtonState. One);
-			clbButtons.SetItemChecked(6, ws.ButtonState. Two);
-			clbButtons.SetItemChecked(7, ws.ButtonState. Up);
-			clbButtons.SetItemChecked(8, ws.ButtonState. Down);
-			clbButtons.SetItemChecked(9, ws.ButtonState. Left);
-			clbButtons.SetItemChecked(10, ws.ButtonState.Right);
+
+            clbButtons.SetItemChecked(0, ws.Buttons. A);
+			clbButtons.SetItemChecked(1, ws.Buttons. B);
+			clbButtons.SetItemChecked(2, ws.Buttons. Minus);
+			clbButtons.SetItemChecked(3, ws.Buttons. Home);
+			clbButtons.SetItemChecked(4, ws.Buttons. Plus);
+			clbButtons.SetItemChecked(5, ws.Buttons. One);
+			clbButtons.SetItemChecked(6, ws.Buttons. Two);
+			clbButtons.SetItemChecked(7, ws.Buttons. Up);
+			clbButtons.SetItemChecked(8, ws.Buttons. Down);
+			clbButtons.SetItemChecked(9, ws.Buttons. Left);
+			clbButtons.SetItemChecked(10, ws.Buttons.Right);
 
 
+			mWiimote.OnPressedReleased("A", () => { mWiimote.PlaySample(sample, 30); }, () => { mWiimote.EnableSpeaker(false); });
+            mWiimote.OnPressedReleased("B", () => { mWiimote.PlaySquareWave(SpeakerFreq.FREQ_2610HZ, 64); }, () => { mWiimote.EnableSpeaker(false); });
 
-		    
-		    mWiimote.OnPressedReleased("A", () => { mWiimote.PlaySample(sample, 30); }, () => { mWiimote.EnableSpeaker(false); });
-            mWiimote.OnPressedReleased("B", () => { mWiimote.PlaySquareWave(SpeakerFreq.FREQ_4410HZ, 50); }, () => { mWiimote.EnableSpeaker(false); });
+			lblAccel.Text = ws.Accel.Values.ToString();
+		    lblAccelImu.Text = ws.Accel.IMU.ToString();
 
-			lblAccel.Text = ws.AccelState.Values.ToString();
+		    if (ws.Accel.Values.X < minWiimoteAccel.X)
+		    {
+		        minWiimoteAccel.X = ws.Accel.Values.X;
+		    }
+		    if (ws.Accel.Values.Y < minWiimoteAccel.Y)
+		    {
+		        minWiimoteAccel.Y = ws.Accel.Values.Y;
+		    }
+		    if (ws.Accel.Values.Z < minWiimoteAccel.Z)
+		    {
+		        minWiimoteAccel.Z = ws.Accel.Values.Z;
+		    }
+		    if (ws.Accel.Values.X > maxWiimoteAccel.X)
+		    {
+		        maxWiimoteAccel.X = ws.Accel.Values.X;
+		    }
+		    if (ws.Accel.Values.Y > maxWiimoteAccel.Y)
+		    {
+		        maxWiimoteAccel.Y = ws.Accel.Values.Y;
+		    }
+		    if (ws.Accel.Values.Z > maxWiimoteAccel.Z)
+		    {
+		        maxWiimoteAccel.Z = ws.Accel.Values.Z;
+		    }
 
-			chkLED1.Checked = ws.LEDState.LED1;
-			chkLED2.Checked = ws.LEDState.LED2;
-			chkLED3.Checked = ws.LEDState.LED3;
-			chkLED4.Checked = ws.LEDState.LED4;
+		    lblAccelMinMax.Text = "";
+		    lblAccelMinMax.Text += minWiimoteAccel.ToString();
+		    lblAccelMinMax.Text += Environment.NewLine;
+		    lblAccelMinMax.Text += maxWiimoteAccel.ToString();
+
+            chkLED1.Checked = ws.LED.LED1;
+			chkLED2.Checked = ws.LED.LED2;
+			chkLED3.Checked = ws.LED.LED3;
+			chkLED4.Checked = ws.LED.LED4;
             
 		    chkSpeakerEnabled.Checked = ws.Speaker.Enabled;
 		    chkSpeakerMuted.Checked = ws.Speaker.Muted;
@@ -111,149 +149,205 @@ namespace WiimoteTest
 		    {
 		        lblSpeakerSample.Text = "Not playing";
 		    }
-
-		    switch(ws.ExtensionType)
+		    if (chkRawBuff.Checked)
+		    {
+		        if (ws.RawBuff != null)
+		        {
+		            foreach (var rawBuffByte in ws.RawBuff)
+		            {
+		                lblRawBuff.Text += $"b{Convert.ToString(rawBuffByte, 2).PadLeft(8, '0')} ";
+		            }
+		        }
+		    }
+            switch (ws.ExtensionType)
 			{
-				case ExtensionType.Nunchuk:
-					lblChuk.Text = ws.NunchukState.AccelState.Values.ToString();
-					lblChukJoy.Text = ws.NunchukState.Joystick.ToString();
-					chkC.Checked = ws.NunchukState.C;
-					chkZ.Checked = ws.NunchukState.Z;
-					break;
+                case ExtensionType.None:
+                    break;
+                case ExtensionType.Unknown:
+                    lblRawBuff.Text = ""; 
+                    if (ws.RawBuff != null)
+                    {
+                        foreach (var rawBuffByte in ws.RawBuff)
+                        {
+                            lblRawBuff.Text += $"b{Convert.ToString(rawBuffByte, 2).PadLeft(8, '0')} ";
+                        }
+                    }
+                    break;
+                case ExtensionType.Nunchuk:
+					lblChuk.Text = ws.Nunchuk.Accel.Values.ToString();
+					lblChukJoy.Text = ws.Nunchuk.Joystick.ToString();
+                    lblNunchuckAccelImu.Text = ws.Nunchuk.Accel.IMU.ToString();
+                    chkC.Checked = ws.Nunchuk.C;
+					chkZ.Checked = ws.Nunchuk.Z;
+                    if (ws.Nunchuk.Accel.Values.X < minNunchukAccel.X)
+                    {
+                        minNunchukAccel.X = ws.Nunchuk.Accel.Values.X;
+                    }
+                    if (ws.Nunchuk.Accel.Values.Y < minNunchukAccel.Y)
+                    {
+                        minNunchukAccel.Y = ws.Nunchuk.Accel.Values.Y;
+                    }
+                    if (ws.Nunchuk.Accel.Values.Z < minNunchukAccel.Z)
+                    {
+                        minNunchukAccel.Z = ws.Nunchuk.Accel.Values.Z;
+                    }
+                    if (ws.Nunchuk.Accel.Values.X > maxNunchukAccel.X)
+                    {
+                        maxNunchukAccel.X = ws.Nunchuk.Accel.Values.X;
+                    }
+                    if (ws.Nunchuk.Accel.Values.Y > maxNunchukAccel.Y)
+                    {
+                        maxNunchukAccel.Y = ws.Nunchuk.Accel.Values.Y;
+                    }
+                    if (ws.Nunchuk.Accel.Values.Z > maxNunchukAccel.Z)
+                    {
+                        maxNunchukAccel.Z = ws.Nunchuk.Accel.Values.Z;
+                    }
 
+                    //_controller.LeftStickX = (short)(ws.Nunchuk.Joystick.X * 32767 * 2).Constrain(-32768, 32767);
+                    //_controller.LeftStickY = (short)(ws.Nunchuk.Joystick.Y * 32767 * 2).Constrain(-32768, 32767);
+
+                    lblNunchukAccelMinMax.Text = "";
+                    lblNunchukAccelMinMax.Text += minNunchukAccel.ToString();
+                    lblNunchukAccelMinMax.Text += Environment.NewLine;
+                    lblNunchukAccelMinMax.Text += maxNunchukAccel.ToString();
+                    break;
 				case ExtensionType.ClassicController:
-					clbCCButtons.SetItemChecked(0, ws.ClassicControllerState.ButtonState.A);
-					clbCCButtons.SetItemChecked(1, ws.ClassicControllerState.ButtonState.B);
-					clbCCButtons.SetItemChecked(2, ws.ClassicControllerState.ButtonState.X);
-					clbCCButtons.SetItemChecked(3, ws.ClassicControllerState.ButtonState.Y);
-					clbCCButtons.SetItemChecked(4, ws.ClassicControllerState.ButtonState.Minus);
-					clbCCButtons.SetItemChecked(5, ws.ClassicControllerState.ButtonState.Home);
-					clbCCButtons.SetItemChecked(6, ws.ClassicControllerState.ButtonState.Plus);
-					clbCCButtons.SetItemChecked(7, ws.ClassicControllerState.ButtonState.Up);
-					clbCCButtons.SetItemChecked(8, ws.ClassicControllerState.ButtonState.Down);
-					clbCCButtons.SetItemChecked(9, ws.ClassicControllerState.ButtonState.Left);
-					clbCCButtons.SetItemChecked(10, ws.ClassicControllerState.ButtonState.Right);
-					clbCCButtons.SetItemChecked(11, ws.ClassicControllerState.ButtonState.ZL);
-					clbCCButtons.SetItemChecked(12, ws.ClassicControllerState.ButtonState.ZR);
-					clbCCButtons.SetItemChecked(13, ws.ClassicControllerState.ButtonState.TriggerL);
-					clbCCButtons.SetItemChecked(14, ws.ClassicControllerState.ButtonState.TriggerR);
+					clbCCButtons.SetItemChecked(0, ws.ClassicController.Buttons.A);
+					clbCCButtons.SetItemChecked(1, ws.ClassicController.Buttons.B);
+					clbCCButtons.SetItemChecked(2, ws.ClassicController.Buttons.X);
+					clbCCButtons.SetItemChecked(3, ws.ClassicController.Buttons.Y);
+					clbCCButtons.SetItemChecked(4, ws.ClassicController.Buttons.Minus);
+					clbCCButtons.SetItemChecked(5, ws.ClassicController.Buttons.Home);
+					clbCCButtons.SetItemChecked(6, ws.ClassicController.Buttons.Plus);
+					clbCCButtons.SetItemChecked(7, ws.ClassicController.Buttons.Up);
+					clbCCButtons.SetItemChecked(8, ws.ClassicController.Buttons.Down);
+					clbCCButtons.SetItemChecked(9, ws.ClassicController.Buttons.Left);
+					clbCCButtons.SetItemChecked(10, ws.ClassicController.Buttons.Right);
+					clbCCButtons.SetItemChecked(11, ws.ClassicController.Buttons.ZL);
+					clbCCButtons.SetItemChecked(12, ws.ClassicController.Buttons.ZR);
+					clbCCButtons.SetItemChecked(13, ws.ClassicController.Buttons.TriggerL);
+					clbCCButtons.SetItemChecked(14, ws.ClassicController.Buttons.TriggerR);
 
-					lblCCJoy1.Text = ws.ClassicControllerState.JoystickL.ToString();
-					lblCCJoy2.Text = ws.ClassicControllerState.JoystickR.ToString();
+					lblCCJoy1.Text = ws.ClassicController.JoystickL.ToString();
+					lblCCJoy2.Text = ws.ClassicController.JoystickR.ToString();
 
-					lblTriggerL.Text = ws.ClassicControllerState.TriggerL.ToString();
-					lblTriggerR.Text = ws.ClassicControllerState.TriggerR.ToString();
+					lblTriggerL.Text = ws.ClassicController.TriggerL.ToString();
+					lblTriggerR.Text = ws.ClassicController.TriggerR.ToString();
 					break;
 
 				case ExtensionType.Guitar:
-				    clbGuitarButtons.SetItemChecked(0, ws.GuitarState.FretButtonState.Green);
-				    clbGuitarButtons.SetItemChecked(1, ws.GuitarState.FretButtonState.Red);
-				    clbGuitarButtons.SetItemChecked(2, ws.GuitarState.FretButtonState.Yellow);
-				    clbGuitarButtons.SetItemChecked(3, ws.GuitarState.FretButtonState.Blue);
-				    clbGuitarButtons.SetItemChecked(4, ws.GuitarState.FretButtonState.Orange);
-				    clbGuitarButtons.SetItemChecked(5, ws.GuitarState.ButtonState.Minus);
-				    clbGuitarButtons.SetItemChecked(6, ws.GuitarState.ButtonState.Plus);
-				    clbGuitarButtons.SetItemChecked(7, ws.GuitarState.ButtonState.StrumUp);
-				    clbGuitarButtons.SetItemChecked(8, ws.GuitarState.ButtonState.StrumDown);
+				    clbGuitarButtons.SetItemChecked(0, ws.Guitar.FretButtons.Green);
+				    clbGuitarButtons.SetItemChecked(1, ws.Guitar.FretButtons.Red);
+				    clbGuitarButtons.SetItemChecked(2, ws.Guitar.FretButtons.Yellow);
+				    clbGuitarButtons.SetItemChecked(3, ws.Guitar.FretButtons.Blue);
+				    clbGuitarButtons.SetItemChecked(4, ws.Guitar.FretButtons.Orange);
+				    clbGuitarButtons.SetItemChecked(5, ws.Guitar.Buttons.Minus);
+				    clbGuitarButtons.SetItemChecked(6, ws.Guitar.Buttons.Plus);
+				    clbGuitarButtons.SetItemChecked(7, ws.Guitar.Buttons.StrumUp);
+				    clbGuitarButtons.SetItemChecked(8, ws.Guitar.Buttons.StrumDown);
 
-					clbTouchbar.SetItemChecked(0, ws.GuitarState.TouchbarState.Green);
-					clbTouchbar.SetItemChecked(1, ws.GuitarState.TouchbarState.Red);
-					clbTouchbar.SetItemChecked(2, ws.GuitarState.TouchbarState.Yellow);
-					clbTouchbar.SetItemChecked(3, ws.GuitarState.TouchbarState.Blue);
-					clbTouchbar.SetItemChecked(4, ws.GuitarState.TouchbarState.Orange);
+					clbTouchbar.SetItemChecked(0, ws.Guitar.Touchbar.Green);
+					clbTouchbar.SetItemChecked(1, ws.Guitar.Touchbar.Red);
+					clbTouchbar.SetItemChecked(2, ws.Guitar.Touchbar.Yellow);
+					clbTouchbar.SetItemChecked(3, ws.Guitar.Touchbar.Blue);
+					clbTouchbar.SetItemChecked(4, ws.Guitar.Touchbar.Orange);
 
-					lblGuitarJoy.Text = ws.GuitarState.Joystick.ToString();
-					lblGuitarWhammy.Text = ws.GuitarState.WhammyBar.ToString();
-					lblGuitarType.Text = ws.GuitarState.GuitarType.ToString();
+					lblGuitarJoy.Text = ws.Guitar.Joystick.ToString();
+					lblGuitarWhammy.Text = ws.Guitar.WhammyBar.ToString();
+					lblGuitarType.Text = ws.Guitar.GuitarType.ToString();
 				    break;
 
 				case ExtensionType.Drums:
-					clbDrums.SetItemChecked(0, ws.DrumsState.Red);
-					clbDrums.SetItemChecked(1, ws.DrumsState.Blue);
-					clbDrums.SetItemChecked(2, ws.DrumsState.Green);
-					clbDrums.SetItemChecked(3, ws.DrumsState.Yellow);
-					clbDrums.SetItemChecked(4, ws.DrumsState.Orange);
-					clbDrums.SetItemChecked(5, ws.DrumsState.Pedal);
-					clbDrums.SetItemChecked(6, ws.DrumsState.Minus);
-					clbDrums.SetItemChecked(7, ws.DrumsState.Plus);
+					clbDrums.SetItemChecked(0, ws.Drums.Red);
+					clbDrums.SetItemChecked(1, ws.Drums.Blue);
+					clbDrums.SetItemChecked(2, ws.Drums.Green);
+					clbDrums.SetItemChecked(3, ws.Drums.Yellow);
+					clbDrums.SetItemChecked(4, ws.Drums.Orange);
+					clbDrums.SetItemChecked(5, ws.Drums.Pedal);
+					clbDrums.SetItemChecked(6, ws.Drums.Minus);
+					clbDrums.SetItemChecked(7, ws.Drums.Plus);
 
 					lbDrumVelocity.Items.Clear();
-					lbDrumVelocity.Items.Add(ws.DrumsState.RedVelocity);
-					lbDrumVelocity.Items.Add(ws.DrumsState.BlueVelocity);
-					lbDrumVelocity.Items.Add(ws.DrumsState.GreenVelocity);
-					lbDrumVelocity.Items.Add(ws.DrumsState.YellowVelocity);
-					lbDrumVelocity.Items.Add(ws.DrumsState.OrangeVelocity);
-					lbDrumVelocity.Items.Add(ws.DrumsState.PedalVelocity);
+					lbDrumVelocity.Items.Add(ws.Drums.RedVelocity);
+					lbDrumVelocity.Items.Add(ws.Drums.BlueVelocity);
+					lbDrumVelocity.Items.Add(ws.Drums.GreenVelocity);
+					lbDrumVelocity.Items.Add(ws.Drums.YellowVelocity);
+					lbDrumVelocity.Items.Add(ws.Drums.OrangeVelocity);
+					lbDrumVelocity.Items.Add(ws.Drums.PedalVelocity);
 
-					lblDrumJoy.Text = ws.DrumsState.Joystick.ToString();
+					lblDrumJoy.Text = ws.Drums.Joystick.ToString();
 					break;
 
 				case ExtensionType.BalanceBoard:
 					if(chkLbs.Checked)
 					{
-						lblBBTL.Text = ws.BalanceBoardState.SensorValuesLb.TopLeft.ToString();
-						lblBBTR.Text = ws.BalanceBoardState.SensorValuesLb.TopRight.ToString();
-						lblBBBL.Text = ws.BalanceBoardState.SensorValuesLb.BottomLeft.ToString();
-						lblBBBR.Text = ws.BalanceBoardState.SensorValuesLb.BottomRight.ToString();
-						lblBBTotal.Text = ws.BalanceBoardState.WeightLb.ToString();
+						lblBBTL.Text = ws.BalanceBoard.SensorValuesLb.TopLeft.ToString();
+						lblBBTR.Text = ws.BalanceBoard.SensorValuesLb.TopRight.ToString();
+						lblBBBL.Text = ws.BalanceBoard.SensorValuesLb.BottomLeft.ToString();
+						lblBBBR.Text = ws.BalanceBoard.SensorValuesLb.BottomRight.ToString();
+						lblBBTotal.Text = ws.BalanceBoard.WeightLb.ToString();
 					}
 					else
 					{
-						lblBBTL.Text = ws.BalanceBoardState.SensorValuesKg.TopLeft.ToString();
-						lblBBTR.Text = ws.BalanceBoardState.SensorValuesKg.TopRight.ToString();
-						lblBBBL.Text = ws.BalanceBoardState.SensorValuesKg.BottomLeft.ToString();
-						lblBBBR.Text = ws.BalanceBoardState.SensorValuesKg.BottomRight.ToString();
-						lblBBTotal.Text = ws.BalanceBoardState.WeightKg.ToString();
+						lblBBTL.Text = ws.BalanceBoard.SensorValuesKg.TopLeft.ToString();
+						lblBBTR.Text = ws.BalanceBoard.SensorValuesKg.TopRight.ToString();
+						lblBBBL.Text = ws.BalanceBoard.SensorValuesKg.BottomLeft.ToString();
+						lblBBBR.Text = ws.BalanceBoard.SensorValuesKg.BottomRight.ToString();
+						lblBBTotal.Text = ws.BalanceBoard.WeightKg.ToString();
 					}
-					lblCOG.Text = ws.BalanceBoardState.CenterOfGravity.ToString();
+					lblCOG.Text = ws.BalanceBoard.CenterOfGravity.ToString();
 					break;
                 case ExtensionType.MotionPlus:
 
-                    lblMPRawPitch.Text = ws.MotionPlusState.GyroRaw.X.ToString();
-                    lblMPRawRoll.Text  = ws.MotionPlusState.GyroRaw.Y.ToString();
-                    lblMPRawYaw.Text   = ws.MotionPlusState.GyroRaw.Z.ToString();
+                    lblMPRawPitch.Text = ws.MotionPlus.GyroRaw.X.ToString();
+                    lblMPRawRoll.Text  = ws.MotionPlus.GyroRaw.Y.ToString();
+                    lblMPRawYaw.Text   = ws.MotionPlus.GyroRaw.Z.ToString();
 
-                    chcMPYawSlow.Checked = ws.MotionPlusState.SlowYaw;
-                    chcMPRollSlow.Checked = ws.MotionPlusState.SlowRoll;
-                    chcMPPitchSlow.Checked = ws.MotionPlusState.SlowPitch;
+                    chcMPYawSlow.Checked = ws.MotionPlus.SlowYaw;
+                    chcMPRollSlow.Checked = ws.MotionPlus.SlowRoll;
+                    chcMPPitchSlow.Checked = ws.MotionPlus.SlowPitch;
 
-                    lblMPPitch.Text = ws.MotionPlusState.Gyro.X.ToString("000.00");
-                    lblMPRoll.Text  = ws.MotionPlusState.Gyro.Y.ToString("000.00");
-                    lblMPYaw.Text   = ws.MotionPlusState.Gyro.Z.ToString("000.00");
+                    lblMPPitch.Text = ws.MotionPlus.Gyro.X.ToString("000.00");
+                    lblMPRoll.Text  = ws.MotionPlus.Gyro.Y.ToString("000.00");
+                    lblMPYaw.Text   = ws.MotionPlus.Gyro.Z.ToString("000.00");
+
+                    lblMotionPlusImu.Text = ws.MotionPlus.IMU.ToString();
                     break;
                 case ExtensionType.UDraw:
                     g2.Clear(Color.Black);
-                    if (ws.TabletState.PressureType != TabletPressure.NotPressed)
+                    if (ws.Tablet.PressureType != TabletPressure.NotPressed)
                     {
-                        g2.DrawEllipse(new Pen(Color.DarkBlue), ws.TabletState.Position.X / 6, ws.TabletState.Position.Y / 6, ws.TabletState.PenPressure / 4, ws.TabletState.PenPressure / 4);
+                        g2.DrawEllipse(new Pen(Color.DarkBlue), ws.Tablet.Position.X / 6, ws.Tablet.Position.Y / 6, ws.Tablet.PenPressure / 4, ws.Tablet.PenPressure / 4);
                     }
                     pbTablet.Image = b2;
-                    chkPenPress.Checked = ws.TabletState.Point;
-                    chkPenUp.Checked = ws.TabletState.ButtonUp;
-                    chkPenDown.Checked = ws.TabletState.ButtonDown;
-                    lblTabletBox.Text = ws.TabletState.BoxPosition.ToString();
-                    lblTabletRaw.Text = ws.TabletState.RawPosition.ToString();
-                    lblPenPressure.Text = ws.TabletState.PenPressure.ToString();
-                    lblPenPosition.Text = ws.TabletState.Position.ToString();
+                    chkPenPress.Checked = ws.Tablet.Point;
+                    chkPenUp.Checked = ws.Tablet.ButtonUp;
+                    chkPenDown.Checked = ws.Tablet.ButtonDown;
+                    lblTabletBox.Text = ws.Tablet.BoxPosition.ToString();
+                    lblTabletRaw.Text = ws.Tablet.RawPosition.ToString();
+                    lblPenPressure.Text = ws.Tablet.PenPressure.ToString();
+                    lblPenPosition.Text = ws.Tablet.Position.ToString();
                     break;
 			}
 
 			g.Clear(Color.Black);
 
-			UpdateIR(ws.IRState.IRSensors[0], lblIR1, lblIR1Raw, chkFound1, Color.Red);
-			UpdateIR(ws.IRState.IRSensors[1], lblIR2, lblIR2Raw, chkFound2, Color.Blue);
-			UpdateIR(ws.IRState.IRSensors[2], lblIR3, lblIR3Raw, chkFound3, Color.Yellow);
-			UpdateIR(ws.IRState.IRSensors[3], lblIR4, lblIR4Raw, chkFound4, Color.Orange);
+			UpdateIR(ws.IR.IRSensors[0], lblIR1, lblIR1Raw, chkFound1, Color.Red);
+			UpdateIR(ws.IR.IRSensors[1], lblIR2, lblIR2Raw, chkFound2, Color.Blue);
+			UpdateIR(ws.IR.IRSensors[2], lblIR3, lblIR3Raw, chkFound3, Color.Yellow);
+			UpdateIR(ws.IR.IRSensors[3], lblIR4, lblIR4Raw, chkFound4, Color.Orange);
 
-			if(ws.IRState.IRSensors[0].Found && ws.IRState.IRSensors[1].Found)
-				g.DrawEllipse(new Pen(Color.Green), (int)(ws.IRState.RawMidpoint.X / 4), (int)(ws.IRState.RawMidpoint.Y / 4), 5, 5);
+			if(ws.IR.IRSensors[0].Found && ws.IR.IRSensors[1].Found)
+				g.DrawEllipse(new Pen(Color.Green), (int)(ws.IR.RawMidpoint.X / 4), (int)(ws.IR.RawMidpoint.Y / 4), 5, 5);
 
 			pbIR.Image = b;
 
 			pbBattery.Value = (ws.Battery > 0xc8 ? 0xc8 : (int)ws.Battery);
 			lblBattery.Text = ws.Battery.ToString();
 			lblDevicePath.Text = "Device Path: " + mWiimote.HIDDevicePath;
-		}
+
+        }
 
 	    private void UpdateIR(IRSensor irSensor, Label lblNorm, Label lblRaw, CheckBox chkFound, Color color)
 		{
@@ -299,7 +393,12 @@ namespace WiimoteTest
             mWiimote.FreqOverride = input == string.Empty ? 0 : int.Parse(input);
         }
 
-        private void lblMPCallibrate_Click(object sender, EventArgs e)
+		private void btnConfigureSCP_Click(object sender, EventArgs e)
+		{
+			new InputMapper(mWiimote).Show();
+		}
+
+		private void lblMPCallibrate_Click(object sender, EventArgs e)
         {
             mWiimote.CalibrateMotionPlus();
         }

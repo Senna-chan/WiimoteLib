@@ -15,14 +15,13 @@ namespace WiimoteLib.DataTypes
         /// X, Y, Z coordinates of this point
         /// </summary>
         public float X, Y, Z;
-
         /// <summary>
         /// Convert to human-readable string
         /// </summary>
         /// <returns>A string that represents the point</returns>
         public override string ToString()
         {
-            return string.Format("{{X={0}, Y={1}, Z={2}}}", X, Y, Z);
+            return string.Format("{{X={0:0.00}\nY={1:0.00}\nZ={2:0.00}}}", X, Y, Z);
         }
 
     }

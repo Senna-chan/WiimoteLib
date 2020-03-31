@@ -127,15 +127,15 @@ int _tmain ()
 	// let's load a couple of samples:
 	wiimote_sample sample1, sample2;
 
-	if(!wiimote::Load16bitMonoSampleWAV(_T("alarm.wav"), sample1)) {
-		_tprintf(_T("\r  ** can't find 'sample' - (sample won't work!) **"));
+	if(!wiimote::Load16bitMonoSampleWAV(_T("Daisy16 (3130).wav"), sample1)) {
+		_tprintf(_T("\r  ** can't find 'alarm' - (sample won't work!) **"));
 		Beep(100, 1000);
 		Sleep(3000);
 		_tprintf(_T("\r") BLANK_LINE);
 		}
 
-	if (!wiimote::Load16bitMonoSampleWAV(_T("chargingpenguin.wav"), sample2)) {
-		_tprintf(_T("\r  ** can't find 'catfood.wav' - (sample won't work!) **"));
+	if (!wiimote::Load16bitMonoSampleWAV(_T("1kSine16 (3130).wav"), sample2)) {
+		_tprintf(_T("\r  ** can't find 'chargingpenguin.wav' - (sample won't work!) **"));
 		Beep(100, 1000);
 		Sleep(3000);
 		_tprintf(_T("\r") BLANK_LINE);
@@ -283,11 +283,11 @@ reconnect:
 			
 		//  play audio whilst certain buttons are held
 		if(!remote.IsBalanceBoard()) {
-			ON_PRESS_RELEASE(  A, remote.PlaySquareWave(FREQ_4410HZ, 0x05),
+			ON_PRESS_RELEASE(  A, remote.PlaySquareWave(FREQ_2470HZ, 0x10),
 								  remote.EnableSpeaker (false));
-			ON_PRESS_RELEASE(One, remote.PlaySample	   (sample1, 0x05),
+			ON_PRESS_RELEASE(One, remote.PlaySample	   (sample1, 0x10),
 								  remote.EnableSpeaker (false));
-			ON_PRESS_RELEASE(Two, remote.PlaySample	   (sample2, 0x05),
+			ON_PRESS_RELEASE(Two, remote.PlaySample	   (sample2, 0x10),
 								  remote.EnableSpeaker (false));
 			}
 
