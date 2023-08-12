@@ -1,0 +1,5 @@
+<map id="WiimoteLib.Wiimote.SetRumble" name="WiimoteLib.Wiimote.SetRumble">
+<area shape="rect" id="Node000001" title="Toggle rumble." alt="" coords="5,5,212,32"/>
+<area shape="rect" id="Node000002" href="$class_wiimote_lib_1_1_wiimote.html#ad60b7b5265674389c46fccd4d9842eb1" title="Set the LEDs on the Wiimote." alt="" coords="260,5,454,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="212,16,245,16,245,21,212,21"/>
+</map>

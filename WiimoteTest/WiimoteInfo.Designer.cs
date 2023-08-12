@@ -37,6 +37,12 @@
             this.lblCCJoy2 = new System.Windows.Forms.Label();
             this.lblCCJoy1 = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.chbFound12A = new System.Windows.Forms.CheckBox();
+            this.lblIR12ARaw = new System.Windows.Forms.Label();
+            this.lblIR12A = new System.Windows.Forms.Label();
+            this.lblIRMode = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.cobSensitivity = new System.Windows.Forms.ComboBox();
             this.lblIR3Raw = new System.Windows.Forms.Label();
             this.lblIR1Raw = new System.Windows.Forms.Label();
             this.lblIR4Raw = new System.Windows.Forms.Label();
@@ -118,8 +124,6 @@
             this.lblTabletRaw = new System.Windows.Forms.Label();
             this.lblPenPressure = new System.Windows.Forms.Label();
             this.lblPenPosition = new System.Windows.Forms.Label();
-            this.lblRawBuff = new System.Windows.Forms.Label();
-            this.chkRawBuff = new System.Windows.Forms.CheckBox();
             this.groupBox13 = new System.Windows.Forms.GroupBox();
             this.groupBox8.SuspendLayout();
             this.groupBox5.SuspendLayout();
@@ -189,7 +193,7 @@
             // lblIR3
             // 
             this.lblIR3.AutoSize = true;
-            this.lblIR3.Location = new System.Drawing.Point(8, 48);
+            this.lblIR3.Location = new System.Drawing.Point(8, 45);
             this.lblIR3.Name = "lblIR3";
             this.lblIR3.Size = new System.Drawing.Size(24, 13);
             this.lblIR3.TabIndex = 7;
@@ -198,7 +202,7 @@
             // lblIR4
             // 
             this.lblIR4.AutoSize = true;
-            this.lblIR4.Location = new System.Drawing.Point(8, 64);
+            this.lblIR4.Location = new System.Drawing.Point(8, 60);
             this.lblIR4.Name = "lblIR4";
             this.lblIR4.Size = new System.Drawing.Size(24, 13);
             this.lblIR4.TabIndex = 7;
@@ -222,6 +226,12 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.chbFound12A);
+            this.groupBox5.Controls.Add(this.lblIR12ARaw);
+            this.groupBox5.Controls.Add(this.lblIR12A);
+            this.groupBox5.Controls.Add(this.lblIRMode);
+            this.groupBox5.Controls.Add(this.label1);
+            this.groupBox5.Controls.Add(this.cobSensitivity);
             this.groupBox5.Controls.Add(this.lblIR3Raw);
             this.groupBox5.Controls.Add(this.lblIR1Raw);
             this.groupBox5.Controls.Add(this.lblIR4Raw);
@@ -236,15 +246,70 @@
             this.groupBox5.Controls.Add(this.chkFound2);
             this.groupBox5.Location = new System.Drawing.Point(296, 3);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(176, 188);
+            this.groupBox5.Size = new System.Drawing.Size(176, 264);
             this.groupBox5.TabIndex = 34;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "IR";
             // 
+            // chbFound12A
+            // 
+            this.chbFound12A.AutoSize = true;
+            this.chbFound12A.Location = new System.Drawing.Point(115, 175);
+            this.chbFound12A.Name = "chbFound12A";
+            this.chbFound12A.Size = new System.Drawing.Size(59, 17);
+            this.chbFound12A.TabIndex = 16;
+            this.chbFound12A.Text = "IR 12A";
+            this.chbFound12A.UseVisualStyleBackColor = true;
+            // 
+            // lblIR12ARaw
+            // 
+            this.lblIR12ARaw.AutoSize = true;
+            this.lblIR12ARaw.Location = new System.Drawing.Point(8, 150);
+            this.lblIR12ARaw.Name = "lblIR12ARaw";
+            this.lblIR12ARaw.Size = new System.Drawing.Size(59, 13);
+            this.lblIR12ARaw.TabIndex = 15;
+            this.lblIR12ARaw.Text = "IR12ARaw";
+            // 
+            // lblIR12A
+            // 
+            this.lblIR12A.AutoSize = true;
+            this.lblIR12A.Location = new System.Drawing.Point(8, 75);
+            this.lblIR12A.Name = "lblIR12A";
+            this.lblIR12A.Size = new System.Drawing.Size(37, 13);
+            this.lblIR12A.TabIndex = 14;
+            this.lblIR12A.Text = "IR12A";
+            // 
+            // lblIRMode
+            // 
+            this.lblIRMode.AutoSize = true;
+            this.lblIRMode.Location = new System.Drawing.Point(9, 216);
+            this.lblIRMode.Name = "lblIRMode";
+            this.lblIRMode.Size = new System.Drawing.Size(45, 13);
+            this.lblIRMode.TabIndex = 13;
+            this.lblIRMode.Text = "IRMode";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(7, 239);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(54, 13);
+            this.label1.TabIndex = 12;
+            this.label1.Text = "Sensitivity";
+            // 
+            // cobSensitivity
+            // 
+            this.cobSensitivity.FormattingEnabled = true;
+            this.cobSensitivity.Location = new System.Drawing.Point(69, 236);
+            this.cobSensitivity.Name = "cobSensitivity";
+            this.cobSensitivity.Size = new System.Drawing.Size(101, 21);
+            this.cobSensitivity.TabIndex = 11;
+            this.cobSensitivity.SelectionChangeCommitted += new System.EventHandler(this.cobSensitivity_SelectionChangeCommitted);
+            // 
             // lblIR3Raw
             // 
             this.lblIR3Raw.AutoSize = true;
-            this.lblIR3Raw.Location = new System.Drawing.Point(8, 112);
+            this.lblIR3Raw.Location = new System.Drawing.Point(8, 120);
             this.lblIR3Raw.Name = "lblIR3Raw";
             this.lblIR3Raw.Size = new System.Drawing.Size(46, 13);
             this.lblIR3Raw.TabIndex = 10;
@@ -253,7 +318,7 @@
             // lblIR1Raw
             // 
             this.lblIR1Raw.AutoSize = true;
-            this.lblIR1Raw.Location = new System.Drawing.Point(8, 80);
+            this.lblIR1Raw.Location = new System.Drawing.Point(8, 90);
             this.lblIR1Raw.Name = "lblIR1Raw";
             this.lblIR1Raw.Size = new System.Drawing.Size(46, 13);
             this.lblIR1Raw.TabIndex = 10;
@@ -262,7 +327,7 @@
             // lblIR4Raw
             // 
             this.lblIR4Raw.AutoSize = true;
-            this.lblIR4Raw.Location = new System.Drawing.Point(8, 128);
+            this.lblIR4Raw.Location = new System.Drawing.Point(8, 135);
             this.lblIR4Raw.Name = "lblIR4Raw";
             this.lblIR4Raw.Size = new System.Drawing.Size(46, 13);
             this.lblIR4Raw.TabIndex = 9;
@@ -271,7 +336,7 @@
             // lblIR2Raw
             // 
             this.lblIR2Raw.AutoSize = true;
-            this.lblIR2Raw.Location = new System.Drawing.Point(8, 96);
+            this.lblIR2Raw.Location = new System.Drawing.Point(8, 105);
             this.lblIR2Raw.Name = "lblIR2Raw";
             this.lblIR2Raw.Size = new System.Drawing.Size(46, 13);
             this.lblIR2Raw.TabIndex = 9;
@@ -280,7 +345,7 @@
             // lblIR1
             // 
             this.lblIR1.AutoSize = true;
-            this.lblIR1.Location = new System.Drawing.Point(8, 16);
+            this.lblIR1.Location = new System.Drawing.Point(8, 15);
             this.lblIR1.Name = "lblIR1";
             this.lblIR1.Size = new System.Drawing.Size(24, 13);
             this.lblIR1.TabIndex = 7;
@@ -289,7 +354,7 @@
             // lblIR2
             // 
             this.lblIR2.AutoSize = true;
-            this.lblIR2.Location = new System.Drawing.Point(8, 32);
+            this.lblIR2.Location = new System.Drawing.Point(8, 30);
             this.lblIR2.Name = "lblIR2";
             this.lblIR2.Size = new System.Drawing.Size(24, 13);
             this.lblIR2.TabIndex = 7;
@@ -298,7 +363,7 @@
             // chkFound3
             // 
             this.chkFound3.AutoSize = true;
-            this.chkFound3.Location = new System.Drawing.Point(60, 148);
+            this.chkFound3.Location = new System.Drawing.Point(60, 175);
             this.chkFound3.Name = "chkFound3";
             this.chkFound3.Size = new System.Drawing.Size(46, 17);
             this.chkFound3.TabIndex = 8;
@@ -308,7 +373,7 @@
             // chkFound4
             // 
             this.chkFound4.AutoSize = true;
-            this.chkFound4.Location = new System.Drawing.Point(60, 164);
+            this.chkFound4.Location = new System.Drawing.Point(60, 191);
             this.chkFound4.Name = "chkFound4";
             this.chkFound4.Size = new System.Drawing.Size(46, 17);
             this.chkFound4.TabIndex = 8;
@@ -318,7 +383,7 @@
             // chkFound1
             // 
             this.chkFound1.AutoSize = true;
-            this.chkFound1.Location = new System.Drawing.Point(8, 148);
+            this.chkFound1.Location = new System.Drawing.Point(10, 175);
             this.chkFound1.Name = "chkFound1";
             this.chkFound1.Size = new System.Drawing.Size(46, 17);
             this.chkFound1.TabIndex = 8;
@@ -328,7 +393,7 @@
             // chkFound2
             // 
             this.chkFound2.AutoSize = true;
-            this.chkFound2.Location = new System.Drawing.Point(8, 164);
+            this.chkFound2.Location = new System.Drawing.Point(10, 191);
             this.chkFound2.Name = "chkFound2";
             this.chkFound2.Size = new System.Drawing.Size(46, 17);
             this.chkFound2.TabIndex = 8;
@@ -360,7 +425,7 @@
             this.groupBox7.Controls.Add(this.lblGuitarWhammy);
             this.groupBox7.Controls.Add(this.lblGuitarJoy);
             this.groupBox7.Controls.Add(this.clbGuitarButtons);
-            this.groupBox7.Location = new System.Drawing.Point(398, 214);
+            this.groupBox7.Location = new System.Drawing.Point(400, 299);
             this.groupBox7.Name = "groupBox7";
             this.groupBox7.Size = new System.Drawing.Size(188, 176);
             this.groupBox7.TabIndex = 36;
@@ -423,7 +488,7 @@
             this.groupBox6.Controls.Add(this.lblCCJoy2);
             this.groupBox6.Controls.Add(this.lblCCJoy1);
             this.groupBox6.Controls.Add(this.clbCCButtons);
-            this.groupBox6.Location = new System.Drawing.Point(588, 215);
+            this.groupBox6.Location = new System.Drawing.Point(590, 245);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(104, 349);
             this.groupBox6.TabIndex = 35;
@@ -458,7 +523,7 @@
             // 
             this.groupBox4.Controls.Add(this.pbBattery);
             this.groupBox4.Controls.Add(this.lblBattery);
-            this.groupBox4.Location = new System.Drawing.Point(266, 396);
+            this.groupBox4.Location = new System.Drawing.Point(268, 481);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(176, 52);
             this.groupBox4.TabIndex = 33;
@@ -490,7 +555,7 @@
             this.groupBox3.Controls.Add(this.chkLED3);
             this.groupBox3.Controls.Add(this.chkLED1);
             this.groupBox3.Controls.Add(this.chkRumble);
-            this.groupBox3.Location = new System.Drawing.Point(266, 273);
+            this.groupBox3.Location = new System.Drawing.Point(268, 358);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(96, 120);
             this.groupBox3.TabIndex = 32;
@@ -674,7 +739,7 @@
             this.groupBox9.Controls.Add(this.lblBBBL);
             this.groupBox9.Controls.Add(this.lblBBTotal);
             this.groupBox9.Controls.Add(this.lblBBTL);
-            this.groupBox9.Location = new System.Drawing.Point(448, 396);
+            this.groupBox9.Location = new System.Drawing.Point(450, 481);
             this.groupBox9.Name = "groupBox9";
             this.groupBox9.Size = new System.Drawing.Size(136, 112);
             this.groupBox9.TabIndex = 38;
@@ -748,7 +813,7 @@
             // lblDevicePath
             // 
             this.lblDevicePath.AutoSize = true;
-            this.lblDevicePath.Location = new System.Drawing.Point(3, 518);
+            this.lblDevicePath.Location = new System.Drawing.Point(5, 599);
             this.lblDevicePath.Name = "lblDevicePath";
             this.lblDevicePath.Size = new System.Drawing.Size(63, 13);
             this.lblDevicePath.TabIndex = 39;
@@ -1005,7 +1070,7 @@
             // pbTablet
             // 
             this.pbTablet.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.pbTablet.Location = new System.Drawing.Point(698, 366);
+            this.pbTablet.Location = new System.Drawing.Point(700, 323);
             this.pbTablet.Name = "pbTablet";
             this.pbTablet.Size = new System.Drawing.Size(256, 192);
             this.pbTablet.TabIndex = 44;
@@ -1081,25 +1146,6 @@
             this.lblPenPosition.TabIndex = 51;
             this.lblPenPosition.Text = "Position";
             // 
-            // lblRawBuff
-            // 
-            this.lblRawBuff.AutoSize = true;
-            this.lblRawBuff.Location = new System.Drawing.Point(3, 553);
-            this.lblRawBuff.Name = "lblRawBuff";
-            this.lblRawBuff.Size = new System.Drawing.Size(57, 13);
-            this.lblRawBuff.TabIndex = 52;
-            this.lblRawBuff.Text = "RawBuffer";
-            // 
-            // chkRawBuff
-            // 
-            this.chkRawBuff.AutoSize = true;
-            this.chkRawBuff.Location = new System.Drawing.Point(6, 533);
-            this.chkRawBuff.Name = "chkRawBuff";
-            this.chkRawBuff.Size = new System.Drawing.Size(94, 17);
-            this.chkRawBuff.TabIndex = 53;
-            this.chkRawBuff.Text = "Print raw buff?";
-            this.chkRawBuff.UseVisualStyleBackColor = true;
-            // 
             // groupBox13
             // 
             this.groupBox13.Controls.Add(this.lblPenPressure);
@@ -1123,8 +1169,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.groupBox13);
-            this.Controls.Add(this.chkRawBuff);
-            this.Controls.Add(this.lblRawBuff);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.pbTablet);
             this.Controls.Add(this.groupBox12);
@@ -1142,7 +1186,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.chkExtension);
             this.Name = "WiimoteInfo";
-            this.Size = new System.Drawing.Size(962, 612);
+            this.Size = new System.Drawing.Size(1150, 730);
             this.groupBox8.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
@@ -1260,13 +1304,17 @@
         private System.Windows.Forms.Label lblTabletRaw;
         private System.Windows.Forms.Label lblPenPressure;
         private System.Windows.Forms.Label lblPenPosition;
-        private System.Windows.Forms.Label lblRawBuff;
         public System.Windows.Forms.Label lblAccelImu;
         public System.Windows.Forms.Label lblNunchuckAccelImu;
         public System.Windows.Forms.Label lblMotionPlusImu;
-        private System.Windows.Forms.CheckBox chkRawBuff;
         public System.Windows.Forms.Label lblAccelMinMax;
         public System.Windows.Forms.Label lblNunchukAccelMinMax;
         private System.Windows.Forms.GroupBox groupBox13;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ComboBox cobSensitivity;
+        private System.Windows.Forms.Label lblIRMode;
+        public System.Windows.Forms.CheckBox chbFound12A;
+        public System.Windows.Forms.Label lblIR12ARaw;
+        public System.Windows.Forms.Label lblIR12A;
     }
 }

@@ -1,0 +1,12 @@
+<map id="WiimoteLib.DataTypes.BalanceBoardState" name="WiimoteLib.DataTypes.BalanceBoardState">
+<area shape="rect" id="Node000001" title="Current state of the Wii Fit Balance Board controller." alt="" coords="653,83,856,125"/>
+<area shape="rect" id="Node000002" href="$struct_wiimote_lib_1_1_data_types_1_1_calibration_info_1_1_balance_board_calibration_info.html" title="Calibration information." alt="" coords="287,49,504,92"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="519,79,653,92,652,97,519,85"/>
+<area shape="rect" id="Node000003" href="$struct_wiimote_lib_1_1_data_types_1_1_balance_board_sensors.html" title="The 4 sensors on the Balance Board (short values)" alt="" coords="5,15,209,57"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="223,18,233,17,263,17,448,24,528,35,630,59,696,80,694,85,628,64,528,41,448,30,263,23,233,23,224,23"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="196,59,233,65,286,70,286,75,232,71,195,64"/>
+<area shape="rect" id="Node000004" href="$struct_wiimote_lib_1_1_data_types_1_1_balance_board_sensors_f.html" title="The 4 sensors on the Balance Board (float values)" alt="" coords="294,116,497,159"/>
+<area shape="poly" id="edge4_Node000001_Node000004" title=" " alt="" coords="512,134,629,127,652,123,653,129,629,132,512,140"/>
+<area shape="rect" id="Node000005" href="$struct_wiimote_lib_1_1_data_types_1_1_point_f.html" title="Point structure for floating point 2D positions (X, Y)" alt="" coords="298,183,493,209"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="506,181,567,170,628,155,708,123,710,128,630,160,568,175,507,186"/>
+</map>

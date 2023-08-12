@@ -1,0 +1,14 @@
+<map id="WiimoteLib.Wiimote.WriteData" name="WiimoteLib.Wiimote.WriteData">
+<area shape="rect" id="Node000001" title="Write a single byte to the Wiimote." alt="" coords="295,147,495,173"/>
+<area shape="poly" id="edge6_Node000001_Node000001" title=" " alt="" coords="443,136,428,128,395,125,366,127,351,132,347,137,354,144,350,148,342,138,347,128,365,122,395,120,429,123,445,131"/>
+<area shape="rect" id="Node000002" href="$class_wiimote_lib_1_1_wiimote.html#a1b474ea6cc8ab45a7d73af9fa6689214" title="Calibrade the Motion Plus." alt="" coords="29,5,223,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="364,139,311,100,246,62,217,51,219,46,248,58,314,96,367,135"/>
+<area shape="rect" id="Node000003" href="$class_wiimote_lib_1_1_wiimote.html#aa6e249fd4040155e7dba29278bdc9846" title="MotionPlus." alt="" coords="31,72,221,115"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="323,145,214,118,216,113,325,140"/>
+<area shape="rect" id="Node000004" href="$class_wiimote_lib_1_1_wiimote.html#ae1d7bf2a01902053850255b40b5ac5f9" title="Disconnects the MotionPlus." alt="" coords="22,139,230,181"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="280,163,230,163,230,157,280,157"/>
+<area shape="rect" id="Node000005" href="$class_wiimote_lib_1_1_wiimote.html#ae77cca2df0bed61c9394dbeb9b9e8375" title=" " alt="" coords="20,205,232,232"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="319,180,247,196,194,207,193,202,246,191,318,175"/>
+<area shape="rect" id="Node000006" href="$class_wiimote_lib_1_1_wiimote.html#a68f7076a71dedf88f729b5c6f7d4f317" title="This will play a squarewave at the frequency that is defined." alt="" coords="5,256,247,283"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="363,184,311,216,248,246,210,258,208,253,246,242,308,212,361,180"/>
+</map>

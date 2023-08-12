@@ -18,16 +18,23 @@ namespace WiiInputMapper.Template
             InitializeComponent();
         }
 
-        internal void ShowVar(string name, object value)
+        public void ShowVar(string name, object value)
         {
-            ucVarShow varShow;
-            if(!variables.TryGetValue(name, out varShow))
+            try
             {
-                varShow = new ucVarShow(name);
-                variables.Add(name, varShow);
-                pnlVarShower.Controls.Add(varShow);
+                ucVarShow varShow;
+                if (!variables.TryGetValue(name, out varShow))
+                {
+                    varShow = new ucVarShow(name);
+                    variables.Add(name, varShow);
+                    pnlVarShower.Controls.Add(varShow);
+                }
+                varShow.setValue(value);
             }
-            varShow.setValue(value);
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
     }
 }

@@ -18,7 +18,7 @@ namespace WiiInputMapper.Template
             lblVarName.Text = name;
         }
 
-        internal void setValue(object value)
+        public void setValue(object value)
         {
             if (lblVarName.InvokeRequired)
             {

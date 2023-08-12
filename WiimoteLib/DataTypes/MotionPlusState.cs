@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WiimoteLib.DataTypes.CalibrationInfo;
 
 namespace WiimoteLib.DataTypes
 {
@@ -23,6 +24,14 @@ namespace WiimoteLib.DataTypes
         /// Gyro values in deg/s
         /// </summary>
         public Point3F Gyro;
+        /// <summary>
+        /// Calibration values for fast mode
+        /// </summary>
+        public MotionPlusCalibrationInfo FastCalibration;
+        /// <summary>
+        /// Calibration values for slow mode
+        /// </summary>
+        public MotionPlusCalibrationInfo SlowCalibration;
         /// <summary>
         /// Slow pitch movement
         /// </summary>

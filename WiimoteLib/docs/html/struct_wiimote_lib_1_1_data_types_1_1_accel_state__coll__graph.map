@@ -1,0 +1,9 @@
+<map id="WiimoteLib.DataTypes.AccelState" name="WiimoteLib.DataTypes.AccelState">
+<area shape="rect" id="Node000001" title="Current state of the accelerometers." alt="" coords="333,48,522,91"/>
+<area shape="rect" id="Node000002" href="$struct_wiimote_lib_1_1_data_types_1_1_point3.html" title="Point structure for int 3D positions (X, Y, Z)" alt="" coords="14,5,207,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="222,32,309,45,333,49,332,55,308,51,221,37"/>
+<area shape="rect" id="Node000003" href="$struct_wiimote_lib_1_1_data_types_1_1_point3_f.html" title="Point structure for floating point 3D positions (X, Y, Z)" alt="" coords="10,56,211,83"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="226,67,332,67,332,72,226,72"/>
+<area shape="rect" id="Node000004" href="$struct_wiimote_lib_1_1_data_types_1_1_i_m_u_state.html" title="Point structure for floating point IMU positions (Roll, Pitch, Yaw)" alt="" coords="5,107,216,133"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="223,101,308,88,332,84,333,89,309,93,224,107"/>
+</map>

@@ -1,0 +1,6 @@
+[submodule "MiscStuff/Wiiuse"]
+	path = MiscStuff/Wiiuse
+	url = https://github.com/wiiuse/wiiuse.git
+[submodule "MiscStuff/Wiiyourself"]
+	path = MiscStuff/Wiiyourself
+	url = https://github.com/greenjava/WiiYourself.git

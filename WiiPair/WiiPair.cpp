@@ -49,16 +49,16 @@ _TCHAR * FormatBTAddress(BLUETOOTH_ADDRESS address)
 int _tmain(int argc, _TCHAR* argv[])
 {
 	bool pairVia12 = true;
-	bool deleteWiimotes = false;
-	{
-		std::cout << "Remove found wiimotes? y/n: ";
-		char answer;
-		std::cin >> answer;
-		if (answer == 'y' || answer == 'Y')
-		{
-			deleteWiimotes = true;
-		}
-	}
+	bool deleteWiimotes = true;
+	//{
+	//	std::cout << "Remove found wiimotes? y/n: ";
+	//	char answer;
+	//	std::cin >> answer;
+	//	if (answer == 'y' || answer == 'Y')
+	//	{
+	//		deleteWiimotes = true;
+	//	}
+	//}
 	{
 		std::cout << "Are you starting pair request via 'Sync' button? y/n: ";
 		char answer;

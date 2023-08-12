@@ -1,0 +1,7 @@
+<map id="WiimoteLib.Helpers.ConvertHelpers.AdpcmToWiimoteRate" name="WiimoteLib.Helpers.ConvertHelpers.AdpcmToWiimoteRate">
+<area shape="rect" id="Node000001" title="Converts the sample rate given to what the wiiremote excpects." alt="" coords="295,23,494,65"/>
+<area shape="rect" id="Node000002" href="$class_wiimote_lib_1_1_wiimote.html#ae77cca2df0bed61c9394dbeb9b9e8375" title=" " alt="" coords="20,5,232,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="280,36,232,31,233,26,280,31"/>
+<area shape="rect" id="Node000003" href="$class_wiimote_lib_1_1_wiimote.html#a68f7076a71dedf88f729b5c6f7d4f317" title="This will play a squarewave at the frequency that is defined." alt="" coords="5,56,247,83"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="280,57,247,61,247,55,279,52"/>
+</map>

@@ -1,0 +1,11 @@
+<map id="WiimoteLib.DataTypes.MotionPlusState" name="WiimoteLib.DataTypes.MotionPlusState">
+<area shape="rect" id="Node000001" title="Current state of the Nunchuk extension." alt="" coords="362,80,557,123"/>
+<area shape="rect" id="Node000002" href="$struct_wiimote_lib_1_1_data_types_1_1_point3.html" title="Point structure for int 3D positions (X, Y, Z)" alt="" coords="17,5,211,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="217,33,338,59,398,77,396,82,337,64,216,38"/>
+<area shape="rect" id="Node000003" href="$struct_wiimote_lib_1_1_data_types_1_1_point3_f.html" title="Point structure for floating point 3D positions (X, Y, Z)" alt="" coords="13,56,215,83"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="229,77,361,90,361,95,229,83"/>
+<area shape="rect" id="Node000004" href="$struct_wiimote_lib_1_1_data_types_1_1_calibration_info_1_1_motion_plus_calibration_info.html" title=" " alt="" coords="5,111,223,153"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="237,134,337,128,379,121,380,126,338,133,238,139"/>
+<area shape="rect" id="Node000005" href="$struct_wiimote_lib_1_1_data_types_1_1_i_m_u_state.html" title="Point structure for floating point IMU positions (Roll, Pitch, Yaw)" alt="" coords="9,177,219,204"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="234,178,286,169,337,156,380,140,418,121,421,126,382,145,338,161,287,174,234,183"/>
+</map>

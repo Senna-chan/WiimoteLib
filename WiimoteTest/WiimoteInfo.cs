@@ -38,20 +38,21 @@ namespace WiimoteTest
 	    private Point3F maxWiimoteAccel;
 	    private Point3F minNunchukAccel;
 	    private Point3F maxNunchukAccel;
+		private SpeakerFreq desiredFreq = SpeakerFreq.FREQ_2610HZ;
+		private byte desiredVolume = 50;
         public WiimoteInfo()
 		{
 			InitializeComponent();
 			g = Graphics.FromImage(b);
 			g2 = Graphics.FromImage(b2);
-
-            
-        }
+			cobSensitivity.DataSource = Enum.GetValues(typeof(IRSensitivity));
+		}
 
 		public WiimoteInfo(Wiimote wm) : this()
 		{
 			mWiimote = wm;
-            //catfood = wm.Load16bitMonoSampleWAV(Path.Combine(Environment.CurrentDirectory, "Assets\\catfood.wav"),4200);
-		    sample = wm.Load8bitMonoSampleWAV(Path.Combine(Environment.CurrentDirectory, "Assets\\chargingpenguin.wav"));
+			//catfood = wm.Load16bitMonoSampleWAV(Path.Combine(Environment.CurrentDirectory, "Assets\\catfood.wav"), 4200);
+			sample = wm.Load8bitMonoSampleWAV(Path.Combine(Environment.CurrentDirectory, "Assets\\sweep.wav"));
         }
 
 		public void UpdateState(WiimoteChangedEventArgs args)
@@ -92,9 +93,12 @@ namespace WiimoteTest
 			clbButtons.SetItemChecked(10, ws.Buttons.Right);
 
 
-			mWiimote.OnPressedReleased("A", () => { mWiimote.PlaySample(sample, 30); }, () => { mWiimote.EnableSpeaker(false); });
-            mWiimote.OnPressedReleased("B", () => { mWiimote.PlaySquareWave(SpeakerFreq.FREQ_2610HZ, 64); }, () => { mWiimote.EnableSpeaker(false); });
-
+			mWiimote.OnPressedReleased("A", () => { mWiimote.PlaySample(sample, desiredVolume); }, () => { mWiimote.EnableSpeaker(false); });
+            mWiimote.OnPressedReleased("B", () => { mWiimote.PlaySquareWave(desiredFreq, desiredVolume); }, () => { mWiimote.EnableSpeaker(false); });
+			mWiimote.OnPressedReleased("Up", () => { }, () => { desiredVolume += 10; if (desiredVolume > 100) desiredVolume = 100; });
+			mWiimote.OnPressedReleased("Down", () => { }, () => { desiredVolume -= 10; if (desiredVolume < 0) desiredVolume = 0; });
+			mWiimote.OnPressedReleased("Left", () => { }, () => { desiredFreq++; if (desiredFreq > SpeakerFreq.FREQ_4410HZ) desiredFreq = SpeakerFreq.FREQ_4410HZ; });
+			mWiimote.OnPressedReleased("Right", () => { }, () => { desiredFreq --; if (desiredFreq < SpeakerFreq.FREQ_4200HZ) desiredFreq = SpeakerFreq.FREQ_4200HZ; });
 			lblAccel.Text = ws.Accel.Values.ToString();
 		    lblAccelImu.Text = ws.Accel.IMU.ToString();
 
@@ -149,29 +153,10 @@ namespace WiimoteTest
 		    {
 		        lblSpeakerSample.Text = "Not playing";
 		    }
-		    if (chkRawBuff.Checked)
-		    {
-		        if (ws.RawBuff != null)
-		        {
-		            foreach (var rawBuffByte in ws.RawBuff)
-		            {
-		                lblRawBuff.Text += $"b{Convert.ToString(rawBuffByte, 2).PadLeft(8, '0')} ";
-		            }
-		        }
-		    }
             switch (ws.ExtensionType)
 			{
                 case ExtensionType.None:
-                    break;
                 case ExtensionType.Unknown:
-                    lblRawBuff.Text = ""; 
-                    if (ws.RawBuff != null)
-                    {
-                        foreach (var rawBuffByte in ws.RawBuff)
-                        {
-                            lblRawBuff.Text += $"b{Convert.ToString(rawBuffByte, 2).PadLeft(8, '0')} ";
-                        }
-                    }
                     break;
                 case ExtensionType.Nunchuk:
 					lblChuk.Text = ws.Nunchuk.Accel.Values.ToString();
@@ -332,14 +317,16 @@ namespace WiimoteTest
 			}
 
 			g.Clear(Color.Black);
-
+			lblIRMode.Text = ws.IR.Mode.ToString();
 			UpdateIR(ws.IR.IRSensors[0], lblIR1, lblIR1Raw, chkFound1, Color.Red);
 			UpdateIR(ws.IR.IRSensors[1], lblIR2, lblIR2Raw, chkFound2, Color.Blue);
 			UpdateIR(ws.IR.IRSensors[2], lblIR3, lblIR3Raw, chkFound3, Color.Yellow);
 			UpdateIR(ws.IR.IRSensors[3], lblIR4, lblIR4Raw, chkFound4, Color.Orange);
-
-			if(ws.IR.IRSensors[0].Found && ws.IR.IRSensors[1].Found)
-				g.DrawEllipse(new Pen(Color.Green), (int)(ws.IR.RawMidpoint.X / 4), (int)(ws.IR.RawMidpoint.Y / 4), 5, 5);
+			UpdateIR(ws.IR.Midpoint, lblIR12A, lblIR12ARaw, chbFound12A, Color.Green);
+			if ((IRSensitivity)cobSensitivity.SelectedValue != ws.IR.Sensitivity && !cobSensitivity.Focused) 
+				cobSensitivity.SelectedItem = ws.IR.Sensitivity;
+			//if(ws.IR.IRSensors[0].Found && ws.IR.IRSensors[1].Found)
+			//	g.DrawEllipse(new Pen(Color.Green), (int)(ws.IR.RawMidpoint.X / 4), (int)(ws.IR.RawMidpoint.Y / 4), 5, 5);
 
 			pbIR.Image = b;
 
@@ -352,7 +339,7 @@ namespace WiimoteTest
 	    private void UpdateIR(IRSensor irSensor, Label lblNorm, Label lblRaw, CheckBox chkFound, Color color)
 		{
 			chkFound.Checked = irSensor.Found;
-
+			chkFound.ForeColor = irSensor.ValidPosition ? Color.Green : Color.Red;
 			if(irSensor.Found)
 			{
 				lblNorm.Text = irSensor.Position.ToString() + ", " + irSensor.Size;
@@ -392,6 +379,12 @@ namespace WiimoteTest
             var input = ((TextBox) sender).Text;
             mWiimote.FreqOverride = input == string.Empty ? 0 : int.Parse(input);
         }
+
+
+		private void cobSensitivity_SelectionChangeCommitted(object sender, EventArgs e)
+		{
+			mWiimote.SetReportType(mWiimote.WiimoteState.Extension ? InputReport.IRExtensionAccel : InputReport.IRAccel, (IRSensitivity)cobSensitivity.SelectedItem, true);
+		}
 
 		private void lblMPCallibrate_Click(object sender, EventArgs e)
         {

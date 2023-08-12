@@ -28,12 +28,16 @@ namespace WiimoteLib.DataTypes
         /// </summary>
         public bool Found;
         /// <summary>
+        /// IR sensor position valid
+        /// </summary>
+        public bool ValidPosition;
+        /// <summary>
         /// Convert to human-readable string
         /// </summary>
         /// <returns>A string that represents the point.</returns>
         public override string ToString()
         {
-            return string.Format("{{{0}, Size={1}, Found={2}}}", Position, Size, Found);
+            return string.Format("{{{0}, Size={1}, Found={2}, Valid={3}}}", Position, Size, Found, ValidPosition);
         }
     }
 }

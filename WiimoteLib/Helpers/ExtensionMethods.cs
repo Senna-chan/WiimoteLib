@@ -11,21 +11,21 @@ namespace WiimoteLib.Helpers
     /// </summary>
     public static class ExtensionMethods
     {
-        public static int Map(this int value, int fromSource, int toSource, int fromTarget, int toTarget)
+        public static int Map(this int value, int inMin, int inMax, int outMin, int outMax)
         {
-            return (value - fromSource) / (toSource - fromSource) * (toTarget - fromTarget) + fromTarget;
+            return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
         }
-        public static byte Map(this byte value, byte fromSource, byte toSource, byte fromTarget, byte toTarget)
+        public static byte Map(this byte value, byte inMin, byte inMax, byte outMin, byte outMax)
         {
-            return (byte) ((value - fromSource) / (toSource - fromSource) * (toTarget - fromTarget) + fromTarget);
+            return (byte) ((value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin);
         }
-        public static decimal Map(this decimal value, decimal fromSource, decimal toSource, decimal fromTarget, decimal toTarget)
+        public static decimal Map(this decimal value, decimal inMin, decimal inMax, decimal outMin, decimal outMax)
         {
-            return (value - fromSource) / (toSource - fromSource) * (toTarget - fromTarget) + fromTarget;
+            return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
         }
-        public static float Map(this float value, float fromSource, float toSource, float fromTarget, float toTarget)
+        public static float Map(this float value, float inMin, float inMax, float outMin, float outMax)
         {
-            return (value - fromSource) / (toSource - fromSource) * (toTarget - fromTarget) + fromTarget;
+            return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
         }
 
 

@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['getpitch_0',['GetPitch',['../class_wiimote_lib_1_1_helpers_1_1_mahony.html#a80759db89fd4878081b61cd6232ec6d8',1,'WiimoteLib::Helpers::Mahony']]],
+  ['getpitchradians_1',['GetPitchRadians',['../class_wiimote_lib_1_1_helpers_1_1_mahony.html#a6167e21de586d168dd9e699bbe3e1776',1,'WiimoteLib::Helpers::Mahony']]],
+  ['getroll_2',['GetRoll',['../class_wiimote_lib_1_1_helpers_1_1_mahony.html#acb8264eb2db22dbc386d6164d36d233f',1,'WiimoteLib::Helpers::Mahony']]],
+  ['getrollradians_3',['GetRollRadians',['../class_wiimote_lib_1_1_helpers_1_1_mahony.html#a4672c25dc0050f80278c609c3df85434',1,'WiimoteLib::Helpers::Mahony']]],
+  ['getstatus_4',['GetStatus',['../class_wiimote_lib_1_1_wiimote.html#a8589a42f2999cd140cdd5909701a84b3',1,'WiimoteLib::Wiimote']]],
+  ['getyaw_5',['GetYaw',['../class_wiimote_lib_1_1_helpers_1_1_mahony.html#a028805cd02dbf7818bb986a757dcaf20',1,'WiimoteLib::Helpers::Mahony']]],
+  ['getyawradians_6',['GetYawRadians',['../class_wiimote_lib_1_1_helpers_1_1_mahony.html#a3b61d27e258103a0cfc723f712b7e224',1,'WiimoteLib::Helpers::Mahony']]],
+  ['green_7',['Green',['../struct_wiimote_lib_1_1_data_types_1_1_drums_state.html#a4c0809a9e3995f1ef1e4ad0707faeb12',1,'WiimoteLib.DataTypes.DrumsState.Green'],['../struct_wiimote_lib_1_1_data_types_1_1_guitar_fret_button_state.html#af8eb4baa3c105c56180f4c9f32096d3b',1,'WiimoteLib.DataTypes.GuitarFretButtonState.Green']]],
+  ['greenvelocity_8',['GreenVelocity',['../struct_wiimote_lib_1_1_data_types_1_1_drums_state.html#ac780df6d856f7ad0ae9a7bce064cfa09',1,'WiimoteLib::DataTypes::DrumsState']]],
+  ['guitar_9',['Guitar',['../class_wiimote_lib_1_1_data_types_1_1_wiimote_state.html#a14a89dcc6c2235a726903ec8047328c7',1,'WiimoteLib.DataTypes.WiimoteState.Guitar'],['../namespace_wiimote_lib_1_1_data_types_1_1_enums.html#a7214b02f2fd64081259bcc67772fe22caae9b9e717bbdc974d74cd2a2aaa5b1d9',1,'WiimoteLib.DataTypes.Enums.Guitar']]],
+  ['guitarbuttonstate_10',['GuitarButtonState',['../struct_wiimote_lib_1_1_data_types_1_1_guitar_button_state.html',1,'WiimoteLib::DataTypes']]],
+  ['guitarbuttonstate_2ecs_11',['GuitarButtonState.cs',['../_guitar_button_state_8cs.html',1,'']]],
+  ['guitarfretbuttonstate_12',['GuitarFretButtonState',['../struct_wiimote_lib_1_1_data_types_1_1_guitar_fret_button_state.html',1,'WiimoteLib::DataTypes']]],
+  ['guitarfretbuttonstate_2ecs_13',['GuitarFretButtonState.cs',['../_guitar_fret_button_state_8cs.html',1,'']]],
+  ['guitarhero3_14',['GuitarHero3',['../namespace_wiimote_lib_1_1_data_types_1_1_enums.html#ac8df2a415abbb9c62c8bf8bf145a46a3a60c804531a5b11934171ebba0bda3301',1,'WiimoteLib::DataTypes::Enums']]],
+  ['guitarheroworldtour_15',['GuitarHeroWorldTour',['../namespace_wiimote_lib_1_1_data_types_1_1_enums.html#ac8df2a415abbb9c62c8bf8bf145a46a3a9998ee65500a1016a66853a991fc4b26',1,'WiimoteLib::DataTypes::Enums']]],
+  ['guitarstate_16',['GuitarState',['../struct_wiimote_lib_1_1_data_types_1_1_guitar_state.html',1,'WiimoteLib::DataTypes']]],
+  ['guitarstate_2ecs_17',['GuitarState.cs',['../_guitar_state_8cs.html',1,'']]],
+  ['guitartype_18',['GuitarType',['../struct_wiimote_lib_1_1_data_types_1_1_guitar_state.html#aac6976ee3d00b4326efc77650765f3a2',1,'WiimoteLib.DataTypes.GuitarState.GuitarType'],['../namespace_wiimote_lib_1_1_data_types_1_1_enums.html#ac8df2a415abbb9c62c8bf8bf145a46a3',1,'WiimoteLib.DataTypes.Enums.GuitarType']]],
+  ['guitartype_2ecs_19',['GuitarType.cs',['../_guitar_type_8cs.html',1,'']]],
+  ['gyro_20',['Gyro',['../struct_wiimote_lib_1_1_data_types_1_1_motion_plus_state.html#a1306697d80932c0a350e37afdcf582a4',1,'WiimoteLib::DataTypes::MotionPlusState']]],
+  ['gyroraw_21',['GyroRaw',['../struct_wiimote_lib_1_1_data_types_1_1_motion_plus_state.html#a417d2901a5ed6d18548cde45d865735c',1,'WiimoteLib::DataTypes::MotionPlusState']]]
+];

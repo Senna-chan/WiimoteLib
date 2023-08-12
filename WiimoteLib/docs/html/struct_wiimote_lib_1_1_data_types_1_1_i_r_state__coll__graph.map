@@ -1,0 +1,9 @@
+<map id="WiimoteLib.DataTypes.IRState" name="WiimoteLib.DataTypes.IRState">
+<area shape="rect" id="Node000001" title="Current state of the IR camera." alt="" coords="106,203,305,229"/>
+<area shape="rect" id="Node000002" href="$struct_wiimote_lib_1_1_data_types_1_1_i_r_sensor.html" title="Current state of a single IR sensor." alt="" coords="101,96,310,123"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="208,137,208,202,203,202,203,137"/>
+<area shape="rect" id="Node000003" href="$struct_wiimote_lib_1_1_data_types_1_1_point.html" title="Point structure for int 2D positions (X, Y)" alt="" coords="5,5,192,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="127,40,192,93,188,97,123,44"/>
+<area shape="rect" id="Node000004" href="$struct_wiimote_lib_1_1_data_types_1_1_point_f.html" title="Point structure for floating point 2D positions (X, Y)" alt="" coords="216,5,410,32"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="288,44,222,97,219,93,285,40"/>
+</map>

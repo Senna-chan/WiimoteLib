@@ -35,20 +35,18 @@
             // 
             this.tabWiimotes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabWiimotes.Location = new System.Drawing.Point(0, 0);
-            this.tabWiimotes.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.tabWiimotes.Name = "tabWiimotes";
             this.tabWiimotes.SelectedIndex = 0;
-            this.tabWiimotes.Size = new System.Drawing.Size(1317, 780);
+            this.tabWiimotes.Size = new System.Drawing.Size(1134, 731);
             this.tabWiimotes.TabIndex = 0;
             // 
             // MultipleWiimoteForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1317, 780);
+            this.ClientSize = new System.Drawing.Size(1134, 731);
             this.Controls.Add(this.tabWiimotes);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.Name = "MultipleWiimoteForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

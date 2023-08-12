@@ -1,24 +1,15 @@
 ﻿using Microsoft.CSharp;
-using ScpDriverInterface;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WiiInputMapper.Properties;
-using WiimoteLib;
-using WiimoteLib.DataTypes;
-using WiimoteLib.DataTypes.Enums;
-using WiimoteLib.Helpers;
-using WindowsInput;
 
 namespace WiiInputMapper
 {
@@ -70,7 +61,8 @@ namespace WiiInputMapper
 			btnRunPrecompiled.Visible = false;
 			btnStopScript.Visible = true;
 			inputMapperScript = new InputMapperTemplate();
-			scriptStopInfo = inputMapperScript.GetType().GetMethod("StopScript");
+			txtCode.Text = inputMapperScript.GetType().GetMethod("GetSourceCode").Invoke(inputMapperScript, new object[] { }).ToString();
+            scriptStopInfo = inputMapperScript.GetType().GetMethod("StopScript");
 		}
 
 		private void btnStopScript_Click(object sender, EventArgs e)
@@ -81,18 +73,40 @@ namespace WiiInputMapper
 			scriptStopInfo?.Invoke(inputMapperScript, null);
 		}
 
+		private void checkAndInitBool(String userCodeStr, String contains, String mapKey)
+		{
+			if (userCodeStr.Contains(contains))
+			{
+				if (!initCode.ContainsKey(mapKey))
+				{
+					initCode.Add(mapKey, $"{mapKey} = true;");
+				}
+			}
+		}
+
+		Dictionary<String, String> variables = new Dictionary<string, string>();
+		Dictionary<String, String> initCode = new Dictionary<string, string>();
+		StringBuilder userCode = new StringBuilder();
+		bool rawCode = false;
 		private string parseCode()
 		{
-			Dictionary<String, String> variables = new Dictionary<string, string>();
-			Dictionary<String, String> initCode = new Dictionary<string, string>();
-
+			variables.Clear();
+			initCode.Clear();
+			userCode.Clear();
+			rawCode = false;
 			string[] userCodeLines = txtCode.Text.Split(new[] { "\r\n", "\r","\n" },StringSplitOptions.None);
 			// Code changing
-			StringBuilder userCode = new StringBuilder();
 			bool isCodeBlock = false; // When true this will make sure the code is between accolades({ and })
 			int codeBlockAmount = 0;
 			foreach(string userCodeLine in userCodeLines) {
 				string userCodeStr = userCodeLine;
+
+				if(userCodeStr.Equals("rawcode") && !rawCode) // No editing of the codeline
+				{
+					rawCode = true;
+					continue;
+				}
+
 				userCodeStr = userCodeStr.Replace("log(", "Console.WriteLine(");
 				userCodeStr = userCodeStr.Replace("Accel.X", "Accel.Values.X");
 				userCodeStr = userCodeStr.Replace("Accel.Y", "Accel.Values.Y");
@@ -100,7 +114,8 @@ namespace WiiInputMapper
 				userCodeStr = userCodeStr.Replace("Accel.Pitch", "Accel.IMU.Pitch");
 				userCodeStr = userCodeStr.Replace("Accel.Roll", "Accel.IMU.Roll");
 				userCodeStr = userCodeStr.Replace("Accel.Yaw", "Accel.IMU.Yaw");
-				//userCodeStr = userCodeStr.Replace("Keyboard.Press", "//Keyboard.KeyPress");
+				//userCodeStr = userCodeStr.Replace("Wiimote.IR.", "Wiimote.IR.Midpoint.");
+
 				var tabAmounts = userCodeStr.Length - userCodeStr.Replace("\t", "").Length;
 
 				userCodeStr = userCodeStr.Replace("\t", ""); // We add tabs ourself and this is beter for StartsWith
@@ -108,15 +123,15 @@ namespace WiiInputMapper
 				{
 					if (tabAmounts != codeBlockAmount)
 					{
-						userCode.Append("\t\t\t"); // Normal spacing
+						appendUserCode("\t\t\t"); // Normal spacing
 						if (codeBlockAmount != 0)
 						{
 							for (int i = codeBlockAmount; i > 1; i--)
 							{
-								userCode.Append("\t");
+								appendUserCode("\t");
 							}
 						}
-						userCode.AppendLine("}");
+						appendUserCodeLine("}");
 						codeBlockAmount--;
 					}
 					if(codeBlockAmount == 0)
@@ -127,7 +142,6 @@ namespace WiiInputMapper
 
 				if (userCodeStr.Contains("Accel.IMU.Pitch") && !userCodeStr.StartsWith("show("))  // We need to validate the pitch.
 				{
-
 					string nonPitchInstruction = userCodeStr.Substring(0,userCodeStr.IndexOf("Wiimote"));
 					string pitchInstruction = userCodeStr.Substring(userCodeStr.IndexOf("Wiimote"));
 					RegexOptions options = RegexOptions.None;
@@ -141,13 +155,11 @@ namespace WiiInputMapper
 					string newPitchInstruction = $"DataValidater.ValidatePitch({pitchInstructionparts[0]}, {pitchInstructionparts[0].Replace(".Pitch", ".Roll")}, {pitchInstructionparts[2].Replace(";","")}, '{compareChar}')";
 					userCodeStr = $"{nonPitchInstruction}{newPitchInstruction}";
 				}
-				if (userCodeStr.Contains("XBox."))
-				{
-					if (!initCode.ContainsKey("initscp"))
-					{
-						initCode.Add("initscp", "initscp = true;");
-					}
-				}
+				
+				checkAndInitBool(userCodeStr, "XBox.", "initscp");
+				checkAndInitBool(userCodeStr, "Wiimote.IR", "usingIR");
+				checkAndInitBool(userCodeStr, "IRDifference", "usingIR");
+
 				if (userCodeStr.StartsWith("Mouse"))
 				{
 					//Mouse.X = Wiimote.Nunchuk.Joystick.X;
@@ -170,7 +182,7 @@ namespace WiiInputMapper
 						userCodeStr = $"Mouse.MoveRel({WiimoteInstruction}.X * mousespeed, {WiimoteInstruction}.Y * mousespeed);";
 					}
 				}
-				if (userCodeStr.StartsWith("var "))
+				else if (userCodeStr.StartsWith("var "))
 				{
 					string varname = userCodeStr.Replace("var ", "").Split('=')[0].Trim();
 					string varvalue = userCodeStr.Replace("var ", "").Split('=')[1].Trim().Replace(";","");
@@ -198,41 +210,65 @@ namespace WiiInputMapper
 					userCodeStr = userCodeStr + "{";
 					codeBlockAmount++;
 				}
-				else if (userCodeStr.Contains("Keyboard."))
+				
+				if (userCodeStr.Contains("Keyboard."))
 				{
 					string KeyboardInstruction = userCodeStr.Substring(0,userCodeStr.IndexOf('=')).Trim();
 					string keyInstruction = userCodeStr.Substring(userCodeStr.IndexOf('=') + 1).Replace(';', ' ').Trim();
 					if (userCodeStr.Contains("Keyboard.Press"))
 					{
-						userCodeStr = $"Keyboard.Press(Keyboard.{KeyboardInstruction.Replace("Keyboard.Press.", "Key.")}, {keyInstruction});";
+						userCodeStr = $"Keyboard.Press({KeyboardInstruction.Replace("Keyboard.Press.", "KeyCode.")}, {keyInstruction});";
 					} 
 					else if (userCodeStr.Contains("Keyboard.KeyUp"))
 					{
-						userCodeStr = $"Keyboard.Up(Keyboard.{KeyboardInstruction.Replace("Keyboard.KeyUp.", "Key.")}, {keyInstruction});";
+						userCodeStr = $"Keyboard.Up({KeyboardInstruction.Replace("Keyboard.KeyUp.", "KeyCode.")}, {keyInstruction});";
 					} 
 					else if (userCodeStr.Contains("Keyboard.KeyDown"))
 					{
-						userCodeStr = $"Keyboard.Down(Keyboard.{KeyboardInstruction.Replace("Keyboard.KeyDown.", "Key.")}, {keyInstruction});";
+						userCodeStr = $"Keyboard.Down({KeyboardInstruction.Replace("Keyboard.KeyDown.", "KeyCode.")}, {keyInstruction});";
 					}
 					else
 					{
-						userCodeStr = $"Keyboard.Press(Keyboard.{KeyboardInstruction.Replace("Keyboard.", "Key.")}, {keyInstruction});";
+						userCodeStr = $"Keyboard.Press({KeyboardInstruction.Replace("Keyboard.", "KeyCode.")}, {keyInstruction});";
 					}
 				}
-				userCode.Append("\t\t\t"); // Normal spacing
+
+				if (userCodeStr.Contains("Wiimote.IR")) {
+					if (!userCodeStr.Contains("Wiimote.IR.")) userCodeStr = userCodeStr.Replace("Wiimote.IR", "Wiimote.IR.Midpoint");
+					userCodeStr = userCodeStr.Replace("Wiimote.IR.X", "Wiimote.IR.Midpoint.RawPosition.X");
+					userCodeStr = userCodeStr.Replace("Wiimote.IR.Y", "Wiimote.IR.Midpoint.RawPosition.Y");
+					userCodeStr = userCodeStr.Replace("Wiimote.IR.Position", "Wiimote.IR.Midpoint.Position");
+					userCodeStr = userCodeStr.Replace("Wiimote.IR.RawPosition", "Wiimote.IR.Midpoint.RawPosition");
+					
+
+					if (!(
+						userCodeStr.Contains("varShower") ||
+						userCodeStr.StartsWith("if(") ||
+						variables.ContainsKey(userCodeStr.Split(' ')[0])
+						)) 
+					userCodeStr = $"if(Wiimote.IR.Midpoint.ValidPosition) {userCodeStr}";
+				}
+
+				appendUserCode("\t\t\t"); // Normal spacing
 				for (; tabAmounts > 0; tabAmounts--)
 				{
-					userCode.Append("\t");
+					appendUserCode("\t");
 				}
-				userCode.AppendLine(userCodeStr);
+				appendUserCodeLine(userCodeStr);
+				if (rawCode)
+				{
+					userCode.AppendLine(userCodeLine);
+				}
 			}
+			if(isCodeBlock)
+				appendUserCodeLine("}");
 			if (!variables.ContainsKey("mousespeed")) variables.Add("mousespeed", "1.0");
 			StringBuilder variableString = new StringBuilder();
 			foreach(KeyValuePair<String, String> varKV in variables)
 			{
 				string varName = varKV.Key;
 				string varValue = varKV.Value;
-				string varType = "string";
+				string varType = "dynamic";
 				Regex numberRegex = new Regex("[^a-z ]*([0-9])*\\d", RegexOptions.None);
 				if (numberRegex.IsMatch(varKV.Value))
 				{
@@ -247,13 +283,24 @@ namespace WiiInputMapper
 			{
 				initString.AppendLine(initStr);
 			}
-			String code = File.ReadAllText("./Template/InputMapperTemplate.cs");
+			String code = Resources.InputMapperTemplate;
 			code = code.Replace("//USERCODE", userCode.ToString());
 			code = code.Replace("//GLOBALS", variableString.ToString());
 			code = code.Replace("//INIT", initString.ToString());
-			//File.WriteAllText("./script.cs", code); 
-			File.WriteAllText("../../script.cs", code.Replace("namespace WiiInputMapper.Template", "namespace WiiInputMapper")); // Save code to build folder to be able to debug it
-			return code;
+			code = code.Replace("SOURCECODE", txtCode.Text.Replace("\"","\\\""));
+
+            File.WriteAllText("../../script.cs", code.Replace("namespace WiiInputMapper.Template", "namespace WiiInputMapper")); // Save code to build folder to be able to debug it
+
+            return code;
+		}
+
+		void appendUserCodeLine(String codeToAppend)
+		{
+			if (!rawCode) userCode.AppendLine(codeToAppend);
+		}
+		void appendUserCode(String codeToAppend)
+		{
+			if (!rawCode) userCode.Append(codeToAppend);
 		}
 
 		void Compile(string code, bool andRun)
@@ -272,27 +319,16 @@ namespace WiiInputMapper
 				Directory.Delete("./tempfiles", true);
 			}
 			Directory.CreateDirectory("./tempfiles");
-			CompilerParams.TempFiles = new TempFileCollection("./tempfiles", true);
 
 
 			string[] references = { "System.dll", "System.Data.dll" };
 			CompilerParams.ReferencedAssemblies.AddRange(references);
+			Assembly currentAssembly = Assembly.GetExecutingAssembly();
+			CompilerParams.ReferencedAssemblies.Add(currentAssembly.ManifestModule.Name);
 			CompilerParams.ReferencedAssemblies.AddRange(Assembly.GetExecutingAssembly().GetReferencedAssemblies().Select(a => a.Name + ".dll").ToArray());
-			List<String> fileContents = new List<String>();
-			var files = Directory.GetFiles("./Template");
-			//Directory.GetFiles("./Template").Select(x => File.ReadAllText(x)).ToList();
-			foreach (var file in files)
-			{
-				var extension = Path.GetExtension(file);
-				if (extension.Equals(".cs"))
-				{
-					if (Path.GetFileNameWithoutExtension(file).Equals("InputMapperTemplate")) continue; // We do not need to compile this since it is already included as the code parameter
-					fileContents.Add(File.ReadAllText(file));
-				}
-			}
-			fileContents.Add(code);
+
 			CSharpCodeProvider provider = new CSharpCodeProvider();
-			CompilerResults compile = provider.CompileAssemblyFromSource(CompilerParams, fileContents.ToArray());
+			CompilerResults compile = provider.CompileAssemblyFromSource(CompilerParams, code);
 
 			
 
@@ -309,7 +345,7 @@ namespace WiiInputMapper
 			else
 			{
 				txtCompileOutput.Text = "Compile success";
-				if (!andRun) return;
+                if (!andRun) return;
 				Module[] modules = compile.CompiledAssembly.GetModules();
 				Module module = modules[0];
 				Type mt = null;

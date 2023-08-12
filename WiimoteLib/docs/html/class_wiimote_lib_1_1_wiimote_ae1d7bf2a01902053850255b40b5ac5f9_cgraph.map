@@ -1,0 +1,6 @@
+<map id="WiimoteLib.Wiimote.DisconnectMotionPlus" name="WiimoteLib.Wiimote.DisconnectMotionPlus">
+<area shape="rect" id="Node000001" title="Disconnects the MotionPlus." alt="" coords="5,21,213,64"/>
+<area shape="rect" id="Node000002" href="$class_wiimote_lib_1_1_wiimote.html#ac2b2d161f0166705fa0c53619715e054" title="Write a single byte to the Wiimote." alt="" coords="261,29,461,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="213,40,246,40,246,45,213,45"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="319,31,311,21,316,11,333,5,361,3,392,6,408,13,405,18,391,11,361,8,334,10,320,15,316,20,323,27"/>
+</map>

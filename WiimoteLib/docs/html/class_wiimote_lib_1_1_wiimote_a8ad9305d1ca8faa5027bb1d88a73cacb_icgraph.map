@@ -1,0 +1,11 @@
+<map id="WiimoteLib.Wiimote.MuteSpeaker" name="WiimoteLib.Wiimote.MuteSpeaker">
+<area shape="rect" id="Node000001" title="This will mute or unmute the speaker." alt="" coords="525,32,744,59"/>
+<area shape="rect" id="Node000002" href="$class_wiimote_lib_1_1_wiimote.html#a12b61c642c818b830321ddfbbfc0327a" title="Turns the speaker on or off." alt="" coords="295,24,477,67"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="510,48,478,48,478,43,510,43"/>
+<area shape="rect" id="Node000003" href="$class_wiimote_lib_1_1_wiimote.html#ae77cca2df0bed61c9394dbeb9b9e8375" title=" " alt="" coords="20,5,232,32"/>
+<area shape="poly" id="edge4_Node000001_Node000003" title=" " alt="" coords="567,31,477,15,350,9,233,13,233,7,350,3,477,9,568,25"/>
+<area shape="rect" id="Node000004" href="$class_wiimote_lib_1_1_wiimote.html#a68f7076a71dedf88f729b5c6f7d4f317" title="This will play a squarewave at the frequency that is defined." alt="" coords="5,60,247,87"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="568,65,477,81,359,87,247,85,247,80,359,82,477,76,567,60"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="280,37,232,32,233,27,280,32"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="280,59,248,63,247,58,279,54"/>
+</map>

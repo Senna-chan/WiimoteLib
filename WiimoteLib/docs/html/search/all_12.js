@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['samples_0',['samples',['../class_wiimote_lib_1_1_data_types_1_1_wiimote_audio_sample.html#abfaede91f861b475c2df7e9d5219561f',1,'WiimoteLib::DataTypes::WiimoteAudioSample']]],
+  ['scalereference_1',['ScaleReference',['../struct_wiimote_lib_1_1_data_types_1_1_calibration_info_1_1_motion_plus_calibration_info.html#ae17e88ca0b4677f6f2ecb1f6c90c8aaf',1,'WiimoteLib::DataTypes::CalibrationInfo::MotionPlusCalibrationInfo']]],
+  ['sensitivity_2',['Sensitivity',['../struct_wiimote_lib_1_1_data_types_1_1_i_r_state.html#a48eafc1ad0659b5e25ba326a5b8f12d6',1,'WiimoteLib::DataTypes::IRState']]],
+  ['sensorvalueskg_3',['SensorValuesKg',['../struct_wiimote_lib_1_1_data_types_1_1_balance_board_state.html#aff4634ce5f35573f4fb6c5d67ecdf271',1,'WiimoteLib::DataTypes::BalanceBoardState']]],
+  ['sensorvalueslb_4',['SensorValuesLb',['../struct_wiimote_lib_1_1_data_types_1_1_balance_board_state.html#a117134c9b0ea5a29041d0536196be8f6',1,'WiimoteLib::DataTypes::BalanceBoardState']]],
+  ['sensorvaluesraw_5',['SensorValuesRaw',['../struct_wiimote_lib_1_1_data_types_1_1_balance_board_state.html#af391bd56183f9460625a64aa016d6553',1,'WiimoteLib::DataTypes::BalanceBoardState']]],
+  ['setleds_6',['SetLEDs',['../class_wiimote_lib_1_1_wiimote.html#ad60b7b5265674389c46fccd4d9842eb1',1,'WiimoteLib.Wiimote.SetLEDs(bool led1, bool led2, bool led3, bool led4)'],['../class_wiimote_lib_1_1_wiimote.html#aa22034676c2e29f9335ed123e63cbd93',1,'WiimoteLib.Wiimote.SetLEDs(int leds)']]],
+  ['setreporttype_7',['SetReportType',['../class_wiimote_lib_1_1_wiimote.html#a29b674a68a89318207849336bdb5dcca',1,'WiimoteLib.Wiimote.SetReportType(InputReport type, bool continuous)'],['../class_wiimote_lib_1_1_wiimote.html#afe9b2728f1b6fec24266696d16aaa9c6',1,'WiimoteLib.Wiimote.SetReportType(InputReport type, IRSensitivity irSensitivity, bool continuous)']]],
+  ['setrumble_8',['SetRumble',['../class_wiimote_lib_1_1_wiimote.html#ad09e427046f4344fa2f73bf46462ab91',1,'WiimoteLib::Wiimote']]],
+  ['size_9',['Size',['../struct_wiimote_lib_1_1_data_types_1_1_i_r_sensor.html#acc61b98326daa8bb5bb38e6b4d8ddc7a',1,'WiimoteLib.DataTypes.IRSensor.Size'],['../struct_wiimote_lib_1_1_h_i_d_imports_1_1_h_i_d_d___a_t_t_r_i_b_u_t_e_s.html#ab5cc643c7e2b6bd36e45c5df2be2ee54',1,'WiimoteLib.HIDImports.HIDD_ATTRIBUTES.Size']]],
+  ['slowcalibration_10',['SlowCalibration',['../struct_wiimote_lib_1_1_data_types_1_1_motion_plus_state.html#a1d155b19bc45441969d45bb9375a3e0d',1,'WiimoteLib::DataTypes::MotionPlusState']]],
+  ['slowpitch_11',['SlowPitch',['../struct_wiimote_lib_1_1_data_types_1_1_motion_plus_state.html#ae5900df31859ee86b70415a8a060af64',1,'WiimoteLib::DataTypes::MotionPlusState']]],
+  ['slowroll_12',['SlowRoll',['../struct_wiimote_lib_1_1_data_types_1_1_motion_plus_state.html#adc44ddfc820d78d2a9c07854324a3215',1,'WiimoteLib::DataTypes::MotionPlusState']]],
+  ['slowyaw_13',['SlowYaw',['../struct_wiimote_lib_1_1_data_types_1_1_motion_plus_state.html#a9c2a322216c6883809500fcde9b6a6ba',1,'WiimoteLib::DataTypes::MotionPlusState']]],
+  ['sp_5fdevice_5finterface_5fdata_14',['SP_DEVICE_INTERFACE_DATA',['../struct_wiimote_lib_1_1_h_i_d_imports_1_1_s_p___d_e_v_i_c_e___i_n_t_e_r_f_a_c_e___d_a_t_a.html',1,'WiimoteLib::HIDImports']]],
+  ['sp_5fdevice_5finterface_5fdetail_5fdata_15',['SP_DEVICE_INTERFACE_DETAIL_DATA',['../struct_wiimote_lib_1_1_h_i_d_imports_1_1_s_p___d_e_v_i_c_e___i_n_t_e_r_f_a_c_e___d_e_t_a_i_l___d_a_t_a.html',1,'WiimoteLib::HIDImports']]],
+  ['sp_5fdevinfo_5fdata_16',['SP_DEVINFO_DATA',['../struct_wiimote_lib_1_1_h_i_d_imports_1_1_s_p___d_e_v_i_n_f_o___d_a_t_a.html',1,'WiimoteLib::HIDImports']]],
+  ['speaker_17',['Speaker',['../class_wiimote_lib_1_1_data_types_1_1_wiimote_state.html#ad02b84ddc915cf6fdcba88d0de5ed000',1,'WiimoteLib::DataTypes::WiimoteState']]],
+  ['speakerfreq_18',['SpeakerFreq',['../namespace_wiimote_lib_1_1_data_types_1_1_enums.html#a493f45d48ac518319c6d5915c29c1ab0',1,'WiimoteLib::DataTypes::Enums']]],
+  ['speakerfreq_2ecs_19',['SpeakerFreq.cs',['../_speaker_freq_8cs.html',1,'']]],
+  ['speakerstate_20',['SpeakerState',['../class_wiimote_lib_1_1_data_types_1_1_speaker_state.html',1,'WiimoteLib::DataTypes']]],
+  ['speakerstate_2ecs_21',['SpeakerState.cs',['../_speaker_state_8cs.html',1,'']]],
+  ['status_22',['Status',['../namespace_wiimote_lib_1_1_data_types_1_1_enums.html#a81d9511c4f4c44debf65810e4efaff49aec53a8c4f07baed5d8825072c89799be',1,'WiimoteLib::DataTypes::Enums']]],
+  ['strumdown_23',['StrumDown',['../struct_wiimote_lib_1_1_data_types_1_1_guitar_button_state.html#aa41117536d720f41c70d3dad0a8d9335',1,'WiimoteLib::DataTypes::GuitarButtonState']]],
+  ['strumup_24',['StrumUp',['../struct_wiimote_lib_1_1_data_types_1_1_guitar_button_state.html#a748e8fb0e69a3acc5844dd215bd6a7b7',1,'WiimoteLib::DataTypes::GuitarButtonState']]]
+];

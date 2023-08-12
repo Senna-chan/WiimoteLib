@@ -13,7 +13,7 @@ namespace WiimoteTest
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new SingleWiimoteForm());
+			Application.Run(new MultipleWiimoteForm());
 		}
 	}
 }

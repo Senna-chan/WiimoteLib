@@ -1,0 +1,15 @@
+<map id="WiimoteLib.Wiimote.PlaySquareWave" name="WiimoteLib.Wiimote.PlaySquareWave">
+<area shape="rect" id="Node000001" title="This will play a squarewave at the frequency that is defined." alt="" coords="5,139,247,165"/>
+<area shape="rect" id="Node000002" href="$class_wiimote_lib_1_1_helpers_1_1_convert_helpers.html#aeb43588ce29680376af82d899cfb919f" title="Converts the sample rate given to what the wiiremote excpects." alt="" coords="295,5,495,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="148,136,212,98,294,58,309,51,311,56,296,62,215,103,151,140"/>
+<area shape="rect" id="Node000003" href="$class_wiimote_lib_1_1_wiimote.html#a12b61c642c818b830321ddfbbfc0327a" title="Turns the speaker on or off." alt="" coords="304,72,486,115"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="190,135,289,114,290,119,191,141"/>
+<area shape="rect" id="Node000004" href="$class_wiimote_lib_1_1_wiimote.html#a8ad9305d1ca8faa5027bb1d88a73cacb" title="This will mute or unmute the speaker." alt="" coords="543,109,762,136"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="247,143,528,127,528,132,247,148"/>
+<area shape="rect" id="Node000005" href="$class_wiimote_lib_1_1_helpers_1_1_convert_helpers.html#af377d7b285d8f71cc88f36a19082fe2e" title="Converts a int to Little Endian byte array." alt="" coords="304,189,486,232"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="191,163,290,185,289,190,190,169"/>
+<area shape="rect" id="Node000006" href="$class_wiimote_lib_1_1_wiimote.html#ac2b2d161f0166705fa0c53619715e054" title="Write a single byte to the Wiimote." alt="" coords="295,280,495,307"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="153,163,296,242,353,271,351,275,293,246,150,168"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="487,101,529,106,528,111,486,106"/>
+<area shape="poly" id="edge7_Node000006_Node000006" title=" " alt="" coords="352,281,344,271,349,261,367,255,395,253,428,256,443,264,441,269,426,262,395,259,368,261,353,266,349,271,356,278"/>
+</map>

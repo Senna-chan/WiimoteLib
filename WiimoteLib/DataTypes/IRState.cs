@@ -21,12 +21,13 @@ namespace WiimoteLib.DataTypes
         /// </summary>
         public IRSensor[] IRSensors;
         /// <summary>
-        /// Raw midpoint of IR sensors 1 and 2 only.  Values range between 0 - 1023, 0 - 767
+        /// Normalized Sensor made of data from IR sensors 1 and 2 only.
         /// </summary>
-        public Point RawMidpoint;
+        public IRSensor Midpoint;
+
         /// <summary>
-        /// Normalized midpoint of IR sensors 1 and 2 only.  Values range between 0.0 - 1.0
+        /// Current sensitivity of IR sensor
         /// </summary>
-        public PointF Midpoint;
+        public IRSensitivity Sensitivity;
     }
 }

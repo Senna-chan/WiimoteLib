@@ -1,0 +1,22 @@
+var searchData=
+[
+  ['r0_0',['R0',['../struct_wiimote_lib_1_1_data_types_1_1_calibration_info_1_1_motion_plus_calibration_info.html#acf1dba89479a6952eec6d8fc1364a353',1,'WiimoteLib::DataTypes::CalibrationInfo::MotionPlusCalibrationInfo']]],
+  ['rawbuff_1',['RawBuff',['../class_wiimote_lib_1_1_data_types_1_1_wiimote_state.html#a87739f0b0a962b806da30305fa97047f',1,'WiimoteLib::DataTypes::WiimoteState']]],
+  ['rawjoystick_2',['RawJoystick',['../struct_wiimote_lib_1_1_data_types_1_1_drums_state.html#a8901f0cb145458407ca66b6922fd4d5c',1,'WiimoteLib.DataTypes.DrumsState.RawJoystick'],['../struct_wiimote_lib_1_1_data_types_1_1_guitar_state.html#a1fbeb8b03ba6716e8c22ed9fc905845e',1,'WiimoteLib.DataTypes.GuitarState.RawJoystick'],['../struct_wiimote_lib_1_1_data_types_1_1_nunchuk_state.html#af16adc8cd893ae22a3cfe9ef315c437a',1,'WiimoteLib.DataTypes.NunchukState.RawJoystick']]],
+  ['rawjoystickl_3',['RawJoystickL',['../struct_wiimote_lib_1_1_data_types_1_1_classic_controller_state.html#a9f47260ad5b7904d4a8e488a7527f846',1,'WiimoteLib::DataTypes::ClassicControllerState']]],
+  ['rawjoystickr_4',['RawJoystickR',['../struct_wiimote_lib_1_1_data_types_1_1_classic_controller_state.html#a8ab8da9d451b25b15206e7273771f1ef',1,'WiimoteLib::DataTypes::ClassicControllerState']]],
+  ['rawposition_5',['RawPosition',['../struct_wiimote_lib_1_1_data_types_1_1_i_r_sensor.html#a43f58c050c423b1752c7e164f6ccd31f',1,'WiimoteLib.DataTypes.IRSensor.RawPosition'],['../struct_wiimote_lib_1_1_data_types_1_1_tablet_state.html#a27bb855836e0a7da8bcd9f40ec6dcd8c',1,'WiimoteLib.DataTypes.TabletState.RawPosition']]],
+  ['rawtriggerl_6',['RawTriggerL',['../struct_wiimote_lib_1_1_data_types_1_1_classic_controller_state.html#abf7007a09c38653ad94b1237bbf2a88e',1,'WiimoteLib::DataTypes::ClassicControllerState']]],
+  ['rawtriggerr_7',['RawTriggerR',['../struct_wiimote_lib_1_1_data_types_1_1_classic_controller_state.html#af7e065e7ff575225153ac031cdf08afc',1,'WiimoteLib::DataTypes::ClassicControllerState']]],
+  ['rawvalues_8',['RawValues',['../struct_wiimote_lib_1_1_data_types_1_1_accel_state.html#aad9e4f6277803c5bef72f56d22f4c530',1,'WiimoteLib::DataTypes::AccelState']]],
+  ['rawwhammybar_9',['RawWhammyBar',['../struct_wiimote_lib_1_1_data_types_1_1_guitar_state.html#a2e5a141b19966139024ec75b5e842639',1,'WiimoteLib::DataTypes::GuitarState']]],
+  ['readdata_10',['ReadData',['../class_wiimote_lib_1_1_wiimote.html#ab34d691b0845af1e3cd5ff5143934ee9',1,'WiimoteLib.Wiimote.ReadData()'],['../namespace_wiimote_lib_1_1_data_types_1_1_enums.html#a81d9511c4f4c44debf65810e4efaff49a9737b198b43957e0daee34be05d34687',1,'WiimoteLib.DataTypes.Enums.ReadData']]],
+  ['red_11',['Red',['../struct_wiimote_lib_1_1_data_types_1_1_drums_state.html#a26defe50f1ee91fe8a6b833e4aaab095',1,'WiimoteLib.DataTypes.DrumsState.Red'],['../struct_wiimote_lib_1_1_data_types_1_1_guitar_fret_button_state.html#ad8bab53ce92505f5b1c40fd08286be50',1,'WiimoteLib.DataTypes.GuitarFretButtonState.Red']]],
+  ['redvelocity_12',['RedVelocity',['../struct_wiimote_lib_1_1_data_types_1_1_drums_state.html#a46c0a64bf7fd23daeb74ad5caa312e6b',1,'WiimoteLib::DataTypes::DrumsState']]],
+  ['reserved_13',['Reserved',['../struct_wiimote_lib_1_1_h_i_d_imports_1_1_s_p___d_e_v_i_n_f_o___d_a_t_a.html#aab5259e0f6ef3403766988d106a68036',1,'WiimoteLib::HIDImports::SP_DEVINFO_DATA']]],
+  ['reserved_14',['RESERVED',['../struct_wiimote_lib_1_1_h_i_d_imports_1_1_s_p___d_e_v_i_c_e___i_n_t_e_r_f_a_c_e___d_a_t_a.html#a778d03cacb65c687e41e05b31804c8a8',1,'WiimoteLib::HIDImports::SP_DEVICE_INTERFACE_DATA']]],
+  ['right_15',['Right',['../struct_wiimote_lib_1_1_data_types_1_1_button_state.html#a7a6f2c45c58a3eb464845dcc661f9001',1,'WiimoteLib.DataTypes.ButtonState.Right'],['../struct_wiimote_lib_1_1_data_types_1_1_classic_controller_button_state.html#a6a4ea48a05cba39301b9d8d743b02686',1,'WiimoteLib.DataTypes.ClassicControllerButtonState.Right']]],
+  ['roll_16',['Roll',['../struct_wiimote_lib_1_1_data_types_1_1_i_m_u_state.html#a5110fa40d879634950f653c4808307f3',1,'WiimoteLib::DataTypes::IMUState']]],
+  ['rs_17',['RS',['../struct_wiimote_lib_1_1_data_types_1_1_calibration_info_1_1_motion_plus_calibration_info.html#ad314aed1010408ac9c2b7b91bfae0692',1,'WiimoteLib::DataTypes::CalibrationInfo::MotionPlusCalibrationInfo']]],
+  ['rumble_18',['Rumble',['../class_wiimote_lib_1_1_data_types_1_1_wiimote_state.html#ad142d3d1e1cda6f47143f805583c1d82',1,'WiimoteLib::DataTypes::WiimoteState']]]
+];

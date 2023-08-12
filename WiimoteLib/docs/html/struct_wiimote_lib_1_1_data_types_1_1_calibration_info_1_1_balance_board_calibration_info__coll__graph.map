@@ -1,0 +1,5 @@
+<map id="WiimoteLib.DataTypes.CalibrationInfo.BalanceBoardCalibrationInfo" name="WiimoteLib.DataTypes.CalibrationInfo.BalanceBoardCalibrationInfo">
+<area shape="rect" id="Node000001" title="Calibration information." alt="" coords="5,144,223,187"/>
+<area shape="rect" id="Node000002" href="$struct_wiimote_lib_1_1_data_types_1_1_balance_board_sensors.html" title="The 4 sensors on the Balance Board (short values)" alt="" coords="12,5,216,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="117,63,117,144,111,144,111,63"/>
+</map>

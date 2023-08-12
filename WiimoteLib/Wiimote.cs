@@ -144,7 +144,7 @@ namespace WiimoteLib
         // Prevent MotionPlus from turning off upon init
         private bool mSuppressExtensionInit = false;
 
-        private Mahony filter = new Mahony(100);
+        private Mahony filter = new Mahony(10);
         private WiimoteAudioSample currentSample = null;
         private Thread SampleThread = null;
         public int FreqOverride = 0;
@@ -392,6 +392,7 @@ namespace WiimoteLib
                 // end the current read
                 mStream.EndRead(ar);
 
+                BeginAsyncRead();
                 // parse it
                 try
                 {
@@ -406,7 +407,6 @@ namespace WiimoteLib
                     Console.WriteLine(e.StackTrace);
                 }
                 // start reading again
-                BeginAsyncRead();
             }
             catch (OperationCanceledException)
             {
@@ -635,6 +635,26 @@ namespace WiimoteLib
                     mWiimoteState.BalanceBoard.CalibrationInfo.Kg34.TopLeft =		(short)((short)buff[24] << 8 | buff[25]);
                     mWiimoteState.BalanceBoard.CalibrationInfo.Kg34.BottomLeft =	(short)((short)buff[26] << 8 | buff[27]);
                     break;
+                case ExtensionType.MotionPlus:
+                    break; // The calibration reading does not work right now
+                    Console.WriteLine("Reading WMP data");
+                    buff = ReadData(REGISTER_EXTENSION_CALIBRATION, 32);
+                    mWiimoteState.MotionPlus.FastCalibration.Y0 =               (short)((short)buff[0] << 8 | buff[1]);
+                    mWiimoteState.MotionPlus.FastCalibration.R0 =               (short)((short)buff[2] << 8 | buff[3]);
+                    mWiimoteState.MotionPlus.FastCalibration.P0 =               (short)((short)buff[4] << 8 | buff[5]);
+                    mWiimoteState.MotionPlus.FastCalibration.YS =               (short)((short)buff[6] << 8 | buff[7]);
+                    mWiimoteState.MotionPlus.FastCalibration.RS =               (short)((short)buff[8] << 8 | buff[9]);
+                    mWiimoteState.MotionPlus.FastCalibration.PS =               (short)((short)buff[10] << 8 | buff[11]);
+                    mWiimoteState.MotionPlus.FastCalibration.ScaleReference =   buff[12];
+                    mWiimoteState.MotionPlus.SlowCalibration.Y0 =               (short)((short)buff[16] << 8 | buff[17]);
+                    mWiimoteState.MotionPlus.SlowCalibration.R0 =               (short)((short)buff[18] << 8 | buff[19]);
+                    mWiimoteState.MotionPlus.SlowCalibration.P0 =               (short)((short)buff[20] << 8 | buff[21]);
+                    mWiimoteState.MotionPlus.SlowCalibration.YS =               (short)((short)buff[22] << 8 | buff[23]);
+                    mWiimoteState.MotionPlus.SlowCalibration.RS =               (short)((short)buff[24] << 8 | buff[25]);
+                    mWiimoteState.MotionPlus.SlowCalibration.PS =               (short)((short)buff[26] << 8 | buff[27]);
+                    mWiimoteState.MotionPlus.FastCalibration.ScaleReference =   buff[28];
+                    break;
+
             }
         }
 
@@ -746,28 +766,42 @@ namespace WiimoteLib
                     break;
             }
 
-            mWiimoteState.IR.IRSensors[0].Position.X = (float)(mWiimoteState.IR.IRSensors[0].RawPosition.X / 1023.5f);
-            mWiimoteState.IR.IRSensors[1].Position.X = (float)(mWiimoteState.IR.IRSensors[1].RawPosition.X / 1023.5f);
-            mWiimoteState.IR.IRSensors[2].Position.X = (float)(mWiimoteState.IR.IRSensors[2].RawPosition.X / 1023.5f);
-            mWiimoteState.IR.IRSensors[3].Position.X = (float)(mWiimoteState.IR.IRSensors[3].RawPosition.X / 1023.5f);
+            mWiimoteState.IR.IRSensors[0].Position.X = (float)(mWiimoteState.IR.IRSensors[0].RawPosition.X / 1023.0f);
+            mWiimoteState.IR.IRSensors[1].Position.X = (float)(mWiimoteState.IR.IRSensors[1].RawPosition.X / 1023.0f);
+            mWiimoteState.IR.IRSensors[2].Position.X = (float)(mWiimoteState.IR.IRSensors[2].RawPosition.X / 1023.0f);
+            mWiimoteState.IR.IRSensors[3].Position.X = (float)(mWiimoteState.IR.IRSensors[3].RawPosition.X / 1023.0f);
                            
-            mWiimoteState.IR.IRSensors[0].Position.Y = (float)(mWiimoteState.IR.IRSensors[0].RawPosition.Y / 767.5f);
-            mWiimoteState.IR.IRSensors[1].Position.Y = (float)(mWiimoteState.IR.IRSensors[1].RawPosition.Y / 767.5f);
-            mWiimoteState.IR.IRSensors[2].Position.Y = (float)(mWiimoteState.IR.IRSensors[2].RawPosition.Y / 767.5f);
-            mWiimoteState.IR.IRSensors[3].Position.Y = (float)(mWiimoteState.IR.IRSensors[3].RawPosition.Y / 767.5f);
+            mWiimoteState.IR.IRSensors[0].Position.Y = (float)(mWiimoteState.IR.IRSensors[0].RawPosition.Y / 767.0f);
+            mWiimoteState.IR.IRSensors[1].Position.Y = (float)(mWiimoteState.IR.IRSensors[1].RawPosition.Y / 767.0f);
+            mWiimoteState.IR.IRSensors[2].Position.Y = (float)(mWiimoteState.IR.IRSensors[2].RawPosition.Y / 767.0f);
+            mWiimoteState.IR.IRSensors[3].Position.Y = (float)(mWiimoteState.IR.IRSensors[3].RawPosition.Y / 767.0f);
 
-            if(mWiimoteState.IR.IRSensors[0].Found && mWiimoteState.IR.IRSensors[1].Found)
+            mWiimoteState.IR.IRSensors[0].ValidPosition = (mWiimoteState.IR.IRSensors[0].RawPosition.X != 1023 && mWiimoteState.IR.IRSensors[0].RawPosition.Y != 1023);
+            mWiimoteState.IR.IRSensors[1].ValidPosition = (mWiimoteState.IR.IRSensors[1].RawPosition.X != 1023 && mWiimoteState.IR.IRSensors[1].RawPosition.Y != 1023);
+            mWiimoteState.IR.IRSensors[2].ValidPosition = (mWiimoteState.IR.IRSensors[2].RawPosition.X != 1023 && mWiimoteState.IR.IRSensors[2].RawPosition.Y != 1023);
+            mWiimoteState.IR.IRSensors[3].ValidPosition = (mWiimoteState.IR.IRSensors[3].RawPosition.X != 1023 && mWiimoteState.IR.IRSensors[3].RawPosition.Y != 1023);
+
+            if ((mWiimoteState.IR.IRSensors[0].Found && mWiimoteState.IR.IRSensors[0].ValidPosition) && (mWiimoteState.IR.IRSensors[1].Found && mWiimoteState.IR.IRSensors[1].ValidPosition))
             {
-                mWiimoteState.IR.RawMidpoint.X = (mWiimoteState.IR.IRSensors[1].RawPosition.X + mWiimoteState.IR.IRSensors[0].RawPosition.X) / 2;
-                mWiimoteState.IR.RawMidpoint.Y = (mWiimoteState.IR.IRSensors[1].RawPosition.Y + mWiimoteState.IR.IRSensors[0].RawPosition.Y) / 2;
-        
-                mWiimoteState.IR.Midpoint.X = (mWiimoteState.IR.IRSensors[1].Position.X + mWiimoteState.IR.IRSensors[0].Position.X) / 2.0f;
-                mWiimoteState.IR.Midpoint.Y = (mWiimoteState.IR.IRSensors[1].Position.Y + mWiimoteState.IR.IRSensors[0].Position.Y) / 2.0f;
+                mWiimoteState.IR.Midpoint.RawPosition.X = (mWiimoteState.IR.IRSensors[1].RawPosition.X + mWiimoteState.IR.IRSensors[0].RawPosition.X) / 2;
+                mWiimoteState.IR.Midpoint.RawPosition.Y = (mWiimoteState.IR.IRSensors[1].RawPosition.Y + mWiimoteState.IR.IRSensors[0].RawPosition.Y) / 2;
+
+                mWiimoteState.IR.Midpoint.Position.X = (mWiimoteState.IR.IRSensors[1].Position.X + mWiimoteState.IR.IRSensors[0].Position.X) / 2.0f;
+                mWiimoteState.IR.Midpoint.Position.Y = (mWiimoteState.IR.IRSensors[1].Position.Y + mWiimoteState.IR.IRSensors[0].Position.Y) / 2.0f;
+                mWiimoteState.IR.Midpoint.Found = true;
+                mWiimoteState.IR.Midpoint.ValidPosition = true;
             }
             else
-                mWiimoteState.IR.Midpoint.X = mWiimoteState.IR.Midpoint.Y = 0.0f;
+            {
+                mWiimoteState.IR.Midpoint.Position.X = mWiimoteState.IR.Midpoint.Position.Y = 0.0f;
+                mWiimoteState.IR.Midpoint.RawPosition.X = mWiimoteState.IR.Midpoint.RawPosition.Y = 1023;
+                mWiimoteState.IR.Midpoint.Found = false;
+                mWiimoteState.IR.Midpoint.ValidPosition = false;
+            }
         }
-
+        long lastParseTime = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
+        int lastSecond = DateTime.Now.Second;
+        List<long> packetsPerSecond = new List<long>() { 0 };
         /// <summary>
         /// Parse data from an extension controller
         /// </summary>
@@ -1039,10 +1073,9 @@ namespace WiimoteLib
                     mWiimoteState.BalanceBoard.CenterOfGravity.Y = ((float)(Ky - 1) / (float)(Ky + 1)) * (float)(-BSW / 2);
                     break;
                 case ExtensionType.MotionPlus:
-
                     // Yaw
                     mWiimoteState.MotionPlus.GyroRaw.Z
-                        = ((buff[offset + 3] & 0xF6) << 6) + buff[offset + 0] ;
+                        = ((buff[offset + 3] & 0xF6) << 6) + buff[offset + 0];
 
                     // Roll
                     mWiimoteState.MotionPlus.GyroRaw.Y
@@ -1091,9 +1124,11 @@ namespace WiimoteLib
                         mWiimoteState.MotionPlus.Gyro.X *= FAST_MULTIPLIER;
                     }
 
+                    
                     filter.UpdateImu(mWiimoteState.MotionPlus.Gyro.X, mWiimoteState.MotionPlus.Gyro.Y,
                         mWiimoteState.MotionPlus.Gyro.Z, mWiimoteState.Accel.Values.X,
                         mWiimoteState.Accel.Values.Y, mWiimoteState.Accel.Values.Z);
+
 
                     mWiimoteState.MotionPlus.IMU.Roll = filter.GetRoll();
                     mWiimoteState.MotionPlus.IMU.Pitch = filter.GetPitch();
@@ -1137,6 +1172,7 @@ namespace WiimoteLib
                 mReadDone.Set();
             else
             {
+                //mReadDone.Set();
                 Console.WriteLine("Something went wrong");
             }
         }
@@ -1183,7 +1219,7 @@ namespace WiimoteLib
         /// <param name="continuous">Continuous data</param>
         public void SetReportType(InputReport type, bool continuous)
         {
-            SetReportType(type, IRSensitivity.Maximum, continuous);
+            SetReportType(type, IRSensitivity.WiiLevel3, continuous);
         }
 
         /// <summary>
@@ -1310,7 +1346,7 @@ namespace WiimoteLib
         private void EnableIR(IRMode mode, IRSensitivity irSensitivity)
         {
             mWiimoteState.IR.Mode = mode;
-
+            mWiimoteState.IR.Sensitivity = irSensitivity;
             ClearReport();
             mBuff[0] = (byte)OutputReport.IR;
             mBuff[1] = (byte)(0x04 | GetRumbleBit());
@@ -1345,8 +1381,10 @@ namespace WiimoteLib
                     WriteData(REGISTER_IR_SENSITIVITY_2, 2, new byte[] {0x1, 0x03});
                     break;
                 case IRSensitivity.Maximum:
-                    WriteData(REGISTER_IR_SENSITIVITY_1, 9, new byte[] {0x02, 0x00, 0x00, 0x71, 0x01, 0x00, 0x90, 0x00, 0x41});
-                    WriteData(REGISTER_IR_SENSITIVITY_2, 2, new byte[] {0x40, 0x00});
+                    //WriteData(REGISTER_IR_SENSITIVITY_1, 9, new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x0C });
+                    //WriteData(REGISTER_IR_SENSITIVITY_2, 2, new byte[] { 0x00, 0x00 });
+                    WriteData(REGISTER_IR_SENSITIVITY_1, 9, new byte[] { 0x02, 0x00, 0x00, 0x71, 0x01, 0x00, 0x90, 0x00, 0x41 });
+                    WriteData(REGISTER_IR_SENSITIVITY_2, 2, new byte[] { 0x40, 0x00 });
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("irSensitivity");
@@ -1386,22 +1424,33 @@ namespace WiimoteLib
         /// </summary>
         private void WriteReport()
         {
-            Console.WriteLine("WriteReport: " + ((OutputReport)mBuff[0]));
-            if(mAltWriteMethod)
-                HIDImports.HidD_SetOutputReport(this.mHandle.DangerousGetHandle(), mBuff, (uint)mBuff.Length);
-            
+            WriteReport(mBuff);
+        }
+
+        /// <summary>
+        /// Writes a report to the Wiimote
+        /// </summary>
+        /// <param name="report">Byte array</param>
+        /// <param name="report_length">length of the array</param>
+        /// <exception cref="WiimoteException"></exception>
+        private void WriteReport(byte[] report)
+        {
+            Console.WriteLine("WriteReport: " + ((OutputReport)report[0]));
+            if (mAltWriteMethod)
+                HIDImports.HidD_SetOutputReport(this.mHandle.DangerousGetHandle(), report, (uint)report.Length);
+
             else if (mStream != null)
             {
-                mStream.Write(mBuff, 0, REPORT_LENGTH);
+                mStream.Write(report, 0, REPORT_LENGTH);
                 mStream.Flush();
             }
-            if(mBuff[0] == (byte)OutputReport.WriteMemory)
+            if (report[0] == (byte)OutputReport.WriteMemory)
             {
                 Console.WriteLine("Wait");
                 if (!mWriteDone.WaitOne(1000, false))
                 {
                     Console.WriteLine("Wait failed");
-                    //throw new WiimoteException("Error writing data to Wiimote...is it connected?");
+                    throw new WiimoteException("Error writing data to Wiimote...is it connected?");
                 }
             }
         }
@@ -1592,7 +1641,7 @@ namespace WiimoteLib
             {
                 WiimoteState.Speaker.Frequency = SpeakerFreq.FREQ_NONE;
                 WiimoteState.Speaker.Volume = 0;
-                WiimoteState.CurrentSample = new WiimoteAudioSample();
+                WiimoteState.CurrentSample = null;
                 MuteSpeaker(true);
                 _sampleThreadCancellationTokenSource.Cancel(false);
             }
@@ -1939,13 +1988,15 @@ namespace WiimoteLib
                 bool playing = IsPlayingAudio();
 
                 if (!playing)
+                {
                     await Task.Delay(TimeSpan.FromMilliseconds(0.10));
+                }
                 else
                 {
                     int freq_hz;
                     if (FreqOverride == 0)
                     {
-                        freq_hz = FreqLookup[(int) WiimoteState.Speaker.Frequency];
+                        freq_hz = FreqLookup[(int)WiimoteState.Speaker.Frequency];
                     }
                     else
                     {
@@ -1955,7 +2006,7 @@ namespace WiimoteLib
                     // has the sample just changed?
                     bool sample_changed = (current_sample != WiimoteState.CurrentSample);
                     current_sample = WiimoteState.CurrentSample;
-                    
+
                     if (!last_playing || sample_changed)
                     {
                         frame = 0;
@@ -1982,9 +2033,9 @@ namespace WiimoteLib
                                     sample_report[2 + index] =
                                             current_sample.samples[(sample_index >> 1) + index];
 
-                                ClearReport();
-                                Array.Copy(sample_report, mBuff, REPORT_LENGTH);
-                                WriteReport();
+                                //ClearReport();
+                                //Array.Copy(sample_report, mBuff, REPORT_LENGTH);
+                                WriteReport(sample_report);
                                 sample_index += report_samples;
                             }
                         }
@@ -2001,20 +2052,16 @@ namespace WiimoteLib
                     else
                     {
                         squarewave_report[1] = (byte)((20 << 3) | GetRumbleBit());
-                        ClearReport();
-                        Array.Copy(squarewave_report, mBuff, REPORT_LENGTH);
-                        WriteReport();
+                        //ClearReport();
+                        //Array.Copy(squarewave_report, mBuff, REPORT_LENGTH);
+                        WriteReport(squarewave_report);
                     }
 
                     frame++;
-
-                    // send the first two buffers immediately? (attempts to lessen startup
-                    //  startup glitches by assuming we're filling a small sample
-                    //  (or general input) buffer on the wiimote) - doesn't seem to help
-                    //			if(frame > 2) {
                     while ((DateTime.Now.Ticks - frame_start) < (int)(frame * frame_ms))
+                    {
                         await Task.Delay(TimeSpan.FromMilliseconds(0.10));
-                    //				}
+                    }
                 }
 
                 last_playing = playing;
@@ -2065,14 +2112,18 @@ namespace WiimoteLib
                 return false;
 
             byte volume = vol;
-            //byte volume = vol.Map(0, 100, 0, 64);
-            // if we're already playing a sample, stop it first
-            if (IsPlayingSample())
+            if (IsPlayingSample()) // if we're already playing a sample, stop it first
+            {
                 currentSample = null;
+            }
             // if we're already playing a square wave at this freq and volume, return
             else if (IsPlayingAudio() && (WiimoteState.Speaker.Frequency == freq) &&
                                         (WiimoteState.Speaker.Volume == vol))
+            {
+                Console.WriteLine($"Already playing squarewave with requested freq and vol");
                 return true;
+            }
+
 
             
             Console.WriteLine("playing square wave.");

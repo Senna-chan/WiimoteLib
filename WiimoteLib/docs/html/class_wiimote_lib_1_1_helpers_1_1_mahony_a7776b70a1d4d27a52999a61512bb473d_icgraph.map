@@ -1,0 +1,5 @@
+<map id="WiimoteLib.Helpers.Mahony.UpdateImu" name="WiimoteLib.Helpers.Mahony.UpdateImu">
+<area shape="rect" id="Node000001" title="quaternion" alt="" coords="242,5,430,48"/>
+<area shape="rect" id="Node000002" href="$class_wiimote_lib_1_1_helpers_1_1_mahony.html#abdd1198615cabd51b7386b33ba2c1bd5" title="Updates the quaternion things for the calculations." alt="" coords="5,5,194,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="227,29,194,29,194,24,227,24"/>
+</map>

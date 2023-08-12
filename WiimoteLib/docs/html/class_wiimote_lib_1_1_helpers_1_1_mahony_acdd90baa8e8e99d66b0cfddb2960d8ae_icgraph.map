@@ -1,0 +1,15 @@
+<map id="WiimoteLib.Helpers.Mahony.ComputeAngles" name="WiimoteLib.Helpers.Mahony.ComputeAngles">
+<area shape="rect" id="Node000001" title=" " alt="" coords="242,172,430,215"/>
+<area shape="rect" id="Node000002" href="$class_wiimote_lib_1_1_helpers_1_1_mahony.html#a80759db89fd4878081b61cd6232ec6d8" title=" " alt="" coords="5,5,194,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="305,163,256,112,225,85,192,62,170,51,173,46,195,58,228,81,259,108,309,159"/>
+<area shape="rect" id="Node000003" href="$class_wiimote_lib_1_1_helpers_1_1_mahony.html#a6167e21de586d168dd9e699bbe3e1776" title=" " alt="" coords="5,72,194,115"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="277,168,193,129,164,118,166,113,195,124,279,163"/>
+<area shape="rect" id="Node000004" href="$class_wiimote_lib_1_1_helpers_1_1_mahony.html#acb8264eb2db22dbc386d6164d36d233f" title=" " alt="" coords="5,139,194,181"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="226,181,194,176,194,171,227,175"/>
+<area shape="rect" id="Node000005" href="$class_wiimote_lib_1_1_helpers_1_1_mahony.html#a4672c25dc0050f80278c609c3df85434" title=" " alt="" coords="5,205,194,248"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="227,211,194,216,194,211,226,206"/>
+<area shape="rect" id="Node000006" href="$class_wiimote_lib_1_1_helpers_1_1_mahony.html#a028805cd02dbf7818bb986a757dcaf20" title=" " alt="" coords="5,272,194,315"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="279,224,195,262,166,274,164,269,193,258,277,219"/>
+<area shape="rect" id="Node000007" href="$class_wiimote_lib_1_1_helpers_1_1_mahony.html#a3b61d27e258103a0cfc723f712b7e224" title=" " alt="" coords="5,339,194,381"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="309,228,259,279,228,306,195,329,173,340,170,336,192,324,225,301,256,275,305,224"/>
+</map>

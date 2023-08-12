@@ -1,0 +1,5 @@
+<map id="WiimoteLib.Wiimote.EnableSpeaker" name="WiimoteLib.Wiimote.EnableSpeaker">
+<area shape="rect" id="Node000001" title="Turns the speaker on or off." alt="" coords="5,5,188,48"/>
+<area shape="rect" id="Node000002" href="$class_wiimote_lib_1_1_wiimote.html#a8ad9305d1ca8faa5027bb1d88a73cacb" title="This will mute or unmute the speaker." alt="" coords="236,13,455,40"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="188,24,221,24,221,29,188,29"/>
+</map>

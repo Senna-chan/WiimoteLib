@@ -1,0 +1,7 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,47,85,73"/>
+<area shape="rect" id="Node000001" href="$class_wiimote_lib_1_1_exceptions_1_1_wiimote_exception.html" title="Represents errors that occur during the execution of the Wiimote library." alt="" coords="133,5,340,48"/>
+<area shape="poly" id="edge4_Node000000_Node000001" title=" " alt="" coords="99,48,132,42,133,47,100,53"/>
+<area shape="rect" id="Node000002" href="$class_wiimote_lib_1_1_exceptions_1_1_wiimote_not_found_exception.html" title="Thrown when no Wiimotes are found in the HID device list." alt="" coords="133,72,340,115"/>
+<area shape="poly" id="edge5_Node000000_Node000002" title=" " alt="" coords="100,67,133,73,132,78,99,72"/>
+</map>

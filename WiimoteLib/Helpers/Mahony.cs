@@ -13,7 +13,6 @@ namespace WiimoteLib.Helpers{
         float invSampleFreq;
         float roll, pitch, yaw;
         bool anglesComputed;
-
         public Mahony(float refreshRate)
         {
             twoKp = twoKpDef;   // 2 * proportional gain (Kp)
