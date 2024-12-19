@@ -53,8 +53,16 @@ namespace WiimoteLib.DataTypes
         /// </summary>
         public IMUState IMU;
         /// <summary>
-        /// This holds the time between samples(For the fusion code)
+        /// This holds the last time it got this message
         /// </summary>
         public long LastMillis;
+        /// <summary>
+        /// This holds the time between samples(For the fusion code)
+        /// </summary>
+        public long TimeInBetweenPackets;
+        /// <summary>
+        /// ExtensionConnected
+        /// </summary>
+        public bool ExtensionConnected;
     }
 }

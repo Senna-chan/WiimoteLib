@@ -14,7 +14,6 @@ using WindowsInput.Native;
 using System.Collections.Generic;
 using WiimoteLib.Exceptions;
 using WiiInputMapper.Template;
-using WindowsInput.Events;
 
 namespace WiiInputMapper
 {
@@ -37,7 +36,7 @@ namespace WiiInputMapper
 		Point lastIRPosition;
 		public InputMapperTemplate()
 		{
-			initvarshower = true;
+			usingIR = true;
 
 			Mouse = new Mouse();
 			Keyboard = new Keyboard();
@@ -81,7 +80,7 @@ namespace WiiInputMapper
 			mWiimote.SetRumble(false);
 			mWiimote.MuteSpeaker(true);
 			mWiimote.Disconnect();
-			if (_scpBus != null) _scpBus.Unplug(1);
+			if(_scpBus != null) _scpBus.Unplug(1);
 			varShower.Close();
 			Mouse.Stop();
 			Keyboard.Stop();
@@ -89,17 +88,11 @@ namespace WiiInputMapper
 
 
 		//region userblock
-		
 		float mousespeed = 1.0f;
-
 
 		private void CodeExecutor(WiimoteState Wiimote)
 		{
-						varShower.ShowVar("Wiimote.Nunchuk.Accel.IMU.Pitch", Wiimote.Nunchuk.Accel.IMU.Pitch);
-			varShower.ShowVar("Wiimote.Nunchuk.Accel.IMU.Roll", Wiimote.Nunchuk.Accel.IMU.Roll);
-			Keyboard.Down(KeyCode.Shift, DataValidater.ValidatePitch(Wiimote.Nunchuk.Accel.IMU.Pitch, Wiimote.Nunchuk.Accel.IMU.Roll, -40, '<'));
-			Keyboard.Up(KeyCode.Shift, DataValidater.ValidatePitch(Wiimote.Nunchuk.Accel.IMU.Pitch, Wiimote.Nunchuk.Accel.IMU.Roll, 40, '>'));
-			Keyboard.Press(KeyCode.R, Wiimote.Nunchuk.Accel.IMU.Roll < -40);
+Console.WriteLine(IRDifference);
 
 		}
 		//endregion  
@@ -140,9 +133,7 @@ namespace WiiInputMapper
 				IRDifference.Y = lastIRPosition.Y - e.WiimoteState.IR.Midpoint.RawPosition.Y;
 				lastIRPosition = e.WiimoteState.IR.Midpoint.RawPosition;
 			}
-
 			CodeExecutor(e.WiimoteState);
-
 			XBox.populateController();
 			if (_scpBus != null) _scpBus.Report(1, _controller.GetReport(), _outputReport);
 		}
@@ -154,17 +145,6 @@ namespace WiiInputMapper
 				mWiimote.SetReportType(InputReport.IRExtensionAccel, true);
 			else
 				mWiimote.SetReportType(InputReport.IRAccel, true);
-		}
-
-		public string GetSourceCode()
-		{
-			return @"
-show(Wiimote.Nunchuk.Accel.Pitch )
-show(Wiimote.Nunchuk.Accel.Roll )
-Keyboard.KeyDown.Shift = Wiimote.Nunchuk.Accel.Pitch <  -40;
-Keyboard.KeyUp.Shift = Wiimote.Nunchuk.Accel.Pitch >  40;
-Keyboard.R = Wiimote.Nunchuk.Accel.Roll < -40;
-";
 		}
 	}
 }

@@ -52,7 +52,7 @@ namespace WiimoteTest
 		{
 			mWiimote = wm;
 			//catfood = wm.Load16bitMonoSampleWAV(Path.Combine(Environment.CurrentDirectory, "Assets\\catfood.wav"), 4200);
-			sample = wm.Load8bitMonoSampleWAV(Path.Combine(Environment.CurrentDirectory, "Assets\\sweep.wav"));
+			sample = wm.Load8bitMonoSampleWAV(Path.Combine(Environment.CurrentDirectory, "Assets\\sweep.wav"), 3640);
         }
 
 		public void UpdateState(WiimoteChangedEventArgs args)
@@ -99,6 +99,7 @@ namespace WiimoteTest
 			mWiimote.OnPressedReleased("Down", () => { }, () => { desiredVolume -= 10; if (desiredVolume < 0) desiredVolume = 0; });
 			mWiimote.OnPressedReleased("Left", () => { }, () => { desiredFreq++; if (desiredFreq > SpeakerFreq.FREQ_4410HZ) desiredFreq = SpeakerFreq.FREQ_4410HZ; });
 			mWiimote.OnPressedReleased("Right", () => { }, () => { desiredFreq --; if (desiredFreq < SpeakerFreq.FREQ_4200HZ) desiredFreq = SpeakerFreq.FREQ_4200HZ; });
+			mWiimote.OnPressedReleased("One", () => { mWiimote.SetRumble(true); }, () => { mWiimote.SetRumble(false); });
 			lblAccel.Text = ws.Accel.Values.ToString();
 		    lblAccelImu.Text = ws.Accel.IMU.ToString();
 
@@ -298,6 +299,8 @@ namespace WiimoteTest
                     lblMPYaw.Text   = ws.MotionPlus.Gyro.Z.ToString("000.00");
 
                     lblMotionPlusImu.Text = ws.MotionPlus.IMU.ToString();
+					chbMPExtraExtension.Checked = ws.MotionPlus.ExtensionConnected;
+                    lblMPTiming.Text = ws.MotionPlus.TimeInBetweenPackets.ToString();
                     break;
                 case ExtensionType.UDraw:
                     g2.Clear(Color.Black);

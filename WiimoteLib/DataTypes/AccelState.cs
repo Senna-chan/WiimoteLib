@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NAudio.CoreAudioApi;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,5 +25,10 @@ namespace WiimoteLib.DataTypes
         /// Roll and pitch
         /// </summary>
         public IMUState IMU;
+
+        public override string ToString()
+        {
+            return IMU.ToString();
+        }
     }
 }

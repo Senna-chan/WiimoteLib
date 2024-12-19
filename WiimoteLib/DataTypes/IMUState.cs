@@ -22,7 +22,7 @@ namespace WiimoteLib.DataTypes
         /// <returns>A string that represents the point</returns>
         public override string ToString()
         {
-            return string.Format("{{Roll={0}, Pitch={1}, Yaw={2}}}", Roll, Pitch, Yaw);
+            return string.Format("{{Roll={0:000.00}, Pitch={1:000.00}, Yaw={2:000.00}}}", Roll, Pitch, Yaw);
         }
 
     }

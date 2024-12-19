@@ -125,6 +125,8 @@
             this.lblPenPressure = new System.Windows.Forms.Label();
             this.lblPenPosition = new System.Windows.Forms.Label();
             this.groupBox13 = new System.Windows.Forms.GroupBox();
+            this.lblMPTiming = new System.Windows.Forms.Label();
+            this.chbMPExtraExtension = new System.Windows.Forms.CheckBox();
             this.groupBox8.SuspendLayout();
             this.groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbIR)).BeginInit();
@@ -876,6 +878,8 @@
             // 
             // groupBox11
             // 
+            this.groupBox11.Controls.Add(this.chbMPExtraExtension);
+            this.groupBox11.Controls.Add(this.lblMPTiming);
             this.groupBox11.Controls.Add(this.lblMotionPlusImu);
             this.groupBox11.Controls.Add(this.lblMPCallibrate);
             this.groupBox11.Controls.Add(this.btnMPConnect);
@@ -897,7 +901,7 @@
             // 
             // lblMotionPlusImu
             // 
-            this.lblMotionPlusImu.Location = new System.Drawing.Point(7, 130);
+            this.lblMotionPlusImu.Location = new System.Drawing.Point(7, 110);
             this.lblMotionPlusImu.Name = "lblMotionPlusImu";
             this.lblMotionPlusImu.Size = new System.Drawing.Size(92, 40);
             this.lblMotionPlusImu.TabIndex = 42;
@@ -916,7 +920,7 @@
             // lblMPYaw
             // 
             this.lblMPYaw.AutoSize = true;
-            this.lblMPYaw.Location = new System.Drawing.Point(7, 114);
+            this.lblMPYaw.Location = new System.Drawing.Point(7, 94);
             this.lblMPYaw.Name = "lblMPYaw";
             this.lblMPYaw.Size = new System.Drawing.Size(28, 13);
             this.lblMPYaw.TabIndex = 8;
@@ -925,7 +929,7 @@
             // lblMPRoll
             // 
             this.lblMPRoll.AutoSize = true;
-            this.lblMPRoll.Location = new System.Drawing.Point(7, 101);
+            this.lblMPRoll.Location = new System.Drawing.Point(7, 81);
             this.lblMPRoll.Name = "lblMPRoll";
             this.lblMPRoll.Size = new System.Drawing.Size(25, 13);
             this.lblMPRoll.TabIndex = 7;
@@ -934,7 +938,7 @@
             // lblMPPitch
             // 
             this.lblMPPitch.AutoSize = true;
-            this.lblMPPitch.Location = new System.Drawing.Point(7, 88);
+            this.lblMPPitch.Location = new System.Drawing.Point(7, 68);
             this.lblMPPitch.Name = "lblMPPitch";
             this.lblMPPitch.Size = new System.Drawing.Size(31, 13);
             this.lblMPPitch.TabIndex = 6;
@@ -1164,6 +1168,25 @@
             this.groupBox13.TabStop = false;
             this.groupBox13.Text = "UDraw";
             // 
+            // lblMPTiming
+            // 
+            this.lblMPTiming.AutoSize = true;
+            this.lblMPTiming.Location = new System.Drawing.Point(7, 170);
+            this.lblMPTiming.Name = "lblMPTiming";
+            this.lblMPTiming.Size = new System.Drawing.Size(38, 13);
+            this.lblMPTiming.TabIndex = 43;
+            this.lblMPTiming.Text = "Timing";
+            // 
+            // chbMPExtraExtension
+            // 
+            this.chbMPExtraExtension.AutoSize = true;
+            this.chbMPExtraExtension.Location = new System.Drawing.Point(10, 150);
+            this.chbMPExtraExtension.Name = "chbMPExtraExtension";
+            this.chbMPExtraExtension.Size = new System.Drawing.Size(72, 17);
+            this.chbMPExtraExtension.TabIndex = 44;
+            this.chbMPExtraExtension.Text = "Extension";
+            this.chbMPExtraExtension.UseVisualStyleBackColor = true;
+            // 
             // WiimoteInfo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1316,5 +1339,7 @@
         public System.Windows.Forms.CheckBox chbFound12A;
         public System.Windows.Forms.Label lblIR12ARaw;
         public System.Windows.Forms.Label lblIR12A;
+        private System.Windows.Forms.Label lblMPTiming;
+        private System.Windows.Forms.CheckBox chbMPExtraExtension;
     }
 }

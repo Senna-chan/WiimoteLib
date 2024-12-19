@@ -61,8 +61,7 @@ namespace WiiInputMapper
 			btnRunPrecompiled.Visible = false;
 			btnStopScript.Visible = true;
 			inputMapperScript = new InputMapperTemplate();
-			txtCode.Text = inputMapperScript.GetType().GetMethod("GetSourceCode").Invoke(inputMapperScript, new object[] { }).ToString();
-            scriptStopInfo = inputMapperScript.GetType().GetMethod("StopScript");
+			scriptStopInfo = inputMapperScript.GetType().GetMethod("StopScript");
 		}
 
 		private void btnStopScript_Click(object sender, EventArgs e)
@@ -75,6 +74,7 @@ namespace WiiInputMapper
 
 		private void checkAndInitBool(String userCodeStr, String contains, String mapKey)
 		{
+
 			if (userCodeStr.Contains(contains))
 			{
 				if (!initCode.ContainsKey(mapKey))
@@ -101,7 +101,7 @@ namespace WiiInputMapper
 			foreach(string userCodeLine in userCodeLines) {
 				string userCodeStr = userCodeLine;
 
-				if(userCodeStr.Equals("rawcode") && !rawCode) // No editing of the codeline
+				if(userCodeStr.Equals("rawcode") && !rawCode)
 				{
 					rawCode = true;
 					continue;
@@ -142,6 +142,7 @@ namespace WiiInputMapper
 
 				if (userCodeStr.Contains("Accel.IMU.Pitch") && !userCodeStr.StartsWith("show("))  // We need to validate the pitch.
 				{
+
 					string nonPitchInstruction = userCodeStr.Substring(0,userCodeStr.IndexOf("Wiimote"));
 					string pitchInstruction = userCodeStr.Substring(userCodeStr.IndexOf("Wiimote"));
 					RegexOptions options = RegexOptions.None;
@@ -182,7 +183,7 @@ namespace WiiInputMapper
 						userCodeStr = $"Mouse.MoveRel({WiimoteInstruction}.X * mousespeed, {WiimoteInstruction}.Y * mousespeed);";
 					}
 				}
-				else if (userCodeStr.StartsWith("var "))
+				if (userCodeStr.StartsWith("var "))
 				{
 					string varname = userCodeStr.Replace("var ", "").Split('=')[0].Trim();
 					string varvalue = userCodeStr.Replace("var ", "").Split('=')[1].Trim().Replace(";","");
@@ -210,26 +211,25 @@ namespace WiiInputMapper
 					userCodeStr = userCodeStr + "{";
 					codeBlockAmount++;
 				}
-				
-				if (userCodeStr.Contains("Keyboard."))
+				else if (userCodeStr.Contains("Keyboard."))
 				{
 					string KeyboardInstruction = userCodeStr.Substring(0,userCodeStr.IndexOf('=')).Trim();
 					string keyInstruction = userCodeStr.Substring(userCodeStr.IndexOf('=') + 1).Replace(';', ' ').Trim();
 					if (userCodeStr.Contains("Keyboard.Press"))
 					{
-						userCodeStr = $"Keyboard.Press({KeyboardInstruction.Replace("Keyboard.Press.", "KeyCode.")}, {keyInstruction});";
+						userCodeStr = $"Keyboard.Press(Keyboard.{KeyboardInstruction.Replace("Keyboard.Press.", "Key.")}, {keyInstruction});";
 					} 
 					else if (userCodeStr.Contains("Keyboard.KeyUp"))
 					{
-						userCodeStr = $"Keyboard.Up({KeyboardInstruction.Replace("Keyboard.KeyUp.", "KeyCode.")}, {keyInstruction});";
+						userCodeStr = $"Keyboard.Up(Keyboard.{KeyboardInstruction.Replace("Keyboard.KeyUp.", "Key.")}, {keyInstruction});";
 					} 
 					else if (userCodeStr.Contains("Keyboard.KeyDown"))
 					{
-						userCodeStr = $"Keyboard.Down({KeyboardInstruction.Replace("Keyboard.KeyDown.", "KeyCode.")}, {keyInstruction});";
+						userCodeStr = $"Keyboard.Down(Keyboard.{KeyboardInstruction.Replace("Keyboard.KeyDown.", "Key.")}, {keyInstruction});";
 					}
 					else
 					{
-						userCodeStr = $"Keyboard.Press({KeyboardInstruction.Replace("Keyboard.", "KeyCode.")}, {keyInstruction});";
+						userCodeStr = $"Keyboard.Press(Keyboard.{KeyboardInstruction.Replace("Keyboard.", "Key.")}, {keyInstruction});";
 					}
 				}
 
@@ -287,11 +287,8 @@ namespace WiiInputMapper
 			code = code.Replace("//USERCODE", userCode.ToString());
 			code = code.Replace("//GLOBALS", variableString.ToString());
 			code = code.Replace("//INIT", initString.ToString());
-			code = code.Replace("SOURCECODE", txtCode.Text.Replace("\"","\\\""));
-
-            File.WriteAllText("../../script.cs", code.Replace("namespace WiiInputMapper.Template", "namespace WiiInputMapper")); // Save code to build folder to be able to debug it
-
-            return code;
+			File.WriteAllText("../../script.cs", code.Replace("namespace WiiInputMapper.Template", "namespace WiiInputMapper")); // Save code to build folder to be able to debug it
+			return code;
 		}
 
 		void appendUserCodeLine(String codeToAppend)
@@ -345,7 +342,7 @@ namespace WiiInputMapper
 			else
 			{
 				txtCompileOutput.Text = "Compile success";
-                if (!andRun) return;
+				if (!andRun) return;
 				Module[] modules = compile.CompiledAssembly.GetModules();
 				Module module = modules[0];
 				Type mt = null;

@@ -42,7 +42,7 @@
         /// </summary>
         BalanceBoard = 0x0000a4200402,
         /// <summary>
-        /// Wii Fit Balance Board controller
+        /// UDraw tablet
         /// </summary>
         UDraw = 0xFF00A4200112,
         /// <summary>

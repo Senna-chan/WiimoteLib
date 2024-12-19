@@ -4,7 +4,7 @@ using MathFloat;
 namespace WiimoteLib.Helpers{
     class Mahony
     {
-        private const float twoKpDef = (2.0f * 0.5f);	// 2 * proportional gain
+        private const float twoKpDef = (2.0f * 0.0f);	// 2 * proportional gain
         private const float twoKiDef = (2.0f * 0.0f); // 2 * integral gain
         float twoKp;        // 2 * proportional gain (Kp)
         float twoKi;        // 2 * integral gain (Ki)
@@ -166,8 +166,12 @@ namespace WiimoteLib.Helpers{
         /// <param name="ax">Accel X in G</param>
         /// <param name="ay">Accel Y in G</param>
         /// <param name="az">Accel Z in G</param>
-        public void UpdateImu(float gx, float gy, float gz, float ax, float ay, float az)
+        public void UpdateImu(float gx, float gy, float gz, float ax, float ay, float az, float refreshTiming = 0)
         {
+            if (refreshTiming != 0)
+            {
+                invSampleFreq = 1.0f / refreshTiming;
+            }
             float recipNorm;
             float halfvx, halfvy, halfvz;
             float halfex, halfey, halfez;

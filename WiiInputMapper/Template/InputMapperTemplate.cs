@@ -14,7 +14,6 @@ using WindowsInput.Native;
 using System.Collections.Generic;
 using WiimoteLib.Exceptions;
 using WiiInputMapper.Template;
-using WindowsInput.Events;
 
 namespace WiiInputMapper.Template
 {
@@ -80,7 +79,7 @@ namespace WiiInputMapper.Template
 			mWiimote.SetRumble(false);
 			mWiimote.MuteSpeaker(true);
 			mWiimote.Disconnect();
-			if (_scpBus != null) _scpBus.Unplug(1);
+			if(_scpBus != null) _scpBus.Unplug(1);
 			varShower.Close();
 			Mouse.Stop();
 			Keyboard.Stop();
@@ -88,12 +87,10 @@ namespace WiiInputMapper.Template
 
 
 		//region userblock
-		
 		//GLOBALS
-
 		private void CodeExecutor(WiimoteState Wiimote)
 		{
-			//USERCODE
+//USERCODE
 		}
 		//endregion  
 
@@ -133,9 +130,7 @@ namespace WiiInputMapper.Template
 				IRDifference.Y = lastIRPosition.Y - e.WiimoteState.IR.Midpoint.RawPosition.Y;
 				lastIRPosition = e.WiimoteState.IR.Midpoint.RawPosition;
 			}
-
 			CodeExecutor(e.WiimoteState);
-
 			XBox.populateController();
 			if (_scpBus != null) _scpBus.Report(1, _controller.GetReport(), _outputReport);
 		}
@@ -147,13 +142,6 @@ namespace WiiInputMapper.Template
 				mWiimote.SetReportType(InputReport.IRExtensionAccel, true);
 			else
 				mWiimote.SetReportType(InputReport.IRAccel, true);
-		}
-
-		public string GetSourceCode()
-		{
-			return @"
-SOURCECODE
-";
 		}
 	}
 }

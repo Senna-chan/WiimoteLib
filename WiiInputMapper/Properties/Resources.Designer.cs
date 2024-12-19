@@ -77,12 +77,11 @@ namespace WiiInputMapper.Properties {
         ///using System.Collections.Generic;
         ///using WiimoteLib.Exceptions;
         ///using WiiInputMapper.Template;
+        ///using WindowsInput.Events;
         ///
-        ///namespace WiiInputMapper.Template
+        ///namespace WiiInputMapper.Scripting
         ///{
-        ///	public class InputMapperTemplate
-        ///	{
-        ///		private Wiimote [rest of string was truncated]&quot;;.
+        ///	public class InputMapperTe [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string InputMapperTemplate {
             get {
