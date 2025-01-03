@@ -20,6 +20,7 @@ namespace WiimoteLib
 	/// </summary>
 	internal class HIDImports
 	{
+		/*
 		//
 		// Flags controlling what is included in the device information set built
 		// by SetupDiGetClassDevs
@@ -29,7 +30,7 @@ namespace WiimoteLib
 		public const int DIGCF_ALLCLASSES       = 0x00000004;
 		public const int DIGCF_PROFILE          = 0x00000008;
 		public const int DIGCF_DEVICEINTERFACE  = 0x00000010;
-
+*/
 		[Flags]
 		public enum EFileAttributes : uint
 		{
@@ -59,7 +60,7 @@ namespace WiimoteLib
 		   OpenNoRecall     = 0x00100000,
 		   FirstPipeInstance= 0x00080000
 		}
-
+/*
 		[StructLayout(LayoutKind.Sequential)]
 		public struct SP_DEVINFO_DATA
 		{
@@ -147,7 +148,7 @@ namespace WiimoteLib
 
 		[DllImport(@"setupapi.dll", CharSet=CharSet.Auto, SetLastError = true)]
 		public static extern UInt16 SetupDiDestroyDeviceInfoList( IntPtr hDevInfo );
-
+*/
 		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
 		public static extern SafeFileHandle CreateFile(
 			string fileName,

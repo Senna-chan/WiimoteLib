@@ -52,8 +52,16 @@ namespace WiimoteTest
 		{
 			mWiimote = wm;
 			//catfood = wm.Load16bitMonoSampleWAV(Path.Combine(Environment.CurrentDirectory, "Assets\\catfood.wav"), 4200);
-			sample = wm.Load8bitMonoSampleWAV(Path.Combine(Environment.CurrentDirectory, "Assets\\sweep.wav"), 3640);
-        }
+			try
+			{
+				sample = wm.Load8bitMonoSampleWAV(Path.Combine(Environment.CurrentDirectory, "Assets\\sweep.wav"),
+					3640);
+			}
+			catch (Exception ex)
+			{
+				// ignored
+			}
+		}
 
 		public void UpdateState(WiimoteChangedEventArgs args)
 		{

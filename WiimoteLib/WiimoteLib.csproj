@@ -267,6 +267,12 @@
   <ItemGroup>
     <Folder Include="DataTypes\Packets\Input\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HidSharp\HidSharp.csproj">
+      <Project>{0db86674-2a7b-4bdc-93c1-3f7dc771426c}</Project>
+      <Name>HidSharp</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
