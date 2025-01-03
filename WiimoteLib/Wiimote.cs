@@ -34,6 +34,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography;
 using System.Net;
 using HidSharp;
+using HidSharp.Reports;
 
 namespace WiimoteLib
 {
@@ -164,26 +165,31 @@ namespace WiimoteLib
             var hidList = list.GetHidDevices().ToArray();
             foreach(HidDevice hid in hidList)
             {
-                
-                string VIDPID = hid.DevicePath.Split('/')[6];
-                string[] VIDPIDParts = VIDPID.Split(new []{':','.'});
                 int vid, pid;
-                if (int.TryParse(VIDPIDParts[1], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out vid) &&
-                    int.TryParse(VIDPIDParts[2], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out pid))
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
-                // if the vendor and product IDs match up
-                    if (vid == VID && (pid == PIDN || pid == PIDO))
-                    {
-                        // it's a Wiimote
-                        Debug.WriteLine("Found one!");
-                        found = true;
-
-                        // fire the callback function...if the callee doesn't care about more Wiimotes, break out
-                        if (!wiimoteFound(hid.DevicePath + "/device"))
-                            break;
-                    }
-                    
+                    string VIDPID = hid.DevicePath.Split('/')[6];
+                    string[] VIDPIDParts = VIDPID.Split(new[] { ':', '.' });
+                    bool vidValid = int.TryParse(VIDPIDParts[1], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out vid);
+                    bool pidValid = int.TryParse(VIDPIDParts[2], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out pid);
+                    if (!vidValid || !pidValid)
+                        continue;
                 }
+                else
+                {
+                    vid = hid.VendorID;
+                    pid = hid.ProductID;
+                }
+                if (vid == VID && (pid == PIDN || pid == PIDO))
+                {
+                    // it's a Wiimote
+                    Debug.WriteLine("Found one!");
+                    found = true;
+
+                    // fire the callback function...if the callee doesn't care about more Wiimotes, break out
+                    if (!wiimoteFound(hid.DevicePath))
+                        break;
+                }   
             }
 
             // if we didn't find a Wiimote, throw an exception
@@ -211,42 +217,50 @@ namespace WiimoteLib
             foreach (HidDevice hid in hidList)
             {
                 if (!devicePath.StartsWith(hid.DevicePath)) continue;
-                string VIDPID = hid.DevicePath.Split('/')[6];
-                string[] VIDPIDParts = VIDPID.Split(new[] { ':', '.' });
                 int vid, pid;
-                if (int.TryParse(VIDPIDParts[1], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out vid) &&
-                    int.TryParse(VIDPIDParts[2], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out pid))
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
-                    // if the vendor and product IDs match up
-                    if (vid == VID && (pid == PIDN || pid == PIDO))
-                    {
-                        // create a nice .NET FileStream wrapping the handle above
-                        //	public FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool useAsync)
-                        // mStream = new FileStream(devicePath, FileMode.Open, FileAccess.ReadWrite,FileShare.ReadWrite, REPORT_LENGTH, true);
+                    string VIDPID = hid.DevicePath.Split('/')[6];
+                    string[] VIDPIDParts = VIDPID.Split(new[] { ':', '.' });
+                    bool vidValid = int.TryParse(VIDPIDParts[1], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out vid);
+                    bool pidValid = int.TryParse(VIDPIDParts[2], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out pid);
+                    if (!vidValid || !pidValid)
+                        continue;
+                }
+                else
+                {
+                    vid = hid.VendorID;
+                    pid = hid.ProductID;
+                }
+                // if the vendor and product IDs match up
+                if (vid == VID && (pid == PIDN || pid == PIDO))
+                {
+                    // create a nice .NET FileStream wrapping the handle above
+                    //	public FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool useAsync)
+                    // mStream = new FileStream(devicePath, FileMode.Open, FileAccess.ReadWrite,FileShare.ReadWrite, REPORT_LENGTH, true);
 
-                        if (!hid.TryOpen(out hidStream))
-                        {
-                            throw new WiimoteException("Failed to open Wiimote.");
-                        }
-                        // start an async read operation on it
-                        BeginAsyncRead();
-                    
-                        // read the calibration info from the controller
-                        try
-                        {
-                            ReadWiimoteCalibration();
-                        }
-                        catch
-                        {
-                            // if we fail above, try the alternate HID writes
-                            mAltWriteMethod = true;
-                            ReadWiimoteCalibration();
-                        }
-                    
-                        // force a status check to get the state of any extensions plugged in at startup
-                        GetStatus();
-                        return;
+                    if (!hid.TryOpen(out hidStream))
+                    {
+                        throw new WiimoteException("Failed to open Wiimote.");
                     }
+                    // start an async read operation on it
+                    BeginAsyncRead();
+                    //SetReportType(InputReport.Buttons, false); // Set default reporting type incase we had a reconnect
+                    // read the calibration info from the controller
+                    try
+                    {
+                        ReadWiimoteCalibration();
+                    }
+                    catch
+                    {
+                        // if we fail above, try the alternate HID writes
+                        mAltWriteMethod = true;
+                        ReadWiimoteCalibration();
+                    }
+                    
+                    // force a status check to get the state of any extensions plugged in at startup
+                    GetStatus();
+                    return;
                 }
             }
             
@@ -405,8 +419,12 @@ namespace WiimoteLib
         /// <returns>Returns a boolean noting whether an event needs to be posted</returns>
         private bool ParseInputReport(byte[] buff)
         {
+            if(buff.Length != REPORT_LENGTH)
+            {
+                Debugger.Break();
+            }
             InputReport type = (InputReport)buff[0];
-            //Console.WriteLine("InputReport: " + type.ToString());
+            Thread.CurrentThread.Name = $"Parse {type}";
             switch (type)
             {
                 case InputReport.Buttons:
@@ -451,7 +469,7 @@ namespace WiimoteLib
                     bool extension = (buff[3] & 0x02) != 0;
                     Console.WriteLine("Extension: " + extension);
 
-                    if(mWiimoteState.Extension != extension)
+                    if (mWiimoteState.Extension != extension)
                     {
                         mWiimoteState.Extension = extension;
 
@@ -464,8 +482,10 @@ namespace WiimoteLib
                             mWiimoteState.ExtensionType = ExtensionType.None;
 
                         // only fire the extension changed event if we have a real extension (i.e. not a balance board)
-                        if(WiimoteExtensionChanged != null && mWiimoteState.ExtensionType != ExtensionType.BalanceBoard)
+                        if (WiimoteExtensionChanged != null && mWiimoteState.ExtensionType != ExtensionType.BalanceBoard)
+                        {
                             WiimoteExtensionChanged(this, new WiimoteExtensionChangedEventArgs(mWiimoteState.ExtensionType, mWiimoteState.Extension));
+                        }
                     }
                     mStatusDone.Set();
                     break;
@@ -509,6 +529,7 @@ namespace WiimoteLib
                     Debugger.Break();
                     return false;
             }
+            Console.WriteLine(String.Format(" InputReport: {0,20} {1,90}", type, buff.ToHexString()));
             return true;
         }
 
@@ -1313,8 +1334,10 @@ namespace WiimoteLib
             WriteReport(packet);
 
             // signal the status report finished
-            if(!mStatusDone.WaitOne(1000, false))
+            if (!mStatusDone.WaitOne(1000, true))
+            {
                 throw new WiimoteException("Timed out waiting for status report");
+            }
         }
 
         /// <summary>
@@ -1402,13 +1425,17 @@ namespace WiimoteLib
         /// <exception cref="WiimoteException"></exception>
         private void WriteReport(byte[] report)
         {
-            Console.WriteLine("WriteReport: " + ((OutputReport)report[0]));
+            if (report[0] == 0)
+            {
+                Debugger.Break();
+            }
+            Console.WriteLine(String.Format("OutputReport: {0,20} {1,90}",((OutputReport)report[0]), report.ToHexString()));
             hidStream.Write(report, 0, REPORT_LENGTH);
             hidStream.Flush();
             if (report[0] == (byte)OutputReport.WriteMemory)
             {
                 Console.WriteLine("Wait");
-                if (!mWriteDone.WaitOne(1000, false))
+                if (!mWriteDone.WaitOne(1000, true))
                 {
                     Console.WriteLine("Wait failed");
                     throw new WiimoteException("Error writing data to Wiimote...is it connected?");

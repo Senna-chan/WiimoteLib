@@ -4,3 +4,6 @@
 [submodule "MiscStuff/Wiiyourself"]
 	path = MiscStuff/Wiiyourself
 	url = https://github.com/greenjava/WiiYourself.git
+[submodule "HidSharp"]
+	path = HidSharp
+	url = https://github.com/Senna-chan/HidSharp.git

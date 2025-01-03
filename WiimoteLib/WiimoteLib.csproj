@@ -235,6 +235,7 @@
     <Compile Include="Helpers\ConvertHelpers.cs" />
     <Compile Include="Helpers\Filter.cs" />
     <Compile Include="Helpers\Mahony.cs" />
+    <Compile Include="Helpers\StringExtensions.cs" />
     <Compile Include="HIDImports.cs" />
     <Compile Include="DataTypes\Packets\Output\BaseOutputPacket.cs" />
     <Compile Include="DataTypes\Packets\Output\OnOffPacket.cs" />
@@ -268,8 +269,8 @@
     <Folder Include="DataTypes\Packets\Input\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HidSharp\HidSharp.csproj">
-      <Project>{0db86674-2a7b-4bdc-93c1-3f7dc771426c}</Project>
+    <ProjectReference Include="..\HidSharp\HidSharp\HidSharp.csproj">
+      <Project>{0DB86674-2A7B-4BDC-93C1-3F7DC771426C}</Project>
       <Name>HidSharp</Name>
     </ProjectReference>
   </ItemGroup>

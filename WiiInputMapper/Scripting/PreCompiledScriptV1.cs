@@ -131,7 +131,6 @@ initvarshower = true;
                     mWiimote.SetLEDs(currentScreenIndex + 1);
                 }
 			});
-			Mouse
 			mWiimote.OnPressedReleased("Right", () => { }, ()=> {
 				if(!(currentScreenIndex >= Screen.AllScreens.Length - 1))
                 {

@@ -125,11 +125,11 @@ namespace WiiInputMapper.HIDEmulators
 
         public void MouseScrollUp(bool state)
         {
-            if (state && !scrollUpState)
-                MouseEvent(MouseEventFlags.);
-            if (!state && scrollUpState)
-                MouseEvent(MouseEventFlags.RightUp);
-            rightState = state;
+            //if (state && !scrollUpState)
+            //    MouseEvent(MouseEventFlags.);
+            //if (!state && scrollUpState)
+            //    MouseEvent(MouseEventFlags.RightUp);
+            //rightState = state;
         }
 
         public void MouseEvent(MouseEventFlags value)
